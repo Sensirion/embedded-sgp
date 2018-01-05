@@ -29,4 +29,3 @@ jobs:
       - run:
           name: make driver
           command: cd release; cd sgp30; make
-
