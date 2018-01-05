@@ -6,15 +6,13 @@ jobs:
     docker:
         - image: gcc:5.4.0 
     
-    ## Customize checkout
-    checkout:
-       post:
-         - git submodule sync
-         - git submodule update --init # use submodules
-
     steps:
 
       - checkout
+
+      - run:
+          name: update common
+          command: git submodule update --init
 
       - run:
           name: apt update
