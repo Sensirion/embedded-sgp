@@ -5,26 +5,19 @@ jobs:
 
     docker:
         - image: gcc:5.4.0 
-    
+
     steps:
 
       - checkout
 
       - run:
-          name: update common
+          name: update common repo
           command: git submodule update --init
 
-      - run:
-          name: apt update
-          command: apt update
-
-      - run:
-          name: install zip
-          command: apt install -y zip
-
-      - run:
-          name: make relase
-          command: make release
+      - run: apt update
+      - run: apt install -y zip
+      
+      - run: make release
 
       - run:
           name: make driver
