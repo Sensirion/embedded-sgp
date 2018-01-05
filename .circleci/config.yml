@@ -20,7 +20,7 @@ jobs:
 
       - run:
           name: install zip
-          command: apt install zip
+          command: apt install -y zip
 
       - run:
           name: make relase
