@@ -12,7 +12,15 @@ jobs:
 
       - run:
           name: update common
-          command: git submodule update
+          command: git submodule update --init
+
+      - run:
+          name: apt update
+          command: apt update
+
+      - run:
+          name: install zip
+          command: apt install zip
 
       - run:
           name: make relase
