@@ -1,17 +1,20 @@
 version: 2
+
 jobs:
   build:
+
     docker:
         - image: gcc:5.4.0 
+
     steps:
+
       - checkout
+
       - run:
-          name: Greeting
-          command: echo Hello, world.
+          name: update common
+          command: git submodule update
+
       - run:
-          name: Print the Current Time
-          command: date
-      - run:
-          name: buildIt
+          name: make relase
           command: make release
 
