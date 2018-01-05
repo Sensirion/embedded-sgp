@@ -1,6 +1,11 @@
 # embedded-sgp
 Embedded SGP Drivers
 
+## Clone this repository
+```
+git clone --recursive https://github.com/Sensirion/embedded-sgp.git
+```
+
 ## Repistory content
 * embedded-common (submodule repository for common embedded driver stuff)
 * sgp30 (sgp30 driver related)
@@ -9,7 +14,7 @@ Embedded SGP Drivers
 
 ## Collecting resources
 ```
-> make release
+make release
 ```
 This will create a release folder with the necessary driver files in it, including a Makefile. That way, you have just ONE folder with all the sources ready to build your driver for your platform.
 
@@ -29,7 +34,7 @@ and depending on your i2c implementation one of the following:
 1. Step into your desired directory (e.g.: release/sgp30)
 2. Adjust sensirion_arch_config.h if you don't have the ```<stdint.h>``` header file available.
 3. Implement necessary functions in the ```*_implementation.c``` files:
-3. make
+4. make
 
 
 ---
