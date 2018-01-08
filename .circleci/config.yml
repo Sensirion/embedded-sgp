@@ -16,7 +16,7 @@ jobs:
 
       - run: apt update
       - run: apt install -y zip
-      
+
       - run: make release
 
       - run:
