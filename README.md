@@ -19,7 +19,7 @@ make release
 This will create a release folder with the necessary driver files in it, including a Makefile. That way, you have just ONE folder with all the sources ready to build your driver for your platform.
 
 
-## Files to adjust
+## Files to adjust (from embedded-common)
 You only need to touch the following files:
 
 * ```sensirion_arch_config.h``` (architecture specifics, you need to specify the integer sizes)
