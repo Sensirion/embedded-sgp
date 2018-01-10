@@ -1,4 +1,5 @@
-# embedded-sgp Embedded SGP Drivers
+# embedded-sg 
+Embedded SGP Drivers
 
 ## Clone this repository 
 ```
@@ -21,8 +22,8 @@ just ONE folder with all the sources ready to build your driver for your
 platform.
 
 
-## Files to adjust (from embedded-common) You only need to touch the following
-files:
+## Files to adjust (from embedded-common)
+You only need to touch the following files:
 
 * `sensirion_arch_config.h` (architecture specifics, you need to specify the
   integer sizes)
