@@ -41,7 +41,7 @@ communication via GPIOs)
 1. Step into your desired directory (e.g.: release/sgp30)
 2. Adjust sensirion_arch_config.h if you don't have the `<stdint.h>` header
 file available
-3. Implement necessary functions in on of the `*_implementation.c` files
+3. Implement necessary functions in one of the `*_implementation.c` files
 4. make
 
 
