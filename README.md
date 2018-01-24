@@ -7,7 +7,7 @@ SGP product line.
 git clone --recursive https://github.com/Sensirion/embedded-sgp.git
 ```
 
-## Repistory content
+## Repository content
 * embedded-common (submodule repository for common embedded driver stuff)
 * sgp30 (SGP30 driver related)
 * sgpc3 (SGPC3 driver related)
