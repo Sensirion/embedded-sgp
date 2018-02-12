@@ -44,6 +44,7 @@ s16 sgp_iaq_init0(void);
 s16 sgp_iaq_init16(void);
 s16 sgp_iaq_init64(void);
 s16 sgp_iaq_init184(void);
+s16 sgp_iaq_init_continuous(void);
 
 const char *sgp_get_driver_version(void);
 u8 sgp_get_configured_address(void);
@@ -52,6 +53,7 @@ s16 sgp_get_serial_id(u64 *serial_id);
 
 s16 sgp_get_iaq_baseline(u16 *baseline);
 s16 sgp_set_iaq_baseline(u16 baseline);
+s16 sgp_get_iaq_factory_baseline(u16 *baseline);
 
 s16 sgp_measure_iaq_blocking_read(u16 *tvoc_ppb);
 s16 sgp_measure_iaq(void);
@@ -69,6 +71,8 @@ s16 sgp_measure_raw_blocking_read(u16 *tvoc_ppb, u16 *scaled_ethanol_signal);
 s16 sgp_measure_raw(void);
 s16 sgp_read_raw(u16 *tvoc_ppb, u16 *scaled_ethanol_signal);
 
+s16 sgp_set_power_mode(u16 power_mode);
+s16 sgp_set_absolute_humidity(u32 absolute_humidity);
 s16 sgp_measure_test(u16 *test_result);
 
 #ifdef __cplusplus

@@ -698,10 +698,9 @@ s16 sgp_set_iaq_baseline(u32 baseline) {
 /**
  * sgp_set_absolute_humidity() - set the absolute humidity for compensation
  *
- * The absolute humidity must be provided in in mg/m^3 and the value must
- * be between 0 and 256000 mg/m^3.
- * If the absolute humidity is set to zero, humidity compensation will be
- * disabled
+ * The absolute humidity must be provided in mg/m^3 and the value must be
+ * between 0 and 256000 mg/m^3.
+ * If the absolute humidity is set to zero, humidity compensation is disabled.
  *
  * @absolute_humidity:   u32 absolute humidity in mg/m^3
  *
@@ -713,8 +712,10 @@ s16 sgp_set_absolute_humidity(u32 absolute_humidity) {
     const u16 BUF_SIZE = SGP_COMMAND_LEN + SGP_WORD_LEN + CRC8_LEN;
     u8 buf[BUF_SIZE];
 
-    profile = sgp_get_profile_by_number(PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY);
+    if (!SGP_REQUIRE_FS(client_data.info.feature_set_version, 1, 0))
+        return STATUS_FAIL; /* feature unavailable */
 
+    profile = sgp_get_profile_by_number(PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY);
     if (profile == NULL)
         return STATUS_FAIL;
 

@@ -31,18 +31,26 @@
 #include "sgp_featureset.h"
 
 #define PROFILE_NUMBER_SIGNALS 9
-#define PROFILE_MEASURE_RAW 8
+#define PROFILE_IAQ_MEASURE_RAW 8
+#define PROFILE_SET_ABSOLUTE_HUMIDITY 12
+#define PROFILE_SET_POWER_MODE 19
 #define PROFILE_IAQ_INIT0 17
 #define PROFILE_IAQ_INIT16 4
 #define PROFILE_IAQ_INIT64 0
 #define PROFILE_IAQ_INIT184 13
+#define PROFILE_IAQ_INIT_CONTINUOUS 21
+#define PROFILE_IAQ_GET_FACTORY_BASELINE 22
 
 const u8 PROFILE_NUMBER_MEASURE_SIGNALS = PROFILE_NUMBER_SIGNALS;
-const u8 PROFILE_NUMBER_MEASURE_RAW = PROFILE_MEASURE_RAW;
+const u8 PROFILE_NUMBER_MEASURE_RAW = PROFILE_IAQ_MEASURE_RAW;
 const u8 PROFILE_NUMBER_IAQ_INIT0 = PROFILE_IAQ_INIT0;
 const u8 PROFILE_NUMBER_IAQ_INIT16 = PROFILE_IAQ_INIT16;
 const u8 PROFILE_NUMBER_IAQ_INIT64 = PROFILE_IAQ_INIT64;
 const u8 PROFILE_NUMBER_IAQ_INIT184 = PROFILE_IAQ_INIT184;
+const u8 PROFILE_NUMBER_IAQ_INIT_CONTINUOUS = PROFILE_IAQ_INIT_CONTINUOUS;
+const u8 PROFILE_NUMBER_IAQ_GET_FACTORY_BASELINE = PROFILE_IAQ_GET_FACTORY_BASELINE;
+const u8 PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY = PROFILE_SET_ABSOLUTE_HUMIDITY;
+const u8 PROFILE_NUMBER_SET_POWER_MODE = PROFILE_SET_POWER_MODE;
 
 static const struct sgp_signal ETHANOL_SIGNAL = {
     .conversion_function = NULL,
@@ -65,10 +73,10 @@ static const struct sgp_signal *SGP_PROFILE_IAQ_MEASURE_SIGNALS[] =
 static const struct sgp_signal *SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS[] =
     { &BASELINE_WORD1 };
 
-static const struct sgp_signal *SGP_PROFILE_MEASURE_SIGNALS_SIGNALS[] =
+static const struct sgp_signal *SGP_PROFILE_MEASURE_ETOH_SIGNAL_SIGNALS[] =
     { &ETHANOL_SIGNAL };
 
-static const struct sgp_signal *SGP_PROFILE_MEASURE_RAW_SIGNALS[] =
+static const struct sgp_signal *SGP_PROFILE_IAQ_MEASURE_RAW_SIGNALS[] =
     { &TVOC_PPB, &ETHANOL_SIGNAL };
 
 
@@ -108,6 +116,15 @@ static const struct sgp_profile SGP_PROFILE_IAQ_INIT184 = {
     .name              = "iaq_init184",
 };
 
+static const struct sgp_profile SGP_PROFILE_IAQ_INIT_CONTINUOUS = {
+    .number            = PROFILE_IAQ_INIT_CONTINUOUS,
+    .duration_us       = 10000,
+    .signals           = NULL,
+    .number_of_signals = 0,
+    .command           = { .buf = {0x20, 0xae} },
+    .name              = "iaq_init_continuous",
+};
+
 static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE = {
     .number            = PROFILE_NUMBER_IAQ_MEASURE,
     .duration_us       = 50000,
@@ -135,26 +152,54 @@ static const struct sgp_profile SGP_PROFILE_IAQ_SET_BASELINE = {
     .name              = "iaq_set_baseline",
 };
 
-static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS = {
+static const struct sgp_profile SGP_PROFILE_MEASURE_ETOH_SIGNAL = {
     .number            = PROFILE_NUMBER_SIGNALS,
     .duration_us       = 50000,
-    .signals           = SGP_PROFILE_MEASURE_SIGNALS_SIGNALS,
-    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_MEASURE_SIGNALS_SIGNALS),
+    .signals           = SGP_PROFILE_MEASURE_ETOH_SIGNAL_SIGNALS,
+    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_MEASURE_ETOH_SIGNAL_SIGNALS),
     .command           = { .buf = {0x20, 0x4d} },
-    .name              = "measure_signals_2s",
+    .name              = "measure_etoh_signal",
 };
 
-static const struct sgp_profile SGP_PROFILE_MEASURE_RAW = {
-    .number            = PROFILE_MEASURE_RAW,
+static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE_RAW = {
+    .number            = PROFILE_IAQ_MEASURE_RAW,
     .duration_us       = 50000,
-    .signals           = SGP_PROFILE_MEASURE_RAW_SIGNALS,
-    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_MEASURE_RAW_SIGNALS),
+    .signals           = SGP_PROFILE_IAQ_MEASURE_RAW_SIGNALS,
+    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_MEASURE_RAW_SIGNALS),
     .command           = { .buf = {0x20, 0x46} },
-    .name              = "measure_raw_2s",
+    .name              = "iaq_measure_raw",
+};
+
+static const struct sgp_profile SGP_PROFILE_IAQ_GET_FACTORY_BASELINE = {
+    .number            = PROFILE_IAQ_GET_FACTORY_BASELINE,
+    .duration_us       = 10000,
+    .signals           = SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS,
+    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS),
+    .command           = { .buf = {0x20, 0xb3} },
+    .name              = "iaq_get_factory_baseline",
+};
+
+static const struct sgp_profile SGP_PROFILE_SET_ABSOLUTE_HUMIDITY = {
+    .number            = PROFILE_SET_ABSOLUTE_HUMIDITY,
+    .duration_us       = 10000,
+    .signals           = NULL,
+    .number_of_signals = 0,
+    .command           = { .buf = {0x20, 0x61} },
+    .name              = "set_absolute_humidity",
+};
+
+static const struct sgp_profile SGP_PROFILE_SET_POWER_MODE = {
+    .number            = PROFILE_SET_POWER_MODE,
+    .duration_us       = 10000,
+    .signals           = NULL,
+    .number_of_signals = 0,
+    .command           = { .buf = {0x20, 0x9f} },
+    .name              = "set_power_mode",
 };
 
 
-static const struct sgp_profile *sgp_profiles[] = {
+static const struct sgp_profile *sgp_profiles_fs4[] = {
+    &SGP_PROFILE_MEASURE_ETOH_SIGNAL,
     &SGP_PROFILE_IAQ_INIT0,
     &SGP_PROFILE_IAQ_INIT16,
     &SGP_PROFILE_IAQ_INIT64,
@@ -162,17 +207,61 @@ static const struct sgp_profile *sgp_profiles[] = {
     &SGP_PROFILE_IAQ_MEASURE,
     &SGP_PROFILE_IAQ_GET_BASELINE,
     &SGP_PROFILE_IAQ_SET_BASELINE,
-    &SGP_PROFILE_MEASURE_SIGNALS,
-    &SGP_PROFILE_MEASURE_RAW,
+    &SGP_PROFILE_IAQ_MEASURE_RAW,
 };
 
-static const u16 supported_featureset_versions[] = { 0x1004 };
+static const struct sgp_profile *sgp_profiles_fs5[] = {
+    &SGP_PROFILE_MEASURE_ETOH_SIGNAL,
+    &SGP_PROFILE_IAQ_INIT0,
+    &SGP_PROFILE_IAQ_INIT16,
+    &SGP_PROFILE_IAQ_INIT64,
+    &SGP_PROFILE_IAQ_INIT184,
+    &SGP_PROFILE_IAQ_MEASURE,
+    &SGP_PROFILE_IAQ_GET_BASELINE,
+    &SGP_PROFILE_IAQ_SET_BASELINE,
+    &SGP_PROFILE_IAQ_MEASURE_RAW,
+    &SGP_PROFILE_IAQ_GET_FACTORY_BASELINE,
+};
 
-const struct sgp_otp_featureset sgp_featureset = {
-    .profiles                                = sgp_profiles,
-    .number_of_profiles                      = ARRAY_SIZE(sgp_profiles),
-    .supported_featureset_versions           = (u16 *) supported_featureset_versions,
-    .number_of_supported_featureset_versions = ARRAY_SIZE(supported_featureset_versions)
+static const struct sgp_profile *sgp_profiles_fs6[] = {
+    &SGP_PROFILE_MEASURE_ETOH_SIGNAL,
+    &SGP_PROFILE_IAQ_INIT0,
+    &SGP_PROFILE_IAQ_INIT16,
+    &SGP_PROFILE_IAQ_INIT64,
+    &SGP_PROFILE_IAQ_INIT184,
+    &SGP_PROFILE_IAQ_INIT_CONTINUOUS,
+    &SGP_PROFILE_IAQ_MEASURE,
+    &SGP_PROFILE_IAQ_GET_BASELINE,
+    &SGP_PROFILE_IAQ_SET_BASELINE,
+    &SGP_PROFILE_IAQ_MEASURE_RAW,
+    &SGP_PROFILE_IAQ_GET_FACTORY_BASELINE,
+    &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
+    &SGP_PROFILE_SET_POWER_MODE,
+};
+
+static const u16 supported_featureset_versions_fs4[] = { 0x1004 };
+static const u16 supported_featureset_versions_fs5[] = { 0x1005 };
+static const u16 supported_featureset_versions_fs6[] = { 0x1006 };
+
+const struct sgp_otp_featureset sgp_featureset4 = {
+    .profiles                                = sgp_profiles_fs4,
+    .number_of_profiles                      = ARRAY_SIZE(sgp_profiles_fs4),
+    .supported_featureset_versions           = (u16 *) supported_featureset_versions_fs4,
+    .number_of_supported_featureset_versions = ARRAY_SIZE(supported_featureset_versions_fs4)
+};
+
+const struct sgp_otp_featureset sgp_featureset5 = {
+    .profiles                                = sgp_profiles_fs5,
+    .number_of_profiles                      = ARRAY_SIZE(sgp_profiles_fs5),
+    .supported_featureset_versions           = (u16 *) supported_featureset_versions_fs5,
+    .number_of_supported_featureset_versions = ARRAY_SIZE(supported_featureset_versions_fs5)
+};
+
+const struct sgp_otp_featureset sgp_featureset6 = {
+    .profiles                                = sgp_profiles_fs6,
+    .number_of_profiles                      = ARRAY_SIZE(sgp_profiles_fs6),
+    .supported_featureset_versions           = (u16 *) supported_featureset_versions_fs6,
+    .number_of_supported_featureset_versions = ARRAY_SIZE(supported_featureset_versions_fs6)
 };
 
 /**
@@ -182,7 +271,9 @@ const struct sgp_otp_featureset sgp_featureset = {
  * version.
  */
 const struct sgp_otp_featureset *featuresets[] = {
-    &sgp_featureset,
+    &sgp_featureset6,
+    &sgp_featureset5,
+    &sgp_featureset4,
 };
 
 const struct sgp_otp_supported_featuresets sgp_supported_featuresets = {

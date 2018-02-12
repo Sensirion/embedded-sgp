@@ -53,6 +53,10 @@ extern const u8 PROFILE_NUMBER_IAQ_INIT0;
 extern const u8 PROFILE_NUMBER_IAQ_INIT16;
 extern const u8 PROFILE_NUMBER_IAQ_INIT64;
 extern const u8 PROFILE_NUMBER_IAQ_INIT184;
+extern const u8 PROFILE_NUMBER_IAQ_INIT_CONTINUOUS;
+extern const u8 PROFILE_NUMBER_IAQ_GET_FACTORY_BASELINE;
+extern const u8 PROFILE_NUMBER_SET_AH;
+extern const u8 PROFILE_NUMBER_SET_POWER_MODE;
 
 /**
  * Check if chip featureset is compatible with driver featureset:
@@ -66,7 +70,14 @@ extern const u8 PROFILE_NUMBER_IAQ_INIT184;
           (((drv_fs) & 0xF000) == ((chip_fs) & 0xF000)) && \
           (((chip_fs) & 0x0100) == 0) && \
           (((drv_fs) & 0x00E0) == ((chip_fs) & 0x00E0)) && \
-          (((chip_fs) & 0x01F) >= ((drv_fs) & 0x01F)) \
+          (((chip_fs) & 0x001F) >= ((drv_fs) & 0x001F)) \
+        ))
+
+/** Check if the chip's featureset is newer than or equal to the required one */
+#define SGP_REQUIRE_FS(chip_fs, major, minor)  ( \
+        ( /* major version equal, minor version upwards compatible */ \
+          (((chip_fs) & 0x00E0) == (major)) && \
+          (((chip_fs) & 0x001F) >= (minor)) \
         ))
 
 typedef union {
