@@ -35,7 +35,7 @@
 #include "sgpc3.h"
 
 
-#define SGP_DRV_VERSION_STR             "2.4.0"
+#define SGP_DRV_VERSION_STR             "2.5.0"
 #define SGP_RAM_WORDS                   4
 #define SGP_BUFFER_SIZE                 ((SGP_RAM_WORDS + 2) * \
                                          (SGP_WORD_LEN + CRC8_LEN))
@@ -714,6 +714,114 @@ s16 sgp_set_iaq_baseline(u16 baseline) {
 
 
 /**
+ * sgp_set_absolute_humidity() - set the absolute humidity for compensation
+ *
+ * The absolute humidity must be provided in mg/m^3 and the value must be
+ * between 0 and 256000 mg/m^3.
+ * If the absolute humidity is set to zero, humidity compensation is disabled.
+ *
+ * @absolute_humidity:   u32 absolute humidity in mg/m^3
+ *
+ * Return:      STATUS_OK on success, else STATUS_FAIL
+ */
+s16 sgp_set_absolute_humidity(u32 absolute_humidity) {
+    const struct sgp_profile *profile;
+    u16 ah_scaled;
+    const u16 BUF_SIZE = SGP_COMMAND_LEN + SGP_WORD_LEN + CRC8_LEN;
+    u8 buf[BUF_SIZE];
+
+    if (!SGP_REQUIRE_FS(client_data.info.feature_set_version, 0, 6))
+        return STATUS_FAIL; /* feature unavailable */
+
+    profile = sgp_get_profile_by_number(PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY);
+    if (profile == NULL)
+        return STATUS_FAIL;
+
+    if (absolute_humidity > 256000)
+        return STATUS_FAIL;
+
+    /* ah_scaled = (absolute_humidity / 1000) * 256 */
+    ah_scaled = (u16)(((u64)absolute_humidity * 256 * 16777) >> 24);
+
+    sgp_fill_cmd_send_buf(buf, &profile->command, &ah_scaled,
+                          sizeof(ah_scaled) / SGP_WORD_LEN);
+
+    if (sensirion_i2c_write(SGP_I2C_ADDRESS, buf, BUF_SIZE) != 0)
+        return STATUS_FAIL;
+
+    return STATUS_OK;
+}
+
+
+/**
+ * sgp_get_iaq_factory_baseline() - read out the factory baseline from the chip
+ *                                  for the currently set power mode
+ *
+ * The IAQ factory baseline can be retrieved for a faster sensor startup.
+ * See application notes for further documentation.
+ *
+ * This functions returns STATUS_FAIL if the factory baseline value is not
+ * available.
+ *
+ * @baseline:   Pointer to raw u16 where to store the factory baseline
+ *              If the method returns STATUS_FAIL, the baseline value must be
+ *              discarded and must not be passed to sgp_set_iaq_baseline().
+ *
+ * Return:      STATUS_OK on success, else STATUS_FAIL
+ */
+s16 sgp_get_iaq_factory_baseline(u16 *baseline) {
+    if (!SGP_REQUIRE_FS(client_data.info.feature_set_version, 0, 5))
+        return STATUS_FAIL; /* feature unavailable */
+
+    s16 ret = sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_FACTORY_BASELINE);
+    if (ret == STATUS_FAIL)
+        return STATUS_FAIL;
+
+    *baseline = client_data.word_buf[0];
+
+    if (!SGP_VALID_IAQ_BASELINE(*baseline))
+        return STATUS_FAIL;
+
+    return STATUS_OK;
+}
+
+
+/**
+ * sgp_set_power_mode() - set the power mode
+ *
+ * The measurement interval for both IAQ and ethanol measurements changes
+ * according to the power mode. See application notes for further
+ * documentation.
+ *
+ * This functions returns STATUS_FAIL if power mode switching is not
+ * available.
+ *
+ * @power_mode: Power mode to set:
+ *              0: Ultra low power mode (30s measurement interval)
+ *              1: (Default) Low power mode (2s measurement interval)
+ *
+ * Return:      STATUS_OK on success, else STATUS_FAIL
+ */
+s16 sgp_set_power_mode(u16 power_mode) {
+    const u16 BUF_SIZE = SGP_COMMAND_LEN + SGP_WORD_LEN + CRC8_LEN;
+    u8 buf[BUF_SIZE];
+    const struct sgp_profile *profile;
+
+    if (!SGP_REQUIRE_FS(client_data.info.feature_set_version, 0, 6))
+        return STATUS_FAIL; /* feature unavailable */
+
+    profile = sgp_get_profile_by_number(PROFILE_NUMBER_SET_POWER_MODE);
+    sgp_fill_cmd_send_buf(buf, &profile->command, &power_mode,
+                          sizeof(power_mode) / SGP_WORD_LEN);
+
+    if (sensirion_i2c_write(SGP_I2C_ADDRESS, buf, BUF_SIZE) != 0)
+        return STATUS_FAIL;
+
+    return STATUS_OK;
+}
+
+
+/**
  * sgp_get_driver_version() - Return the driver version
  * Return:  Driver version string
  */
@@ -762,10 +870,20 @@ s16 sgp_get_serial_id(u64 *serial_id) {
 }
 
 
+/**
+ * sgp_iaq_init_continuous() - reset the SGP's internal IAQ baselines and
+ *                             run accelerated startup until the first
+ *                             sgp_measure_iaq()
+ *
+ * Return:  STATUS_OK on success.
+ */
+s16 sgp_iaq_init_continuous() {
+    return sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT_CONTINUOUS);
+}
 
 /**
  * sgp_iaq_init() - reset the SGP's internal IAQ baselines using the default
- *                  iaq init time of 64s
+ *                  accelerated startup time of 64s
  *
  * Return:  STATUS_OK on success.
  */
@@ -774,8 +892,8 @@ s16 sgp_iaq_init() {
 }
 
 /**
- * sgp_iaq_init0() - reset the SGP's internal IAQ baselines using iaq init time
- *                   of 0s
+ * sgp_iaq_init0() - reset the SGP's internal IAQ baselines without accelerated
+ *                   startup time
  *
  * Return:  STATUS_OK on success.
  */
@@ -784,8 +902,8 @@ s16 sgp_iaq_init0() {
 }
 
 /**
- * sgp_iaq_init16() - reset the SGP's internal IAQ baselines using iaq init time
- *                    of 16s
+ * sgp_iaq_init16() - reset the SGP's internal IAQ baselines using accelerated
+ *                    startup time of 16s
  *
  * Return:  STATUS_OK on success.
  */
@@ -794,8 +912,8 @@ s16 sgp_iaq_init16() {
 }
 
 /**
- * sgp_iaq_init64() - reset the SGP's internal IAQ baselines using iaq init time
- *                    of 64s
+ * sgp_iaq_init64() - reset the SGP's internal IAQ baselines using accelerated
+ *                    startup time of 64s
  *
  * Return:  STATUS_OK on success.
  */
@@ -804,8 +922,8 @@ s16 sgp_iaq_init64() {
 }
 
 /**
- * sgp_iaq_init184() - reset the SGP's internal IAQ baselines using iaq init
- *                     time of 184s
+ * sgp_iaq_init184() - reset the SGP's internal IAQ baselines using accelerated
+ *                     startup time of 184s
  *
  * Return:  STATUS_OK on success.
  */
