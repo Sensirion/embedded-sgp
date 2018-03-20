@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Sensirion AG
+ * Copyright (c) 2018, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -341,7 +341,6 @@ static u16 sgp_fill_cmd_send_buf(u8 *buf, const sgp_command *cmd,
  */
 static s16 sgp_detect_featureset_version(u16 *featureset) {
     s16 i, j;
-    s16 ret = STATUS_FAIL;
     u16 feature_set_version = be16_to_cpu(*featureset);
     const struct sgp_otp_featureset *sgp_featureset;
 
@@ -353,12 +352,11 @@ static s16 sgp_detect_featureset_version(u16 *featureset) {
             if (SGP_FS_COMPAT(feature_set_version,
                               sgp_featureset->supported_featureset_versions[j])) {
                 client_data.otp_features = sgp_featureset;
-                ret = STATUS_OK;
-                break;
+                return STATUS_OK;
             }
         }
     }
-    return ret;
+    return STATUS_FAIL;
 }
 
 
@@ -852,7 +850,7 @@ u8 sgp_get_configured_address() {
  */
 s16 sgp_get_feature_set_version(u16 *feature_set_version, u8 *product_type) {
     *feature_set_version = client_data.info.feature_set_version & 0x00FF;
-    *product_type = (u8)((client_data.info.feature_set_version & 0xC0000) >> 14);
+    *product_type = (u8)((client_data.info.feature_set_version & 0xF000) >> 12);
     return STATUS_OK;
 }
 
