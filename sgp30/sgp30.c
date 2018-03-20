@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Sensirion AG
+ * Copyright (c) 2018, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -766,7 +766,7 @@ u8 sgp_get_configured_address() {
  */
 s16 sgp_get_feature_set_version(u16 *feature_set_version, u8 *product_type) {
     *feature_set_version = client_data.info.feature_set_version & 0x00FF;
-    *product_type = (u8)((client_data.info.feature_set_version & 0xC0000) >> 14);
+    *product_type = (u8)((client_data.info.feature_set_version & 0xF000) >> 12);
     return STATUS_OK;
 }
 
