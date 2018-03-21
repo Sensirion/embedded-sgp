@@ -753,39 +753,6 @@ s16 sgp_set_absolute_humidity(u32 absolute_humidity) {
 
 
 /**
- * sgp_get_iaq_factory_baseline() - read out the factory baseline from the chip
- *                                  for the currently set power mode
- *
- * The IAQ factory baseline can be retrieved for a faster sensor startup.
- * See application notes for further documentation.
- *
- * This functions returns STATUS_FAIL if the factory baseline value is not
- * available.
- *
- * @baseline:   Pointer to raw u16 where to store the factory baseline
- *              If the method returns STATUS_FAIL, the baseline value must be
- *              discarded and must not be passed to sgp_set_iaq_baseline().
- *
- * Return:      STATUS_OK on success, else STATUS_FAIL
- */
-s16 sgp_get_iaq_factory_baseline(u16 *baseline) {
-    if (!SGP_REQUIRE_FS(client_data.info.feature_set_version, 0, 5))
-        return STATUS_FAIL; /* feature unavailable */
-
-    s16 ret = sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_FACTORY_BASELINE);
-    if (ret == STATUS_FAIL)
-        return STATUS_FAIL;
-
-    *baseline = client_data.word_buf[0];
-
-    if (!SGP_VALID_IAQ_BASELINE(*baseline))
-        return STATUS_FAIL;
-
-    return STATUS_OK;
-}
-
-
-/**
  * sgp_set_power_mode() - set the power mode
  *
  * The measurement interval for both IAQ and ethanol measurements changes
