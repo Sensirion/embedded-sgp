@@ -536,9 +536,8 @@ s16 sgp_measure_signals(void) {
     const struct sgp_profile *profile;
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
-    if (profile == NULL) {
+    if (profile == NULL)
         return STATUS_FAIL;
-    }
 
     if (sgp_i2c_write(&(profile->command)) == STATUS_FAIL)
         return STATUS_FAIL;
@@ -610,9 +609,8 @@ s16 sgp_measure_raw(void) {
     const struct sgp_profile *profile;
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_MEASURE_RAW);
-    if (profile == NULL) {
+    if (profile == NULL)
         return STATUS_FAIL;
-    }
 
     if (sgp_i2c_write(&(profile->command)) == STATUS_FAIL)
         return STATUS_FAIL;
@@ -701,6 +699,9 @@ s16 sgp_set_iaq_baseline(u16 baseline) {
         return STATUS_FAIL;
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_IAQ_SET_BASELINE);
+    if (profile == NULL)
+        return STATUS_FAIL;
+
     sgp_fill_cmd_send_buf(buf, &profile->command, &baseline,
                           sizeof(baseline) / SGP_WORD_LEN);
 
@@ -809,6 +810,9 @@ s16 sgp_set_power_mode(u16 power_mode) {
         return STATUS_FAIL; /* feature unavailable */
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_SET_POWER_MODE);
+    if (profile == NULL)
+        return STATUS_FAIL;
+
     sgp_fill_cmd_send_buf(buf, &profile->command, &power_mode,
                           sizeof(power_mode) / SGP_WORD_LEN);
 
