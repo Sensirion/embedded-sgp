@@ -57,8 +57,8 @@ int main(void) {
      * Do not run measure_signals between IAQ measurements
      * (iaq, tVOC) without saving the baseline before the call and
      * restoring it after with sgp_get_iaq_baseline / sgp_set_iaq_baseline.
-     * If a recent baseline is not available, reset it using sgp_iaq_init
-     * prior to running IAQ measurements.  */
+     * If a recent baseline is not available, reset it using
+     * sgp_iaq_init_continuous prior to running IAQ measurements.  */
     err = sgp_measure_signals_blocking_read(&scaled_ethanol_signal);
 
     if (err == STATUS_OK) {
@@ -76,13 +76,16 @@ int main(void) {
     /* Consider the two cases (A) and (B):
      * (A) If no baseline is available or the most recent baseline is more than
      *     one week old, it must discarded. A new baseline is found with
-     *     sgp_iaq_init() */
-    err = sgp_iaq_init();
-    /* (B) If a recent baseline is available, set it after sgp_iaq_init() for
-     * faster start-up */
+     *     sgp_iaq_init_continuous() */
+    err = sgp_iaq_init_continuous();
+    /* (B) If a recent baseline is available, set it after
+     *      sgp_iaq_init_continuous() for faster start-up */
     /* IMPLEMENT: retrieve iaq_baseline from presistent storage;
      * err = sgp_set_iaq_baseline(iaq_baseline);
      */
+
+    /* IMPLEMENT: sleep for the desired accelerated warm-up duration */
+    /* sleep(64); */
 
     /* Run periodic IAQ measurements at defined intervals */
     while (1) {
