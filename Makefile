@@ -18,12 +18,12 @@ release/sgp30:
 	export pkgname="$${driver}-$${tag}" && \
 	export pkgdir="release/$${pkgname}" && \
 	rm -rf "$${pkgdir}" && mkdir -p "$${pkgdir}" && \
-	cp -rl embedded-common/* "$${pkgdir}" && \
-	cp -rl sgp-common/* "$${pkgdir}" && \
-	cp -rl $${driver}/* "$${pkgdir}" && \
-	sed -i 's/^sensirion_common_dir :=.*$$/sensirion_common_dir := ./' "$${pkgdir}/Makefile" && \
-	sed -i 's/^sgp_common_dir :=.*$$/sgp_common_dir := ./' "$${pkgdir}/Makefile" && \
-	sed -i "s/^\(#define\s\+SGP_DRV_VERSION_STR\s*\)\".*\"$$/\1\"$${tag}\"/" "$${pkgdir}/sgp30.c" && \
+	cp -r embedded-common/* "$${pkgdir}" && \
+	cp -r sgp-common/* "$${pkgdir}" && \
+	cp -r $${driver}/* "$${pkgdir}" && \
+	perl -pi -e 's/^sensirion_common_dir :=.*$$/sensirion_common_dir := ./' "$${pkgdir}/Makefile" && \
+	perl -pi -e 's/^sgp_common_dir :=.*$$/sgp_common_dir := ./' "$${pkgdir}/Makefile" && \
+	perl -pi -e "s/^(#define\s+SGP_DRV_VERSION_STR\s+)\".*\"$$/\\1\"$${tag}\"/" "$${pkgdir}/sgp30.c" && \
 	cd "$${pkgdir}" && make && make clean && cd - && \
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
@@ -34,12 +34,12 @@ release/sgpc3:
 	export pkgname="sgpc3-$${tag}" && \
 	export pkgdir="release/$${pkgname}" && \
 	rm -rf "$${pkgdir}" && mkdir -p "$${pkgdir}" && \
-	cp -rl embedded-common/* "$${pkgdir}" && \
-	cp -rl sgp-common/* "$${pkgdir}" && \
-	cp -rl $${driver}/* "$${pkgdir}" && \
-	sed -i 's/^sensirion_common_dir :=.*$$/sensirion_common_dir := ./' "$${pkgdir}/Makefile" && \
-	sed -i 's/^sgp_common_dir :=.*$$/sgp_common_dir := ./' "$${pkgdir}/Makefile" && \
-	sed -i "s/^\(#define\s\+SGP_DRV_VERSION_STR\s*\)\".*\"$$/\1\"$${tag}\"/" "$${pkgdir}/sgpc3.c" && \
+	cp -r embedded-common/* "$${pkgdir}" && \
+	cp -r sgp-common/* "$${pkgdir}" && \
+	cp -r $${driver}/* "$${pkgdir}" && \
+	perl -pi -e 's/^sensirion_common_dir :=.*$$/sensirion_common_dir := ./' "$${pkgdir}/Makefile" && \
+	perl -pi -e 's/^sgp_common_dir :=.*$$/sgp_common_dir := ./' "$${pkgdir}/Makefile" && \
+	perl -pi -e "s/^(#define\s+SGP_DRV_VERSION_STR\s+)\".*\"$$/\\1\"$${tag}\"/" "$${pkgdir}/sgpc3.c" && \
 	cd "$${pkgdir}" && make && make clean && cd - && \
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
