@@ -143,7 +143,7 @@ static const struct sgp_profile SGP_PROFILE_IAQ_GET_BASELINE = {
 
 static const struct sgp_profile SGP_PROFILE_IAQ_SET_BASELINE = {
     .number            = PROFILE_NUMBER_IAQ_SET_BASELINE,
-    .duration_us       = 1000,
+    .duration_us       = 10000,
     .signals           = NULL,
     .number_of_signals = 0,
     .command           = { .buf = {0x20, 0x1e} },
