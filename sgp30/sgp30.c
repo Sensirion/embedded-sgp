@@ -556,23 +556,19 @@ s16 sgp_measure_co2_eq_blocking_read(u16 *co2_eq_ppm) {
  * sgp_measure_signals_blocking_read() - Measure signals
  * The profile is executed synchronously.
  *
- * @scaled_ethanol_signal: Output variable for the ethanol signal
- *                         The signal is scaled by factor 512. Divide the scaled
- *                         value by 512 to get the real signal.
- * @scaled_h2_signal: Output variable for the h2 signal
- *                    The signal is scaled by factor 512. Divide the scaled
- *                    value by 512 to get the real signal.
+ * @ethanol_signal: Output variable for the ethanol signal
+ * @h2_signal: Output variable for the h2 signal
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-s16 sgp_measure_signals_blocking_read(u16 *scaled_ethanol_signal,
-                                      u16 *scaled_h2_signal) {
+s16 sgp_measure_signals_blocking_read(u16 *ethanol_signal,
+                                      u16 *h2_signal) {
 
     if (sgp_run_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS) == STATUS_FAIL)
         return STATUS_FAIL;
 
-    *scaled_ethanol_signal = client_data.word_buf[0];
-    *scaled_h2_signal = client_data.word_buf[1];
+    *ethanol_signal = client_data.word_buf[0];
+    *h2_signal = client_data.word_buf[1];
 
     return STATUS_OK;
 }
@@ -606,16 +602,12 @@ s16 sgp_measure_signals(void) {
  * This command can only be exectued after a measurement started with
  * sgp_measure_signals and has finished.
  *
- * @scaled_ethanol_signal: Output variable for ethanol signal.
- *                         The signal is scaled by factor 512. Divide the scaled
- *                         value by 512 to get the real signal.
- * @scaled_h2_signal: Output variable for h2 signal.
- *                    The signal is scaled by factor 512. Divide the scaled
- *                    value by 512 to get the real signal.
+ * @ethanol_signal: Output variable for ethanol signal.
+ * @h2_signal: Output variable for h2 signal.
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-s16 sgp_read_signals(u16 *scaled_ethanol_signal, u16 *scaled_h2_signal) {
+s16 sgp_read_signals(u16 *ethanol_signal, u16 *h2_signal) {
     const struct sgp_profile *profile;
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
@@ -625,8 +617,8 @@ s16 sgp_read_signals(u16 *scaled_ethanol_signal, u16 *scaled_h2_signal) {
     if (read_measurement(profile) == STATUS_FAIL)
         return STATUS_FAIL;
 
-    *scaled_ethanol_signal = client_data.word_buf[0];
-    *scaled_h2_signal = client_data.word_buf[1];
+    *ethanol_signal = client_data.word_buf[0];
+    *h2_signal = client_data.word_buf[1];
 
     return STATUS_OK;
 }

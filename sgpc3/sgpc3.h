@@ -62,13 +62,13 @@ s16 sgp_measure_tvoc_blocking_read(u16 *tvoc_ppb);
 s16 sgp_measure_tvoc(void);
 s16 sgp_read_tvoc(u16 *tvoc_ppb);
 
-s16 sgp_measure_signals_blocking_read(u16 *scaled_ethanol_signal);
+s16 sgp_measure_signals_blocking_read(u16 *ethanol_signal);
 s16 sgp_measure_signals(void);
-s16 sgp_read_signals(u16 *scaled_ethanol_signal);
+s16 sgp_read_signals(u16 *ethanol_signal);
 
-s16 sgp_measure_raw_blocking_read(u16 *tvoc_ppb, u16 *scaled_ethanol_signal);
+s16 sgp_measure_raw_blocking_read(u16 *tvoc_ppb, u16 *ethanol_signal);
 s16 sgp_measure_raw(void);
-s16 sgp_read_raw(u16 *tvoc_ppb, u16 *scaled_ethanol_signal);
+s16 sgp_read_raw(u16 *tvoc_ppb, u16 *ethanol_signal);
 
 s16 sgp_set_power_mode(u16 power_mode);
 s16 sgp_set_absolute_humidity(u32 absolute_humidity);

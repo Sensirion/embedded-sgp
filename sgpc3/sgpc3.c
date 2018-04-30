@@ -507,18 +507,16 @@ s16 sgp_measure_tvoc_blocking_read(u16 *tvoc_ppb) {
  * sgp_measure_signals_blocking_read() - Measure signals
  * The profile is executed synchronously.
  *
- * @scaled_ethanol_signal: Output variable for the ethanol signal
- *                         The signal is scaled by factor 512. Divide the scaled
- *                         value by 512 to get the real signal.
+ * @ethanol_signal: Output variable for the ethanol signal
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-s16 sgp_measure_signals_blocking_read(u16 *scaled_ethanol_signal) {
+s16 sgp_measure_signals_blocking_read(u16 *ethanol_signal) {
 
     if (sgp_run_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS) == STATUS_FAIL)
         return STATUS_FAIL;
 
-    *scaled_ethanol_signal = client_data.word_buf[0];
+    *ethanol_signal = client_data.word_buf[0];
 
     return STATUS_OK;
 }
@@ -552,13 +550,11 @@ s16 sgp_measure_signals(void) {
  * This command can only be exectued after a measurement has been started with
  * sgp_measure_signals and has finished.
  *
- * @scaled_ethanol_signal: Output variable for ethanol signal.
- *                         The signal is scaled by factor 512. Divide the scaled
- *                         value by 512 to get the real signal.
+ * @ethanol_signal: Output variable for ethanol signal.
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-s16 sgp_read_signals(u16 *scaled_ethanol_signal) {
+s16 sgp_read_signals(u16 *ethanol_signal) {
     const struct sgp_profile *profile;
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
@@ -568,7 +564,7 @@ s16 sgp_read_signals(u16 *scaled_ethanol_signal) {
     if (read_measurement(profile) == STATUS_FAIL)
         return STATUS_FAIL;
 
-    *scaled_ethanol_signal = client_data.word_buf[0];
+    *ethanol_signal = client_data.word_buf[0];
 
     return STATUS_OK;
 }
@@ -579,19 +575,17 @@ s16 sgp_read_signals(u16 *scaled_ethanol_signal) {
  * The profile is executed synchronously.
  *
  * @tvoc_ppb:              The tVOC ppb value will be written to this location
- * @scaled_ethanol_signal: Output variable for the ethanol signal
- *                         The signal is scaled by factor 512. Divide the scaled
- *                         value by 512 to get the real signal.
+ * @ethanol_signal: Output variable for the ethanol signal
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-s16 sgp_measure_raw_blocking_read(u16 *tvoc_ppb, u16 *scaled_ethanol_signal) {
+s16 sgp_measure_raw_blocking_read(u16 *tvoc_ppb, u16 *ethanol_signal) {
 
     if (sgp_run_profile_by_number(PROFILE_NUMBER_MEASURE_RAW) == STATUS_FAIL)
         return STATUS_FAIL;
 
     *tvoc_ppb = client_data.word_buf[0];
-    *scaled_ethanol_signal = client_data.word_buf[1];
+    *ethanol_signal = client_data.word_buf[1];
 
     return STATUS_OK;
 }
@@ -626,13 +620,11 @@ s16 sgp_measure_raw(void) {
  * sgp_measure_raw and has finished.
  *
  * @tvoc_ppb:              The tVOC ppb value will be written to this location
- * @scaled_ethanol_signal: Output variable for ethanol signal.
- *                         The signal is scaled by factor 512. Divide the scaled
- *                         value by 512 to get the real signal.
+ * @ethanol_signal: Output variable for ethanol signal.
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-s16 sgp_read_raw(u16 *tvoc_ppb, u16 *scaled_ethanol_signal) {
+s16 sgp_read_raw(u16 *tvoc_ppb, u16 *ethanol_signal) {
     const struct sgp_profile *profile;
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_MEASURE_RAW);
@@ -643,7 +635,7 @@ s16 sgp_read_raw(u16 *tvoc_ppb, u16 *scaled_ethanol_signal) {
         return STATUS_FAIL;
 
     *tvoc_ppb = client_data.word_buf[0];
-    *scaled_ethanol_signal = client_data.word_buf[1];
+    *ethanol_signal = client_data.word_buf[1];
 
     return STATUS_OK;
 }
