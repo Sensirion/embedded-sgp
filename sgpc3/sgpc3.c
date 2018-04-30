@@ -35,7 +35,7 @@
 #include "sgpc3.h"
 
 
-#define SGP_DRV_VERSION_STR             "2.5.0"
+#define SGP_DRV_VERSION_STR             "3.0.0"
 #define SGP_RAM_WORDS                   4
 #define SGP_BUFFER_SIZE                 ((SGP_RAM_WORDS + 2) * \
                                          (SGP_WORD_LEN + CRC8_LEN))
