@@ -43,7 +43,7 @@ int main(void) {
     s16 err;
     u16 tvoc_ppb;
     u16 iaq_baseline;
-    u16 scaled_ethanol_signal;
+    u16 ethanol_signal;
 
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
@@ -59,16 +59,11 @@ int main(void) {
      * restoring it after with sgp_get_iaq_baseline / sgp_set_iaq_baseline.
      * If a recent baseline is not available, reset it using
      * sgp_iaq_init_continuous prior to running IAQ measurements.  */
-    err = sgp_measure_signals_blocking_read(&scaled_ethanol_signal);
+    err = sgp_measure_signals_blocking_read(&ethanol_signal);
 
     if (err == STATUS_OK) {
-        /* Print ethanol signal with floating point support */
-        /* printf("Ethanol signal: %f\n", scaled_ethanol_signal / 512.0f); */
-
-        /* Print ethanol signal without floating point support */
-        /* printf("ethanol signal: %u.%09llu\n", scaled_ethanol_signal >> 9,
-         *          ((scaled_ethanol_signal & 0x01ff) * (u64)1000000000) >> 9);
-         */
+        /* Print ethanol signal */
+        /* printf("Ethanol signal: %u\n", ethanol_signal); */
     } else {
         /* printf("error reading signals\n"); */
     }

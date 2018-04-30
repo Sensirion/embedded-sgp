@@ -61,10 +61,10 @@ s16 sgp_measure_co2_eq_blocking_read(u16 *co2_eq_ppm);
 s16 sgp_measure_co2_eq(void);
 s16 sgp_read_co2_eq(u16 *co2_eq_ppm);
 
-s16 sgp_measure_signals_blocking_read(u16 *scaled_ethanol_signal,
-                                      u16 *scaled_h2_signal);
+s16 sgp_measure_signals_blocking_read(u16 *ethanol_signal,
+                                      u16 *h2_signal);
 s16 sgp_measure_signals(void);
-s16 sgp_read_signals(u16 *scaled_ethanol_signal, u16 *scaled_h2_signal);
+s16 sgp_read_signals(u16 *ethanol_signal, u16 *h2_signal);
 
 s16 sgp_measure_test(u16 *test_result);
 
