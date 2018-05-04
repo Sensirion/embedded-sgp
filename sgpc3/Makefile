@@ -19,15 +19,15 @@ all_objects := ${sensirion_common_objects} ${hw_objects} ${sw_objects} ${sgp_fea
 
 all: ${sgp_binaries}
 
-sensirion_common.o:
-	$(CC) $(CFLAGS) -c -o $@ $^ ${sensirion_common_dir}/sensirion_common.c
-sensirion_sw_i2c_implementation.o:
-	$(CC) $(CFLAGS) -c -o $@ $^ ${sw_i2c_dir}/sensirion_sw_i2c_implementation.c
-sensirion_hw_i2c_implementation.o:
-	$(CC) $(CFLAGS) -c -o $@ $^ ${hw_i2c_dir}/sensirion_hw_i2c_implementation.c
+sensirion_common.o: ${sensirion_common_dir}/sensirion_common.c
+	$(CC) $(CFLAGS) -c -o $@ $^
+sensirion_sw_i2c_implementation.o: ${sw_i2c_dir}/sensirion_sw_i2c_implementation.c
+	$(CC) $(CFLAGS) -c -o $@ $^
+sensirion_hw_i2c_implementation.o: ${hw_i2c_dir}/sensirion_hw_i2c_implementation.c
+	$(CC) $(CFLAGS) -c -o $@ $^
 
-sensirion_sw_i2c.o:
-	$(CC) -I${sw_i2c_dir} $(CFLAGS) -c -o $@ $^ ${sw_i2c_dir}/sensirion_sw_i2c.c
+sensirion_sw_i2c.o: ${sw_i2c_dir}/sensirion_sw_i2c.c
+	$(CC) -I${sw_i2c_dir} $(CFLAGS) -c -o $@ $^
 
 sgpc3.o: ${sgp_common_dir}/sgp_featureset.h ${sensirion_common_dir}/sensirion_i2c.h sgpc3.c sgpc3.h
 
