@@ -4,7 +4,7 @@ jobs:
   build:
 
     docker:
-        - image: gcc:5.4.0 
+        - image: gcc:5.4.0
 
     steps:
 
@@ -13,12 +13,9 @@ jobs:
       - run:
           name: update common repo
           command: git submodule update --init
-
       - run: apt update
       - run: apt install -y zip
-
       - run: make release
-
       - run:
           name: make driver
           command: cd release; cd sgp30; make
