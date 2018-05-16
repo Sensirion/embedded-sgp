@@ -51,7 +51,7 @@ static const u8 SGP_I2C_ADDRESS = 0x58;
 
 /* command and constants for reading the serial ID */
 #define SGP_CMD_GET_SERIAL_ID_DURATION_US   500
-#define SGP_CMD_GET_SERIAL_ID_WORDS         2
+#define SGP_CMD_GET_SERIAL_ID_WORDS         3
 static const sgp_command sgp_cmd_get_serial_id = {
     .buf = {0x36, 0x82}
 };
@@ -801,8 +801,9 @@ s16 sgp_iaq_init() {
  */
 s16 sgp_probe() {
     s16 err;
-    const u64 *serial_buf = (const u64 *)client_data.buffer.words;
+    u64 *serial_buf = (u64 *)client_data.buffer.words;
 
+    *serial_buf = 0;
     client_data.current_state = WAIT_STATE;
 
     /* Initialize I2C */
