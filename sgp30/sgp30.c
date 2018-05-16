@@ -90,7 +90,10 @@ static struct sgp_data {
     enum sgp_state_code current_state;
     struct sgp_info info;
     const struct sgp_otp_featureset *otp_features;
-    u16 word_buf[SGP_BUFFER_WORDS];
+    union {
+        u16 words[SGP_BUFFER_WORDS];
+        u64 __enforce_alignment;
+    } buffer;
 } client_data;
 
 
@@ -149,7 +152,8 @@ static s16 sgp_i2c_write(const sgp_command *command) {
 
 
 /**
- * unpack_signals() - unpack signals which are stored in client_data.word_buf
+ * unpack_signals() - unpack signals which are stored in
+ *                    client_data.buffer.words
  * @profile:    The profile
  */
 static void unpack_signals(const struct sgp_profile *profile) {
@@ -161,7 +165,7 @@ static void unpack_signals(const struct sgp_profile *profile) {
 
     /* copy buffer */
     for (i = 0; i < data_words; i++)
-        word_buf[i] = client_data.word_buf[i];
+        word_buf[i] = client_data.buffer.words[i];
 
     /* signals are in reverse order in the data buffer */
     for (i = profile->number_of_signals - 1, j = 0; i >= 0; i -= 1, j += 1) {
@@ -169,9 +173,9 @@ static void unpack_signals(const struct sgp_profile *profile) {
         value = be16_to_cpu(word_buf[i]);
 
         if (signal->conversion_function != NULL)
-            client_data.word_buf[j] = signal->conversion_function(value);
+            client_data.buffer.words[j] = signal->conversion_function(value);
         else
-            client_data.word_buf[j] = value;
+            client_data.buffer.words[j] = value;
     }
 }
 
@@ -187,7 +191,7 @@ static s16 read_measurement(const struct sgp_profile *profile) {
     switch (client_data.current_state) {
 
         case MEASURING_PROFILE_STATE:
-            ret = sgp_i2c_read_words(client_data.word_buf,
+            ret = sgp_i2c_read_words(client_data.buffer.words,
                                      profile->number_of_signals);
 
             if (ret)
@@ -440,8 +444,8 @@ s16 sgp_read_iaq(u16 *tvoc_ppb, u16 *co2_eq_ppm) {
     if (read_measurement(profile) == STATUS_FAIL)
         return STATUS_FAIL;
 
-    *tvoc_ppb = client_data.word_buf[0];
-    *co2_eq_ppm = client_data.word_buf[1];
+    *tvoc_ppb = client_data.buffer.words[0];
+    *co2_eq_ppm = client_data.buffer.words[1];
 
     return STATUS_OK;
 }
@@ -461,8 +465,8 @@ s16 sgp_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm) {
     if (sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE) == STATUS_FAIL)
         return STATUS_FAIL;
 
-    *tvoc_ppb = client_data.word_buf[0];
-    *co2_eq_ppm = client_data.word_buf[1];
+    *tvoc_ppb = client_data.buffer.words[0];
+    *co2_eq_ppm = client_data.buffer.words[1];
 
     return STATUS_OK;
 }
@@ -567,8 +571,8 @@ s16 sgp_measure_signals_blocking_read(u16 *ethanol_signal,
     if (sgp_run_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS) == STATUS_FAIL)
         return STATUS_FAIL;
 
-    *ethanol_signal = client_data.word_buf[0];
-    *h2_signal = client_data.word_buf[1];
+    *ethanol_signal = client_data.buffer.words[0];
+    *h2_signal = client_data.buffer.words[1];
 
     return STATUS_OK;
 }
@@ -617,8 +621,8 @@ s16 sgp_read_signals(u16 *ethanol_signal, u16 *h2_signal) {
     if (read_measurement(profile) == STATUS_FAIL)
         return STATUS_FAIL;
 
-    *ethanol_signal = client_data.word_buf[0];
-    *h2_signal = client_data.word_buf[1];
+    *ethanol_signal = client_data.buffer.words[0];
+    *h2_signal = client_data.buffer.words[1];
 
     return STATUS_OK;
 }
@@ -646,8 +650,8 @@ s16 sgp_get_iaq_baseline(u32 *baseline) {
     if (ret == STATUS_FAIL)
         return STATUS_FAIL;
 
-    ((u16 *)baseline)[0] = client_data.word_buf[0];
-    ((u16 *)baseline)[1] = client_data.word_buf[1];
+    ((u16 *)baseline)[0] = client_data.buffer.words[0];
+    ((u16 *)baseline)[1] = client_data.buffer.words[1];
 
     if (!SGP_VALID_IAQ_BASELINE(*baseline))
         return STATUS_FAIL;
@@ -695,11 +699,12 @@ s16 sgp_set_iaq_baseline(u32 baseline) {
  * between 0 and 256000 mg/m^3.
  * If the absolute humidity is set to zero, humidity compensation is disabled.
  *
- * @absolute_humidity:   u32 absolute humidity in mg/m^3
+ * @absolute_humidity:      absolute humidity in mg/m^3
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
 s16 sgp_set_absolute_humidity(u32 absolute_humidity) {
+    u64 ah = absolute_humidity;
     const struct sgp_profile *profile;
     u16 ah_scaled;
     const u16 BUF_SIZE = SGP_COMMAND_LEN + SGP_WORD_LEN + CRC8_LEN;
@@ -715,8 +720,8 @@ s16 sgp_set_absolute_humidity(u32 absolute_humidity) {
     if (absolute_humidity > 256000)
         return STATUS_FAIL;
 
-    /* ah_scaled = (absolute_humidity / 1000) * 256 */
-    ah_scaled = (u16)(((u64)absolute_humidity * 256 * 16777) >> 24);
+    /* ah_scaled = (ah / 1000) * 256 */
+    ah_scaled = (u16)((ah * 256 * 16777) >> 24);
 
     sgp_fill_cmd_send_buf(buf, &profile->command, &ah_scaled,
                           sizeof(ah_scaled) / SGP_WORD_LEN);
@@ -796,7 +801,7 @@ s16 sgp_iaq_init() {
  */
 s16 sgp_probe() {
     s16 err;
-    const u64 *serial_buf = (const u64 *)client_data.word_buf;
+    const u64 *serial_buf = (const u64 *)client_data.buffer.words;
 
     client_data.current_state = WAIT_STATE;
 
@@ -806,7 +811,7 @@ s16 sgp_probe() {
     /* try to read the serial ID */
     err = sgp_i2c_read_words_from_cmd(&sgp_cmd_get_serial_id,
                                       SGP_CMD_GET_SERIAL_ID_DURATION_US,
-                                      client_data.word_buf,
+                                      client_data.buffer.words,
                                       SGP_CMD_GET_SERIAL_ID_WORDS);
     if (err == STATUS_FAIL)
         return err;
@@ -816,12 +821,12 @@ s16 sgp_probe() {
     /* read the featureset version */
     err = sgp_i2c_read_words_from_cmd(&sgp_cmd_get_featureset,
                                       SGP_CMD_GET_FEATURESET_DURATION_US,
-                                      client_data.word_buf,
+                                      client_data.buffer.words,
                                       SGP_CMD_GET_FEATURESET_WORDS);
     if (err == STATUS_FAIL)
         return STATUS_FAIL;
 
-    err = sgp_detect_featureset_version(client_data.word_buf);
+    err = sgp_detect_featureset_version(client_data.buffer.words);
     if (err == STATUS_FAIL)
         return STATUS_FAIL;
 
