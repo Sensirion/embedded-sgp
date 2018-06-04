@@ -1,4 +1,4 @@
-drivers=sgp30 sgpc3
+drivers=sgp30 sgpc3 svm30
 clean_drivers=$(foreach d, $(drivers), clean_$(d))
 release_drivers=$(foreach d, $(drivers), release/$(d))
 
@@ -16,7 +16,6 @@ sgp-common/sgp_git_version.c: FORCE
 		{print "#include \"sgp_git_version.h\""} \
 		{print "const char * SGP_DRV_VERSION_STR = \"" $$0"\";"} \
 		END {}' > $@ || echo "Can't update version, not a git repository"
-
 
 $(release_drivers): sgp-common/sgp_git_version.c
 	export rel=$@ && \
@@ -42,4 +41,5 @@ $(clean_drivers):
 	cd $${driver} && $(MAKE) clean $(MFLAGS) && cd -
 
 clean: $(clean_drivers)
+	cd svm30 && $(MAKE) clean $(MFLAGS) && cd - && \
 	rm -rf release
