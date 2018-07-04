@@ -4,3 +4,4 @@
 /sgp30/sgp30_example_usage_sw_i2c
 /sgpc3/sgpc3_example_usage_hw_i2c
 /sgpc3/sgpc3_example_usage_sw_i2c
+/sgp-common/sgp_git_version.c

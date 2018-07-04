@@ -28,14 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sensirion_i2c.h"
 #include "sensirion_arch_config.h"
+#include "sensirion_i2c.h"
 #include "sensirion_common.h"
 #include "sgp_featureset.h"
+#include "sgp_git_version.h"
 #include "sgp30.h"
 
 
-#define SGP_DRV_VERSION_STR             "3.0.0"
 #define SGP_RAM_WORDS                   4
 #define SGP_BUFFER_SIZE                 ((SGP_RAM_WORDS + 2) * \
                                          (SGP_WORD_LEN + CRC8_LEN))
