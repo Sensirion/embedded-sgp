@@ -709,6 +709,35 @@ s16 sgp_set_iaq_baseline(u16 baseline) {
 
 
 /**
+ * sgp_get_tvoc_factory_baseline() - read the chip's tVOC factory baseline
+ *
+ * The IAQ baseline should be retrieved for a faster *initial* sensor startup.
+ * The factory baseline should only be used for the first (ever) usage of the
+ * sensor.
+ * Note that the factory baseline is dependent on the currently set power-mode.
+ *
+ * @tvoc_factory_baseline:
+ *              Pointer to raw u16 where to store the factory baseline
+ *              If the method returns STATUS_FAIL, the factory baseline value
+ *              must be discarded and must not be passed to
+ *              sgp_set_iaq_baseline().
+ *
+ * Return:      STATUS_OK on success, else STATUS_FAIL
+ */
+s16 sgp_get_tvoc_factory_baseline(u16 *tvoc_factory_baseline) {
+    s16 ret = sgp_run_profile_by_number(
+            PROFILE_NUMBER_IAQ_GET_TVOC_FACTORY_BASELINE);
+
+    if (ret == STATUS_FAIL)
+        return STATUS_FAIL;
+
+    *tvoc_factory_baseline = client_data.buffer.words[0];
+
+    return STATUS_OK;
+}
+
+
+/**
  * sgp_set_absolute_humidity() - set the absolute humidity for compensation
  *
  * The absolute humidity must be provided in mg/m^3 and the value must be
