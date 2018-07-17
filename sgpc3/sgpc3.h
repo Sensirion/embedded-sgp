@@ -53,6 +53,7 @@ s16 sgp_get_serial_id(u64 *serial_id);
 
 s16 sgp_get_iaq_baseline(u16 *baseline);
 s16 sgp_set_iaq_baseline(u16 baseline);
+s16 sgp_get_tvoc_factory_baseline(u16 *tvoc_factory_baseline);
 
 s16 sgp_measure_iaq_blocking_read(u16 *tvoc_ppb);
 s16 sgp_measure_iaq(void);

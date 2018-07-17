@@ -32,7 +32,9 @@
 
 #define PROFILE_NUMBER_SIGNALS 10
 #define PROFILE_NUMBER_SET_AH 12
+#define PROFILE_IAQ_SET_TVOC_BASELINE 14
 
+const u8 PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE = PROFILE_IAQ_SET_TVOC_BASELINE;
 const u8 PROFILE_NUMBER_MEASURE_SIGNALS = PROFILE_NUMBER_SIGNALS;
 const u8 PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY = PROFILE_NUMBER_SET_AH;
 
@@ -69,6 +71,9 @@ static const struct sgp_signal BASELINE_WORD2 = {
 static const struct sgp_signal *SGP_PROFILE_IAQ_MEASURE_SIGNALS9[] =
     { &TVOC_PPB_FS9, &CO2_EQ_PPM };
 
+static const struct sgp_signal *SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE_SIGNALS[] =
+    { &BASELINE_WORD1 };
+
 static const struct sgp_signal *SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS[] =
     { &BASELINE_WORD1, &BASELINE_WORD2 };
 
@@ -92,6 +97,24 @@ static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE9 = {
     .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_MEASURE_SIGNALS9),
     .command           = { .buf = {0x20, 0x08} },
     .name              = "iaq_measure",
+};
+
+static const struct sgp_profile SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE = {
+    .number            = PROFILE_NUMBER_IAQ_GET_TVOC_FACTORY_BASELINE,
+    .duration_us       = 10000,
+    .signals           = SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE_SIGNALS,
+    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE_SIGNALS),
+    .command           = { .buf = {0x20, 0xb3} },
+    .name              = "iaq_get_tvoc_factory_baseline",
+};
+
+static const struct sgp_profile SGP_PROFILE_IAQ_SET_TVOC_BASELINE = {
+    .number            = PROFILE_IAQ_SET_TVOC_BASELINE,
+    .duration_us       = 10000,
+    .signals           = NULL,
+    .number_of_signals = 0,
+    .command           = { .buf = {0x20, 0x77} },
+    .name              = "iaq_set_tvoc_baseline",
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_GET_BASELINE = {
@@ -148,22 +171,41 @@ static const struct sgp_profile *sgp_profiles32[] = {
     &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
 };
 
+static const struct sgp_profile *sgp_profiles33[] = {
+    &SGP_PROFILE_IAQ_INIT,
+    &SGP_PROFILE_IAQ_MEASURE9,
+    &SGP_PROFILE_IAQ_GET_BASELINE,
+    &SGP_PROFILE_IAQ_SET_BASELINE,
+    &SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE,
+    &SGP_PROFILE_IAQ_SET_TVOC_BASELINE,
+    &SGP_PROFILE_MEASURE_SIGNALS9,
+    &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
+};
+
 static const u16 supported_featureset_versions_fs9[] = { 9 };
 static const u16 supported_featureset_versions_fs32[] = { 0x20 };
+static const u16 supported_featureset_versions_fs33[] = { 0x21 };
 
 
-const struct sgp_otp_featureset sgp_featureset9 = {
+static const struct sgp_otp_featureset sgp_featureset9 = {
     .profiles                                = sgp_profiles9,
     .number_of_profiles                      = ARRAY_SIZE(sgp_profiles9),
     .supported_featureset_versions           = (u16 *)supported_featureset_versions_fs9,
     .number_of_supported_featureset_versions = ARRAY_SIZE(supported_featureset_versions_fs9)
 };
 
-const struct sgp_otp_featureset sgp_featureset32 = {
+static const struct sgp_otp_featureset sgp_featureset32 = {
     .profiles                                = sgp_profiles32,
     .number_of_profiles                      = ARRAY_SIZE(sgp_profiles32),
     .supported_featureset_versions           = (u16 *)supported_featureset_versions_fs32,
     .number_of_supported_featureset_versions = ARRAY_SIZE(supported_featureset_versions_fs32)
+};
+
+static const struct sgp_otp_featureset sgp_featureset33 = {
+    .profiles                                = sgp_profiles33,
+    .number_of_profiles                      = ARRAY_SIZE(sgp_profiles33),
+    .supported_featureset_versions           = (u16 *)supported_featureset_versions_fs33,
+    .number_of_supported_featureset_versions = ARRAY_SIZE(supported_featureset_versions_fs33)
 };
 
 /**
@@ -172,7 +214,8 @@ const struct sgp_otp_featureset sgp_featureset32 = {
  * compatible featureset config, as multiple ones may apply for the same major
  * version.
  */
-const struct sgp_otp_featureset *featuresets[] = {
+static const struct sgp_otp_featureset *featuresets[] = {
+    &sgp_featureset33,
     &sgp_featureset32,
     &sgp_featureset9,
 };

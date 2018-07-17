@@ -345,7 +345,6 @@ static u16 sgp_fill_cmd_send_buf(u8 *buf, const sgp_command *cmd,
  */
 static s16 sgp_detect_featureset_version(u16 *featureset) {
     s16 i, j;
-    s16 ret = STATUS_FAIL;
     u16 feature_set_version = be16_to_cpu(*featureset);
     const struct sgp_otp_featureset *sgp_featureset;
 
@@ -357,12 +356,11 @@ static s16 sgp_detect_featureset_version(u16 *featureset) {
             if (SGP_FS_COMPAT(feature_set_version,
                               sgp_featureset->supported_featureset_versions[j])) {
                 client_data.otp_features = sgp_featureset;
-                ret = STATUS_OK;
-                break;
+                return STATUS_OK;
             }
         }
     }
-    return ret;
+    return STATUS_FAIL;
 }
 
 
@@ -627,7 +625,6 @@ s16 sgp_read_signals(u16 *ethanol_signal, u16 *h2_signal) {
     return STATUS_OK;
 }
 
-
 /**
  * sgp_get_iaq_baseline() - read out the baseline from the chip
  *
@@ -684,6 +681,65 @@ s16 sgp_set_iaq_baseline(u32 baseline) {
 
     sgp_fill_cmd_send_buf(buf, &profile->command, (u16 *)&baseline,
                           sizeof(baseline) / SGP_WORD_LEN);
+
+    if (sensirion_i2c_write(SGP_I2C_ADDRESS, buf, BUF_SIZE) != 0)
+        return STATUS_FAIL;
+
+    return STATUS_OK;
+}
+
+
+/**
+ * sgp_get_tvoc_factory_baseline() - read the chip's tVOC factory baseline
+ *
+ * The IAQ baseline should be retrieved for a faster *initial* sensor startup.
+ * The factory baseline should only be used for the first (ever) usage of the
+ * sensor.
+ *
+ * @tvoc_factory_baseline:
+ *              Pointer to raw u16 where to store the factory baseline
+ *              If the method returns STATUS_FAIL, the factory baseline value
+ *              must be discarded and must not be passed to
+ *              sgp_set_tvoc_baseline().
+ *
+ * Return:      STATUS_OK on success, else STATUS_FAIL
+ */
+s16 sgp_get_tvoc_factory_baseline(u16 *tvoc_factory_baseline) {
+    s16 ret = sgp_run_profile_by_number(
+            PROFILE_NUMBER_IAQ_GET_TVOC_FACTORY_BASELINE);
+
+    if (ret == STATUS_FAIL)
+        return STATUS_FAIL;
+
+    *tvoc_factory_baseline = client_data.buffer.words[0];
+
+    return STATUS_OK;
+}
+
+
+/**
+ * sgp_set_tvoc_baseline() - set the on-chip tVOC baseline
+ * @baseline:   A raw u16 tVOC baseline
+ *              This value must be unmodified from what was retrieved by a
+ *              successful call to sgp_get_tvoc_factory_baseline() with return
+ *              value STATUS_OK.
+ *
+ * Return:      STATUS_OK on success, else STATUS_FAIL
+ */
+s16 sgp_set_tvoc_baseline(u16 tvoc_baseline) {
+    const u16 BUF_SIZE = SGP_COMMAND_LEN + SGP_WORD_LEN + CRC8_LEN;
+    u8 buf[BUF_SIZE];
+    const struct sgp_profile *profile;
+
+    if (!SGP_VALID_IAQ_BASELINE(tvoc_baseline))
+        return STATUS_FAIL;
+
+    profile = sgp_get_profile_by_number(PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE);
+    if (profile == NULL)
+        return STATUS_FAIL;
+
+    sgp_fill_cmd_send_buf(buf, &profile->command, &tvoc_baseline,
+                          sizeof(tvoc_baseline) / SGP_WORD_LEN);
 
     if (sensirion_i2c_write(SGP_I2C_ADDRESS, buf, BUF_SIZE) != 0)
         return STATUS_FAIL;
@@ -833,4 +889,3 @@ s16 sgp_probe() {
 
     return sgp_iaq_init();
 }
-
