@@ -692,9 +692,9 @@ s16 sgp_set_iaq_baseline(u32 baseline) {
 /**
  * sgp_get_tvoc_factory_baseline() - read the chip's tVOC factory baseline
  *
- * The IAQ baseline should be retrieved for a faster *initial* sensor startup.
- * The factory baseline should only be used for the first (ever) usage of the
- * sensor.
+ * The factory baseline must only be used on the very first startup of the
+ * sensor. It ensures that measured concentrations are consistent with the air
+ * quality even before the first clean air event.
  *
  * @tvoc_factory_baseline:
  *              Pointer to raw u16 where to store the factory baseline
