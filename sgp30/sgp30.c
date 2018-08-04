@@ -766,7 +766,7 @@ s16 sgp_set_absolute_humidity(u32 absolute_humidity) {
     const u16 BUF_SIZE = SGP_COMMAND_LEN + SGP_WORD_LEN + CRC8_LEN;
     u8 buf[BUF_SIZE];
 
-    if (!SGP_REQUIRE_FS(client_data.info.feature_set_version, 1, 0))
+    if (!SGP_REQUIRE_FS(client_data.info.feature_set_version, 0x20, 0))
         return STATUS_FAIL; /* feature unavailable */
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY);
