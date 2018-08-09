@@ -121,6 +121,43 @@ s16 svm_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm,
 }
 
 /**
+ * svm_measure_signals_blocking_read() - Measure signals
+ *
+ * The output values are written to the memory locations passed as parameters:
+ * @ethanol_signal: The ethanol signal
+ * @h2_signal:      The h2 signal
+ * @temperature:    Temperature in [degree Celsius] multiplied by 1000
+ * @humidity:   Relative humidity in [%RH (0..100)] multiplied by 1000
+ *
+ * The profile is executed synchronously.
+ *
+ * Return:      STATUS_OK on success, else STATUS_FAIL
+ */
+s16 svm_measure_signals_blocking_read(u16 *ethanol_signal, u16 *h2_signal,
+                                      s32 *temperature, s32 *humidity) {
+    u32 absolute_humidity;
+    u16 sgp_feature_set;
+    u8 sgp_product_type;
+    s16 err;
+
+    err = sht_measure_blocking_read(temperature, humidity);
+    if (err != STATUS_OK)
+        return err;
+
+    sgp_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
+    if (sgp_feature_set >= 0x06) {
+        absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
+        sgp_set_absolute_humidity(absolute_humidity);
+    }
+
+    err = sgp_measure_signals_blocking_read(ethanol_signal, h2_signal);
+    if (err != STATUS_OK)
+        return err;
+
+    return STATUS_OK;
+}
+
+/**
  * svm_probe() - check if an SVM30 module is available and initialize it
  *
  * This call aleady initializes the IAQ baselines (sgp_iaq_init())
