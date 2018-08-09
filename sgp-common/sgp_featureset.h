@@ -76,7 +76,7 @@ extern const u8 PROFILE_NUMBER_SET_POWER_MODE;
 /** Check if the chip's featureset is newer than or equal to the required one */
 #define SGP_REQUIRE_FS(chip_fs, major, minor)  ( \
         ( /* major version equal, minor version upwards compatible */ \
-          (((chip_fs) & 0x00E0) == (major)) && \
+          ((((chip_fs) & 0x00E0) >> 5) == (major)) && \
           (((chip_fs) & 0x001F) >= (minor)) \
         ))
 
