@@ -33,6 +33,24 @@ $(release_drivers): sgp-common/sgp_git_version.c
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
 
+release/svm30: release/sgp30
+	export rel=$@ && \
+	export driver=$${rel#release/} && \
+	export tag="$$(git describe --always --dirty)" && \
+	export pkgname="$${driver}-$${tag}" && \
+	export pkgdir="release/$${pkgname}" && \
+	cp -r release/sgp30/ $${pkgdir} && \
+	cp -r ../embedded-sht/sht-common/* $${pkgdir} && \
+	cp -r ../embedded-sht/shtc1/* $${pkgdir} && \
+	cp svm30/Makefile $${pkgdir} && \
+	cp svm30/*.[ch] $${pkgdir} && \
+	for i in sht_source_dir sht_common_dir sgp_source_dir sgp_common_dir sensirion_common_dir; \
+		do perl -pi -e "s/^$$i :=.*$$/$$i := ./" "$${pkgdir}/Makefile"; \
+	done && \
+	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
+	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
+	ln -sf $${pkgname} $@
+
 release: clean $(release_drivers)
 
 $(clean_drivers):
@@ -41,5 +59,4 @@ $(clean_drivers):
 	cd $${driver} && $(MAKE) clean $(MFLAGS) && cd -
 
 clean: $(clean_drivers)
-	cd svm30 && $(MAKE) clean $(MFLAGS) && cd - && \
 	rm -rf release
