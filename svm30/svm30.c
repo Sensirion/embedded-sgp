@@ -29,10 +29,9 @@
  */
 
 #include "sensirion_common.h"
+#include "sgp_git_version.h"
 #include "sgp30.h"
 #include "sht.h"
-
-#define SVM_DRV_VERSION_STR             "3.0.0"
 
 #define T_LO (-20000)
 #define T_HI 70000
@@ -81,7 +80,7 @@ static u32 sensirion_calc_absolute_humidity(const s32 *temperature,
  */
 const char *svm_get_driver_version()
 {
-    return SVM_DRV_VERSION_STR;
+    return SGP_DRV_VERSION_STR;
 }
 
 /**
