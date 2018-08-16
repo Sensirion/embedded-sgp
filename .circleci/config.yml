@@ -20,9 +20,9 @@ jobs:
           command: git submodule update --init
       - run: apt update
       - run: apt install -y zip
-      - run: make release
       - run:
-          name: make driver
-          command: |
-            cd release/sgp30 && make && make clean && cd -
-            cd release/sgpc3 && make && make clean && cd -
+          name: build drivers
+          command: make && make clean
+      - run:
+          name: create and build release
+          command: make release
