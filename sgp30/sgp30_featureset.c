@@ -86,7 +86,7 @@ static const struct sgp_profile SGP_PROFILE_IAQ_INIT = {
     .duration_us       = 10000,
     .signals           = NULL,
     .number_of_signals = 0,
-    .command           = { .buf = {0x20, 0x03} },
+    .command           = 0x2003,
     .name              = "iaq_init",
 };
 
@@ -95,7 +95,7 @@ static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE9 = {
     .duration_us       = 50000,
     .signals           = SGP_PROFILE_IAQ_MEASURE_SIGNALS9,
     .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_MEASURE_SIGNALS9),
-    .command           = { .buf = {0x20, 0x08} },
+    .command           = 0x2008,
     .name              = "iaq_measure",
 };
 
@@ -104,7 +104,7 @@ static const struct sgp_profile SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE = {
     .duration_us       = 10000,
     .signals           = SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE_SIGNALS,
     .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE_SIGNALS),
-    .command           = { .buf = {0x20, 0xb3} },
+    .command           = 0x20b3,
     .name              = "iaq_get_tvoc_factory_baseline",
 };
 
@@ -113,7 +113,7 @@ static const struct sgp_profile SGP_PROFILE_IAQ_SET_TVOC_BASELINE = {
     .duration_us       = 10000,
     .signals           = NULL,
     .number_of_signals = 0,
-    .command           = { .buf = {0x20, 0x77} },
+    .command           = 0x2077,
     .name              = "iaq_set_tvoc_baseline",
 };
 
@@ -122,7 +122,7 @@ static const struct sgp_profile SGP_PROFILE_IAQ_GET_BASELINE = {
     .duration_us       = 10000,
     .signals           = SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS,
     .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS),
-    .command           = { .buf = {0x20, 0x15} },
+    .command           = 0x2015,
     .name              = "iaq_get_baseline",
 };
 
@@ -131,7 +131,7 @@ static const struct sgp_profile SGP_PROFILE_IAQ_SET_BASELINE = {
     .duration_us       = 10000,
     .signals           = NULL,
     .number_of_signals = 0,
-    .command           = { .buf = {0x20, 0x1e} },
+    .command           = 0x201e,
     .name              = "iaq_set_baseline",
 };
 
@@ -140,7 +140,7 @@ static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS9 = {
     .duration_us       = 200000,
     .signals           = SGP_PROFILE_MEASURE_SIGNALS_SIGNALS9,
     .number_of_signals = ARRAY_SIZE(SGP_PROFILE_MEASURE_SIGNALS_SIGNALS9),
-    .command           = { .buf = {0x20, 0x50} },
+    .command           = 0x2050,
     .name              = "measure_signals",
 };
 
@@ -149,7 +149,7 @@ static const struct sgp_profile SGP_PROFILE_SET_ABSOLUTE_HUMIDITY = {
     .duration_us       = 10000,
     .signals           = NULL,
     .number_of_signals = 0,
-    .command           = { .buf = {0x20, 0x61} },
+    .command           = 0x2061,
     .name              = "set_absolute_humidity",
 };
 

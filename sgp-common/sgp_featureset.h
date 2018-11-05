@@ -80,11 +80,6 @@ extern const u8 PROFILE_NUMBER_SET_POWER_MODE;
           (((chip_fs) & 0x001F) >= (minor)) \
         ))
 
-typedef union {
-    u16 words[SGP_COMMAND_LEN / SGP_WORD_LEN]; /* enforce u16 alignment */
-    u8 buf[SGP_COMMAND_LEN];
-} sgp_command;
-
 struct sgp_signal {
     u16(*conversion_function)(u16);
     char name[NAME_SIZE];
@@ -92,13 +87,13 @@ struct sgp_signal {
 
 struct sgp_profile {
     /* expected duration of measurement, i.e., when to return for data */
-    u32 duration_us;
+    const u32 duration_us;
     /* signals */
     const struct sgp_signal **signals;
-    u16 number_of_signals;
-    u8 number;
-    const sgp_command command;
-    char name[NAME_SIZE];
+    const u16 number_of_signals;
+    const u16 command;
+    const u8 number;
+    const char name[NAME_SIZE];
 };
 
 struct sgp_otp_featureset {
