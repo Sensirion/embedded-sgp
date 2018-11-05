@@ -92,7 +92,7 @@ int main(void) {
         }
 
         /* Persist the current baseline every hour */
-        if (++i % 3600 == 3599) {
+        if (++i % 1800 == 1799) {
             err = sgp_get_iaq_baseline(&iaq_baseline);
             if (err == STATUS_OK) {
                 /* IMPLEMENT: store baseline to presistent storage */
