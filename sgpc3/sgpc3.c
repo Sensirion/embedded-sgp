@@ -52,24 +52,18 @@ static const u8 SGP_I2C_ADDRESS = 0x58;
 /* command and constants for reading the serial ID */
 #define SGP_CMD_GET_SERIAL_ID_DURATION_US   500
 #define SGP_CMD_GET_SERIAL_ID_WORDS         3
-static const sgp_command sgp_cmd_get_serial_id = {
-    .buf = {0x36, 0x82}
-};
+static const u16 sgp_cmd_get_serial_id = 0x3682;
 
 /* command and constants for reading the featureset version */
 #define SGP_CMD_GET_FEATURESET_DURATION_US  1000
 #define SGP_CMD_GET_FEATURESET_WORDS        1
-static const sgp_command sgp_cmd_get_featureset = {
-    .buf = {0x20, 0x2f}
-};
+static const u16 sgp_cmd_get_featureset = 0x202f;
 
 /* command and constants for on-chip self-test */
 #define SGP_CMD_MEASURE_TEST_DURATION_US    220000
 #define SGP_CMD_MEASURE_TEST_WORDS          1
 #define SGP_CMD_MEASURE_TEST_OK             0xd400
-static const sgp_command sgp_cmd_measure_test = {
-    .buf = {0x20, 0x32}
-};
+static const u16 sgp_cmd_measure_test = 0x2032;
 
 static const struct sgp_otp_featureset sgp_features_unknown = {
     .profiles = NULL,
@@ -95,60 +89,6 @@ static struct sgp_data {
         u64 __enforce_alignment;
     } buffer;
 } client_data;
-
-
-/**
- * sgp_i2c_read_words() - read data words from SGP sensor
- * @data:       Allocated buffer to store the read data.
- *              The buffer may also have been modified on STATUS_FAIL return.
- * @data_words: Number of data words to read (without CRC bytes)
- *
- * Return:      STATUS_OK on success, STATUS_FAIL otherwise
- */
-static s16 sgp_i2c_read_words(u16 *data, u16 data_words) {
-    s16 ret;
-    u16 i, j;
-    u16 size = data_words * 3;
-    u16 word_buf[SGP_MAX_PROFILE_RET_LEN / sizeof(u16)];
-    u8 * const buf8 = (u8 *)word_buf;
-
-    ret = sensirion_i2c_read(SGP_I2C_ADDRESS, buf8, size);
-
-    if (ret != 0)
-        return STATUS_FAIL;
-
-    /* check the CRC for each word */
-    for (i = 0, j = 0;
-         i < size;
-         i += SGP_WORD_LEN + CRC8_LEN, j += SGP_WORD_LEN) {
-
-        if (sensirion_common_check_crc(&buf8[i], SGP_WORD_LEN,
-                                       buf8[i + SGP_WORD_LEN]) == STATUS_FAIL) {
-            return STATUS_FAIL;
-        }
-        ((u8 *)data)[j]     = buf8[i];
-        ((u8 *)data)[j + 1] = buf8[i + 1];
-    }
-
-    return STATUS_OK;
-}
-
-
-/**
- * sgp_i2c_write() - writes to the SGP sensor
- * @command:     Command
- *
- * Return:      STATUS_OK on success.
- */
-static s16 sgp_i2c_write(const sgp_command *command) {
-    s8 ret;
-
-    ret = sensirion_i2c_write(SGP_I2C_ADDRESS, command->buf, SGP_COMMAND_LEN);
-    if (ret != 0)
-        return STATUS_FAIL;
-
-    return STATUS_OK;
-}
 
 
 /**
@@ -182,17 +122,17 @@ static void unpack_signals(const struct sgp_profile *profile) {
 /**
  * read_measurement() - reads the result of a profile measurement
  *
- * Return:  Length of the written data to the buffer. Negative if it fails.
+ * Return:  STATUS_OK on success, an error code otherwise
  */
 static s16 read_measurement(const struct sgp_profile *profile) {
-
     s16 ret;
 
     switch (client_data.current_state) {
 
         case MEASURING_PROFILE_STATE:
-            ret = sgp_i2c_read_words(client_data.buffer.words,
-                                     profile->number_of_signals);
+            ret = sensirion_i2c_read_words(SGP_I2C_ADDRESS,
+                                           client_data.buffer.words,
+                                           profile->number_of_signals);
 
             if (ret)
                 /* Measurement in progress */
@@ -209,40 +149,20 @@ static s16 read_measurement(const struct sgp_profile *profile) {
     }
 }
 
-/**
- * sgp_i2c_read_words_from_cmd() - reads data words from the SGP sensor after a
- *                                 command has been issued
- * @cmd:        Command
- * @data_words: Allocated buffer to store the read data
- * @num_words:  Data words to read (without CRC bytes)
- *
- * Return:      STATUS_OK on success, else STATUS_FAIL
- */
-static s16 sgp_i2c_read_words_from_cmd(const sgp_command *cmd,
-                                       u32 duration_us,
-                                       u16 *data_words,
-                                       u16 num_words) {
-
-    if (sgp_i2c_write(cmd) == STATUS_FAIL)
-        return STATUS_FAIL;
-
-    /* the chip needs some time to write the data into the RAM */
-    sensirion_sleep_usec(duration_us);
-    return sgp_i2c_read_words(data_words, num_words);
-}
-
 
 /**
  * sgp_run_profile() - run a profile and read write its return to client_data
  * @profile     A pointer to the profile
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 static s16 sgp_run_profile(const struct sgp_profile *profile) {
     u32 duration_us = profile->duration_us + 5;
+    s16 ret;
 
-    if (sgp_i2c_write(&profile->command) == STATUS_FAIL)
-        return STATUS_FAIL;
+    ret = sensirion_i2c_write_cmd(SGP_I2C_ADDRESS, profile->command);
+    if (ret != STATUS_OK)
+        return ret;
 
     sensirion_sleep_usec(duration_us);
 
@@ -283,7 +203,7 @@ static const struct sgp_profile *sgp_get_profile_by_number(u16 number) {
  * sgp_run_profile_by_number() - run a profile by its identifier number
  * @number:     The number that identifies the profile
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 static s16 sgp_run_profile_by_number(u16 number) {
     const struct sgp_profile *profile;
@@ -292,46 +212,7 @@ static s16 sgp_run_profile_by_number(u16 number) {
     if (profile == NULL)
         return STATUS_FAIL;
 
-    if (sgp_run_profile(profile) == STATUS_FAIL)
-        return STATUS_FAIL;
-
-    return STATUS_OK;
-}
-
-
-/**
- * sgp_fill_cmd_send_buf() - create the i2c send buffer for a command and a set
- *                           of argument words.
- *                           The output buffer interleaves argument words with
- *                           their checksums.
- * @buf:        The generated buffer to send over i2c. Then buffer length must
- *              be at least SGP_COMMAND_LEN + num_args * (SGP_WORD_LEN +
- *              CRC8_LEN).
- * @cmd:        The sgp i2c command to send. It already includes a checksum.
- * @args:       The arguments to the command. Can be NULL if none.
- * @num_args:   The number of word arguments in args.
- * Return:      Bytes written to buf: SGP_COMMAND_LEN + num_args *
- *              (SGP_WORD_LEN + CRC8_LEN).
- */
-static u16 sgp_fill_cmd_send_buf(u8 *buf, const sgp_command *cmd,
-                                 const u16 *args, u8 num_args) {
-    u16 word;
-    u8 crc;
-    u8 i;
-    u8 idx = 0;
-
-    buf[idx++] = cmd->buf[0];
-    buf[idx++] = cmd->buf[1];
-
-    for (i = 0; i < num_args; ++i) {
-        word = be16_to_cpu(args[i]);
-        crc = sensirion_common_generate_crc((u8 *)&word, SGP_WORD_LEN);
-
-        buf[idx++] = (u8)((word & 0x00FF) >> 0);
-        buf[idx++] = (u8)((word & 0xFF00) >> 8);
-        buf[idx++] = crc;
-    }
-    return idx;
+    return sgp_run_profile(profile);
 }
 
 
@@ -341,7 +222,7 @@ static u16 sgp_fill_cmd_send_buf(u8 *buf, const sgp_command *cmd,
  *
  * @featureset:  Pointer to the featureset bits
  *
- * Return:    STATUS_OK on success
+ * Return:    STATUS_OK on success, STATUS_FAIL otherwise
  */
 static s16 sgp_detect_featureset_version(u16 *featureset) {
     s16 i, j;
@@ -374,21 +255,20 @@ static s16 sgp_detect_featureset_version(u16 *featureset) {
  *                  test_result is SGP_CMD_MEASURE_TEST_OK on success or set to
  *                  zero (0) in the case of a communication error.
  *
- * Return: STATUS_OK on a successful self-test, STATUS_FAIL otherwise.
+ * Return: STATUS_OK on a successful self-test, an error code otherwise
  */
 s16 sgp_measure_test(u16 *test_result) {
     u16 measure_test_word_buf[SGP_CMD_MEASURE_TEST_WORDS];
+    s16 ret;
 
     *test_result = 0;
 
-    if (sgp_i2c_write(&sgp_cmd_measure_test) != STATUS_OK)
-        return STATUS_FAIL;
-
-    sensirion_sleep_usec(SGP_CMD_MEASURE_TEST_DURATION_US);
-
-    if (sgp_i2c_read_words(measure_test_word_buf,
-                           SGP_CMD_MEASURE_TEST_WORDS) != STATUS_OK)
-        return STATUS_FAIL;
+    ret = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS, sgp_cmd_measure_test,
+                                         SGP_CMD_MEASURE_TEST_DURATION_US,
+                                         measure_test_word_buf,
+                                         SENSIRION_NUM_WORDS(measure_test_word_buf));
+    if (ret != STATUS_OK)
+        return ret;
 
     *test_result = be16_to_cpu(*measure_test_word_buf);
     if (*test_result == SGP_CMD_MEASURE_TEST_OK)
@@ -401,21 +281,22 @@ s16 sgp_measure_test(u16 *test_result) {
 /**
  * sgp_measure_iaq() - Measure IAQ values async
  *
- * The profile is executed asynchronously. Use sgp_read_iaq to get the
- * values.
+ * The profile is executed asynchronously. Use sgp_read_iaq to get the values.
  *
- * Return:  STATUS_OK on success, else STATUS_FAIL
+ * Return:  STATUS_OK on success, an error code otherwise
  */
 s16 sgp_measure_iaq() {
     const struct sgp_profile *profile;
+    s16 ret;
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE);
-    if (profile == NULL) {
+    if (profile == NULL)
         return STATUS_FAIL;
-    }
 
-    if (sgp_i2c_write(&(profile->command)) == STATUS_FAIL)
-        return STATUS_FAIL;
+    ret = sensirion_i2c_write_cmd(SGP_I2C_ADDRESS, profile->command);
+    if (ret != STATUS_OK)
+        return ret;
+
     client_data.current_state = MEASURING_PROFILE_STATE;
 
     return STATUS_OK;
@@ -430,17 +311,19 @@ s16 sgp_measure_iaq() {
  *
  * @tvoc_ppb:   The tVOC ppb value will be written to this location
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 s16 sgp_read_iaq(u16 *tvoc_ppb) {
     const struct sgp_profile *profile;
+    s16 ret;
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE);
     if (profile == NULL)
         return STATUS_FAIL;
 
-    if (read_measurement(profile) == STATUS_FAIL)
-        return STATUS_FAIL;
+    ret = read_measurement(profile);
+    if (ret != STATUS_OK)
+        return ret;
 
     *tvoc_ppb = client_data.buffer.words[0];
 
@@ -455,11 +338,14 @@ s16 sgp_read_iaq(u16 *tvoc_ppb) {
  *
  * The profile is executed synchronously.
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 s16 sgp_measure_iaq_blocking_read(u16 *tvoc_ppb) {
-    if (sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE) == STATUS_FAIL)
-        return STATUS_FAIL;
+    s16 ret;
+
+    ret = sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE);
+    if (ret != STATUS_OK)
+        return ret;
 
     *tvoc_ppb = client_data.buffer.words[0];
 
@@ -473,7 +359,7 @@ s16 sgp_measure_iaq_blocking_read(u16 *tvoc_ppb) {
  * The profile is executed asynchronously. Use sgp_read_tvoc to get the
  * ppb value.
  *
- * Return:  STATUS_OK on success, else STATUS_FAIL
+ * Return:  STATUS_OK on success, an error code otherwise
  */
 s16 sgp_measure_tvoc() {
     return sgp_measure_iaq();
@@ -488,7 +374,7 @@ s16 sgp_measure_tvoc() {
  *
  * @tvoc_ppb:   The tVOC ppb value will be written to this location
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 s16 sgp_read_tvoc(u16 *tvoc_ppb) {
     return sgp_read_iaq(tvoc_ppb);
@@ -513,12 +399,12 @@ s16 sgp_measure_tvoc_blocking_read(u16 *tvoc_ppb) {
  *
  * @ethanol_signal: Output variable for the ethanol signal
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 s16 sgp_measure_signals_blocking_read(u16 *ethanol_signal) {
-
-    if (sgp_run_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS) == STATUS_FAIL)
-        return STATUS_FAIL;
+    s16 ret = sgp_run_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
+    if (ret != STATUS_OK)
+        return ret;
 
     *ethanol_signal = client_data.buffer.words[0];
 
@@ -532,17 +418,20 @@ s16 sgp_measure_signals_blocking_read(u16 *ethanol_signal) {
  * The profile is executed asynchronously. Use sgp_read_signals to get
  * the signal values.
  *
- * Return:  STATUS_OK on success, else STATUS_FAIL
+ * Return:  STATUS_OK on success, an error code otherwise
  */
 s16 sgp_measure_signals(void) {
     const struct sgp_profile *profile;
+    s16 ret;
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
     if (profile == NULL)
         return STATUS_FAIL;
 
-    if (sgp_i2c_write(&(profile->command)) == STATUS_FAIL)
-        return STATUS_FAIL;
+    ret = sensirion_i2c_write_cmd(SGP_I2C_ADDRESS, profile->command);
+    if (ret != STATUS_OK)
+        return ret;
+
     client_data.current_state = MEASURING_PROFILE_STATE;
 
     return STATUS_OK;
@@ -556,17 +445,19 @@ s16 sgp_measure_signals(void) {
  *
  * @ethanol_signal: Output variable for ethanol signal.
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 s16 sgp_read_signals(u16 *ethanol_signal) {
     const struct sgp_profile *profile;
+    s16 ret;
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
     if (profile == NULL)
         return STATUS_FAIL;
 
-    if (read_measurement(profile) == STATUS_FAIL)
-        return STATUS_FAIL;
+    ret = read_measurement(profile);
+    if (ret != STATUS_OK)
+        return ret;
 
     *ethanol_signal = client_data.buffer.words[0];
 
@@ -581,12 +472,14 @@ s16 sgp_read_signals(u16 *ethanol_signal) {
  * @tvoc_ppb:              The tVOC ppb value will be written to this location
  * @ethanol_signal: Output variable for the ethanol signal
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 s16 sgp_measure_raw_blocking_read(u16 *tvoc_ppb, u16 *ethanol_signal) {
+    s16 ret;
 
-    if (sgp_run_profile_by_number(PROFILE_NUMBER_MEASURE_RAW) == STATUS_FAIL)
-        return STATUS_FAIL;
+    ret = sgp_run_profile_by_number(PROFILE_NUMBER_MEASURE_RAW);
+    if (ret != STATUS_OK)
+        return ret;
 
     *tvoc_ppb = client_data.buffer.words[0];
     *ethanol_signal = client_data.buffer.words[1];
@@ -601,17 +494,20 @@ s16 sgp_measure_raw_blocking_read(u16 *tvoc_ppb, u16 *ethanol_signal) {
  * The profile is executed asynchronously. Use sgp_read_raw to get
  * the tvoc and signal values.
  *
- * Return:  STATUS_OK on success, else STATUS_FAIL
+ * Return:  STATUS_OK on success, an error code otherwise
  */
-s16 sgp_measure_raw(void) {
+s16 sgp_measure_raw() {
     const struct sgp_profile *profile;
+    s16 ret;
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_MEASURE_RAW);
     if (profile == NULL)
         return STATUS_FAIL;
 
-    if (sgp_i2c_write(&(profile->command)) == STATUS_FAIL)
-        return STATUS_FAIL;
+    ret = sensirion_i2c_write_cmd(SGP_I2C_ADDRESS, profile->command);
+    if (ret != STATUS_OK)
+        return ret;
+
     client_data.current_state = MEASURING_PROFILE_STATE;
 
     return STATUS_OK;
@@ -626,24 +522,25 @@ s16 sgp_measure_raw(void) {
  * @tvoc_ppb:              The tVOC ppb value will be written to this location
  * @ethanol_signal: Output variable for ethanol signal.
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 s16 sgp_read_raw(u16 *tvoc_ppb, u16 *ethanol_signal) {
     const struct sgp_profile *profile;
+    s16 ret;
 
     profile = sgp_get_profile_by_number(PROFILE_NUMBER_MEASURE_RAW);
     if (profile == NULL)
         return STATUS_FAIL;
 
-    if (read_measurement(profile) == STATUS_FAIL)
-        return STATUS_FAIL;
+    ret = read_measurement(profile);
+    if (ret != STATUS_OK)
+        return ret;
 
     *tvoc_ppb = client_data.buffer.words[0];
     *ethanol_signal = client_data.buffer.words[1];
 
     return STATUS_OK;
 }
-
 
 /**
  * sgp_get_iaq_baseline() - read out the baseline from the chip
@@ -660,12 +557,12 @@ s16 sgp_read_raw(u16 *tvoc_ppb, u16 *ethanol_signal) {
  *              If the method returns STATUS_FAIL, the baseline value must be
  *              discarded and must not be passed to sgp_set_iaq_baseline().
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 s16 sgp_get_iaq_baseline(u16 *baseline) {
     s16 ret = sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_BASELINE);
-    if (ret == STATUS_FAIL)
-        return STATUS_FAIL;
+    if (ret != STATUS_OK)
+        return ret;
 
     *baseline = client_data.buffer.words[0];
 
@@ -684,11 +581,9 @@ s16 sgp_get_iaq_baseline(u16 *baseline) {
  *              STATUS_OK. A persisted baseline should not be set if it is
  *              older than one week.
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 s16 sgp_set_iaq_baseline(u16 baseline) {
-    const u16 BUF_SIZE = SGP_COMMAND_LEN + SGP_WORD_LEN + CRC8_LEN;
-    u8 buf[BUF_SIZE];
     const struct sgp_profile *profile;
 
     if (!SGP_VALID_IAQ_BASELINE(baseline))
@@ -698,13 +593,9 @@ s16 sgp_set_iaq_baseline(u16 baseline) {
     if (profile == NULL)
         return STATUS_FAIL;
 
-    sgp_fill_cmd_send_buf(buf, &profile->command, &baseline,
-                          sizeof(baseline) / SGP_WORD_LEN);
-
-    if (sensirion_i2c_write(SGP_I2C_ADDRESS, buf, BUF_SIZE) != 0)
-        return STATUS_FAIL;
-
-    return STATUS_OK;
+    return sensirion_i2c_write_cmd_with_args(SGP_I2C_ADDRESS, profile->command,
+                                             &baseline,
+                                             SENSIRION_NUM_WORDS(baseline));
 }
 
 
@@ -722,14 +613,14 @@ s16 sgp_set_iaq_baseline(u16 baseline) {
  *              must be discarded and must not be passed to
  *              sgp_set_iaq_baseline().
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 s16 sgp_get_tvoc_factory_baseline(u16 *tvoc_factory_baseline) {
-    s16 ret = sgp_run_profile_by_number(
-            PROFILE_NUMBER_IAQ_GET_TVOC_FACTORY_BASELINE);
+    s16 ret;
 
-    if (ret == STATUS_FAIL)
-        return STATUS_FAIL;
+    ret = sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_TVOC_FACTORY_BASELINE);
+    if (ret != STATUS_OK)
+        return ret;
 
     *tvoc_factory_baseline = client_data.buffer.words[0];
 
@@ -744,16 +635,14 @@ s16 sgp_get_tvoc_factory_baseline(u16 *tvoc_factory_baseline) {
  * between 0 and 256000 mg/m^3.
  * If the absolute humidity is set to zero, humidity compensation is disabled.
  *
- * @absolute_humidity:  absolute humidity in mg/m^3
+ * @absolute_humidity:      absolute humidity in mg/m^3
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 s16 sgp_set_absolute_humidity(u32 absolute_humidity) {
     u64 ah = absolute_humidity;
     const struct sgp_profile *profile;
     u16 ah_scaled;
-    const u16 BUF_SIZE = SGP_COMMAND_LEN + SGP_WORD_LEN + CRC8_LEN;
-    u8 buf[BUF_SIZE];
 
     if (!SGP_REQUIRE_FS(client_data.info.feature_set_version, 0, 6))
         return STATUS_FAIL; /* feature unavailable */
@@ -768,13 +657,9 @@ s16 sgp_set_absolute_humidity(u32 absolute_humidity) {
     /* ah_scaled = (ah / 1000) * 256 */
     ah_scaled = (u16)((ah * 256 * 16777) >> 24);
 
-    sgp_fill_cmd_send_buf(buf, &profile->command, &ah_scaled,
-                          sizeof(ah_scaled) / SGP_WORD_LEN);
-
-    if (sensirion_i2c_write(SGP_I2C_ADDRESS, buf, BUF_SIZE) != 0)
-        return STATUS_FAIL;
-
-    return STATUS_OK;
+    return sensirion_i2c_write_cmd_with_args(SGP_I2C_ADDRESS, profile->command,
+                                             &ah_scaled,
+                                             SENSIRION_NUM_WORDS(ah_scaled));
 }
 
 
@@ -792,11 +677,9 @@ s16 sgp_set_absolute_humidity(u32 absolute_humidity) {
  *              0: Ultra low power mode (30s measurement interval)
  *              1: (Default) Low power mode (2s measurement interval)
  *
- * Return:      STATUS_OK on success, else STATUS_FAIL
+ * Return:      STATUS_OK on success, an error code otherwise
  */
 s16 sgp_set_power_mode(u16 power_mode) {
-    const u16 BUF_SIZE = SGP_COMMAND_LEN + SGP_WORD_LEN + CRC8_LEN;
-    u8 buf[BUF_SIZE];
     const struct sgp_profile *profile;
 
     if (!SGP_REQUIRE_FS(client_data.info.feature_set_version, 0, 6))
@@ -806,13 +689,9 @@ s16 sgp_set_power_mode(u16 power_mode) {
     if (profile == NULL)
         return STATUS_FAIL;
 
-    sgp_fill_cmd_send_buf(buf, &profile->command, &power_mode,
-                          sizeof(power_mode) / SGP_WORD_LEN);
-
-    if (sensirion_i2c_write(SGP_I2C_ADDRESS, buf, BUF_SIZE) != 0)
-        return STATUS_FAIL;
-
-    return STATUS_OK;
+    return sensirion_i2c_write_cmd_with_args(SGP_I2C_ADDRESS, profile->command,
+                                             &power_mode,
+                                             SENSIRION_NUM_WORDS(power_mode));
 }
 
 
@@ -932,7 +811,7 @@ s16 sgp_iaq_init184() {
  *
  * This call aleady initializes the IAQ baselines (sgp_iaq_init())
  *
- * Return:  STATUS_OK on success.
+ * Return:  STATUS_OK on success, an error code otherwise
  */
 s16 sgp_probe() {
     s16 err;
@@ -945,26 +824,28 @@ s16 sgp_probe() {
     sensirion_i2c_init();
 
     /* try to read the serial ID */
-    err = sgp_i2c_read_words_from_cmd(&sgp_cmd_get_serial_id,
-                                      SGP_CMD_GET_SERIAL_ID_DURATION_US,
-                                      client_data.buffer.words,
-                                      SGP_CMD_GET_SERIAL_ID_WORDS);
-    if (err == STATUS_FAIL)
+    err = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS,
+                                         sgp_cmd_get_serial_id,
+                                         SGP_CMD_GET_SERIAL_ID_DURATION_US,
+                                         client_data.buffer.words,
+                                         SGP_CMD_GET_SERIAL_ID_WORDS);
+    if (err != STATUS_OK)
         return err;
 
     client_data.info.serial_id = be64_to_cpu(*serial_buf) >> 16;
 
     /* read the featureset version */
-    err = sgp_i2c_read_words_from_cmd(&sgp_cmd_get_featureset,
-                                      SGP_CMD_GET_FEATURESET_DURATION_US,
-                                      client_data.buffer.words,
-                                      SGP_CMD_GET_FEATURESET_WORDS);
-    if (err == STATUS_FAIL)
-        return STATUS_FAIL;
+    err = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS,
+                                         sgp_cmd_get_featureset,
+                                         SGP_CMD_GET_FEATURESET_DURATION_US,
+                                         client_data.buffer.words,
+                                         SGP_CMD_GET_FEATURESET_WORDS);
+    if (err != STATUS_OK)
+        return err;
 
     err = sgp_detect_featureset_version(client_data.buffer.words);
-    if (err == STATUS_FAIL)
-        return STATUS_FAIL;
+    if (err != STATUS_OK)
+        return err;
 
     return sgp_iaq_init();
 }
