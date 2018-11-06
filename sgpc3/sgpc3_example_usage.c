@@ -49,6 +49,7 @@ int main(void) {
      * a sensor. */
     while (sgp_probe() != STATUS_OK) {
         /* printf("SGP sensor probing failed\n"); */
+        /* sleep(1); */
     }
     /* printf("SGP sensor probing successful\n"); */
 
