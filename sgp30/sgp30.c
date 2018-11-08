@@ -110,7 +110,7 @@ static void unpack_signals(const struct sgp_profile *profile) {
     /* signals are in reverse order in the data buffer */
     for (i = profile->number_of_signals - 1, j = 0; i >= 0; i -= 1, j += 1) {
         signal = profile->signals[profile->number_of_signals - i - 1];
-        value = be16_to_cpu(word_buf[i]);
+        value = word_buf[i];
 
         if (signal->conversion_function != NULL)
             client_data.buffer.words[j] = signal->conversion_function(value);
@@ -226,7 +226,7 @@ static s16 sgp_run_profile_by_number(u16 number) {
  */
 static s16 sgp_detect_featureset_version(u16 *featureset) {
     s16 i, j;
-    u16 feature_set_version = be16_to_cpu(*featureset);
+    u16 feature_set_version = *featureset;
     const struct sgp_otp_featureset *sgp_featureset;
 
     client_data.info.feature_set_version = feature_set_version;
@@ -270,7 +270,7 @@ s16 sgp_measure_test(u16 *test_result) {
     if (ret != STATUS_OK)
         return ret;
 
-    *test_result = be16_to_cpu(*measure_test_word_buf);
+    *test_result = *measure_test_word_buf;
     if (*test_result == SGP_CMD_MEASURE_TEST_OK)
         return STATUS_OK;
 
@@ -749,6 +749,7 @@ s16 sgp_probe() {
     if (err != STATUS_OK)
         return err;
 
+    SENSIRION_WORDS_TO_BYTES(serial_buf, SGP_CMD_GET_SERIAL_ID_WORDS);
     client_data.info.serial_id = be64_to_cpu(*serial_buf) >> 16;
 
     /* read the featureset version */
