@@ -86,7 +86,7 @@ static struct sgp_data {
     const struct sgp_otp_featureset *otp_features;
     union {
         u16 words[SGP_BUFFER_WORDS];
-        u64 __enforce_alignment;
+        u64 u64_value;
     } buffer;
 } client_data;
 
@@ -815,7 +815,7 @@ s16 sgp_iaq_init184() {
  */
 s16 sgp_probe() {
     s16 err;
-    u64 *serial_buf = (u64 *)client_data.buffer.words;
+    u64 *serial_buf = &client_data.buffer.u64_value;
 
     *serial_buf = 0;
     client_data.current_state = WAIT_STATE;
@@ -832,7 +832,8 @@ s16 sgp_probe() {
     if (err != STATUS_OK)
         return err;
 
-    SENSIRION_WORDS_TO_BYTES(serial_buf, SGP_CMD_GET_SERIAL_ID_WORDS);
+    SENSIRION_WORDS_TO_BYTES(client_data.buffer.words,
+                             SGP_CMD_GET_SERIAL_ID_WORDS);
     client_data.info.serial_id = be64_to_cpu(*serial_buf) >> 16;
 
     /* read the featureset version */
