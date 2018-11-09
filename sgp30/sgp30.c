@@ -86,7 +86,7 @@ static struct sgp_data {
     const struct sgp_otp_featureset *otp_features;
     union {
         u16 words[SGP_BUFFER_WORDS];
-        u64 __enforce_alignment;
+        u64 u64_value;
     } buffer;
 } client_data;
 
@@ -540,8 +540,8 @@ s16 sgp_get_iaq_baseline(u32 *baseline) {
     if (ret != STATUS_OK)
         return ret;
 
-    ((u16 *)baseline)[0] = client_data.buffer.words[0];
-    ((u16 *)baseline)[1] = client_data.buffer.words[1];
+    *baseline = (((u32)client_data.buffer.words[0]) << 16) |
+                 (u32)client_data.buffer.words[1];
 
     if (!SGP_VALID_IAQ_BASELINE(*baseline))
         return STATUS_FAIL;
@@ -562,6 +562,10 @@ s16 sgp_get_iaq_baseline(u32 *baseline) {
  */
 s16 sgp_set_iaq_baseline(u32 baseline) {
     const struct sgp_profile *profile;
+    u16 words[SENSIRION_NUM_WORDS(baseline)] = {
+        (u16)((baseline & 0xffff0000) >> 16),
+        (u16)(baseline & 0x0000ffff)
+    };
 
     if (!SGP_VALID_IAQ_BASELINE(baseline))
         return STATUS_FAIL;
@@ -571,8 +575,7 @@ s16 sgp_set_iaq_baseline(u32 baseline) {
         return STATUS_FAIL;
 
     return sensirion_i2c_write_cmd_with_args(SGP_I2C_ADDRESS, profile->command,
-                                             (u16 *)&baseline,
-                                             SENSIRION_NUM_WORDS(baseline));
+                                             words, SENSIRION_NUM_WORDS(words));
 }
 
 
@@ -732,7 +735,7 @@ s16 sgp_iaq_init() {
  */
 s16 sgp_probe() {
     s16 err;
-    u64 *serial_buf = (u64 *)client_data.buffer.words;
+    u64 *serial_buf = &client_data.buffer.u64_value;
 
     *serial_buf = 0;
     client_data.current_state = WAIT_STATE;
@@ -749,7 +752,8 @@ s16 sgp_probe() {
     if (err != STATUS_OK)
         return err;
 
-    SENSIRION_WORDS_TO_BYTES(serial_buf, SGP_CMD_GET_SERIAL_ID_WORDS);
+    SENSIRION_WORDS_TO_BYTES(client_data.buffer.words,
+                             SGP_CMD_GET_SERIAL_ID_WORDS);
     client_data.info.serial_id = be64_to_cpu(*serial_buf) >> 16;
 
     /* read the featureset version */
