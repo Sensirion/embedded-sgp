@@ -151,13 +151,13 @@ static const struct sgp_profile SGP_PROFILE_IAQ_SET_BASELINE = {
     .name              = "iaq_set_baseline",
 };
 
-static const struct sgp_profile SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE = {
-    .number            = PROFILE_NUMBER_IAQ_GET_TVOC_FACTORY_BASELINE,
+static const struct sgp_profile SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE = {
+    .number            = PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE,
     .duration_us       = 10000,
     .signals           = SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS,
     .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS),
     .command           = 0x20b3,
-    .name              = "iaq_get_tvoc_factory_baseline",
+    .name              = "iaq_get_tvoc_inceptive_baseline",
 };
 
 static const struct sgp_profile SGP_PROFILE_MEASURE_ETOH_SIGNAL = {
@@ -218,7 +218,7 @@ static const struct sgp_profile *sgp_profiles_fs5[] = {
     &SGP_PROFILE_IAQ_MEASURE,
     &SGP_PROFILE_IAQ_GET_BASELINE,
     &SGP_PROFILE_IAQ_SET_BASELINE,
-    &SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE,
+    &SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE,
     &SGP_PROFILE_IAQ_MEASURE_RAW,
 };
 
@@ -232,7 +232,7 @@ static const struct sgp_profile *sgp_profiles_fs6[] = {
     &SGP_PROFILE_IAQ_MEASURE,
     &SGP_PROFILE_IAQ_GET_BASELINE,
     &SGP_PROFILE_IAQ_SET_BASELINE,
-    &SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE,
+    &SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE,
     &SGP_PROFILE_IAQ_MEASURE_RAW,
     &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
     &SGP_PROFILE_SET_POWER_MODE,

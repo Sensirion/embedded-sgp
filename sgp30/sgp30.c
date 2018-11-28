@@ -577,28 +577,28 @@ s16 sgp_set_iaq_baseline(u32 baseline) {
 
 
 /**
- * sgp_get_tvoc_factory_baseline() - read the chip's tVOC factory baseline
+ * sgp_get_tvoc_inceptive_baseline() - read the chip's tVOC inceptive baseline
  *
- * The factory baseline must only be used on the very first startup of the
+ * The inceptive baseline must only be used on the very first startup of the
  * sensor. It ensures that measured concentrations are consistent with the air
  * quality even before the first clean air event.
  *
- * @tvoc_factory_baseline:
- *              Pointer to raw u16 where to store the factory baseline
- *              If the method returns STATUS_FAIL, the factory baseline value
+ * @tvoc_inceptive_baseline:
+ *              Pointer to raw u16 where to store the inceptive baseline
+ *              If the method returns STATUS_FAIL, the inceptive baseline value
  *              must be discarded and must not be passed to
  *              sgp_set_tvoc_baseline().
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp_get_tvoc_factory_baseline(u16 *tvoc_factory_baseline) {
+s16 sgp_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline) {
     s16 ret;
 
-    ret = sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_TVOC_FACTORY_BASELINE);
+    ret = sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE);
     if (ret != STATUS_OK)
         return ret;
 
-    *tvoc_factory_baseline = client_data.buffer.words[0];
+    *tvoc_inceptive_baseline = client_data.buffer.words[0];
 
     return STATUS_OK;
 }
@@ -608,7 +608,7 @@ s16 sgp_get_tvoc_factory_baseline(u16 *tvoc_factory_baseline) {
  * sgp_set_tvoc_baseline() - set the on-chip tVOC baseline
  * @baseline:   A raw u16 tVOC baseline
  *              This value must be unmodified from what was retrieved by a
- *              successful call to sgp_get_tvoc_factory_baseline() with return
+ *              successful call to sgp_get_tvoc_inceptive_baseline() with return
  *              value STATUS_OK.
  *
  * Return:      STATUS_OK on success, an error code otherwise

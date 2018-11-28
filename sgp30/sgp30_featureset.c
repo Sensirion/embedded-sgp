@@ -71,7 +71,7 @@ static const struct sgp_signal BASELINE_WORD2 = {
 static const struct sgp_signal *SGP_PROFILE_IAQ_MEASURE_SIGNALS9[] =
     { &TVOC_PPB_FS9, &CO2_EQ_PPM };
 
-static const struct sgp_signal *SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE_SIGNALS[] =
+static const struct sgp_signal *SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE_SIGNALS[] =
     { &BASELINE_WORD1 };
 
 static const struct sgp_signal *SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS[] =
@@ -99,13 +99,13 @@ static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE9 = {
     .name              = "iaq_measure",
 };
 
-static const struct sgp_profile SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE = {
-    .number            = PROFILE_NUMBER_IAQ_GET_TVOC_FACTORY_BASELINE,
+static const struct sgp_profile SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE = {
+    .number            = PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE,
     .duration_us       = 10000,
-    .signals           = SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE_SIGNALS,
-    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE_SIGNALS),
+    .signals           = SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE_SIGNALS,
+    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE_SIGNALS),
     .command           = 0x20b3,
-    .name              = "iaq_get_tvoc_factory_baseline",
+    .name              = "iaq_get_tvoc_inceptive_baseline",
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_SET_TVOC_BASELINE = {
@@ -176,7 +176,7 @@ static const struct sgp_profile *sgp_profiles33[] = {
     &SGP_PROFILE_IAQ_MEASURE9,
     &SGP_PROFILE_IAQ_GET_BASELINE,
     &SGP_PROFILE_IAQ_SET_BASELINE,
-    &SGP_PROFILE_IAQ_GET_TVOC_FACTORY_BASELINE,
+    &SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE,
     &SGP_PROFILE_IAQ_SET_TVOC_BASELINE,
     &SGP_PROFILE_MEASURE_SIGNALS9,
     &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
