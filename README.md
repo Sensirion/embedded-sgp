@@ -1,4 +1,4 @@
-# embedded-sgp
+# embedded-sgp [![CircleCI](https://circleci.com/gh/Sensirion/embedded-sgp.svg?style=shield)](https://circleci.com/gh/Sensirion/embedded-sgp) [![GitHub license](https://img.shields.io/badge/license-BSD3-blue.svg)](https://raw.githubusercontent.com/Sensirion/embedded-sgp/master/LICENSE)
 This repository contains the embedded driver sources for Sensirion's
 SGP product line.
 
@@ -39,8 +39,8 @@ communication via GPIOs)
 
 ## Building the driver
 1. Step into your desired directory (e.g.: release/sgp30)
-2. Adjust sensirion_arch_config.h if you don't have the `<stdint.h>` header
-file available
+2. Adjust sensirion\_arch\_config.h if you don't have the `<stdint.h>` header
+   file available
 3. Implement necessary functions in one of the `*_implementation.c` files
 4. make
 
