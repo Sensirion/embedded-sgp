@@ -31,6 +31,7 @@
 #include "sensirion_common.h"
 #include "sgp_git_version.h"
 #include "sgp30.h"
+#include "sgp_featureset.h"
 #include "sht.h"
 
 #define T_LO (-20000)
@@ -105,7 +106,7 @@ s16 svm_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm,
         return err;
 
     sgp_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
-    if (sgp_feature_set >= 0x20) {
+    if (SGP_REQUIRE_FS(sgp_feature_set, 1, 0)) {
         absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
         sgp_set_absolute_humidity(absolute_humidity);
     }
@@ -144,7 +145,7 @@ s16 svm_measure_signals_blocking_read(u16 *ethanol_signal, u16 *h2_signal,
         return err;
 
     sgp_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
-    if (sgp_feature_set >= 0x06) {
+    if (SGP_REQUIRE_FS(sgp_feature_set, 1, 0)) {
         absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
         sgp_set_absolute_humidity(absolute_humidity);
     }
