@@ -79,6 +79,12 @@ int main(void) {
 
     /* Run periodic IAQ measurements at defined intervals */
     while (1) {
+        /*
+        * IMPLEMENT: get absolute humidity to enable humidity compensation
+        * u32 ah = get_absolute_humidity(); // absolute humidity in mg/m^3
+        * sgp_set_absolute_humidity(ah);
+        */
+
         err = sgp_measure_iaq_blocking_read(&tvoc_ppb, &co2_eq_ppm);
         if (err == STATUS_OK) {
             /* printf("tVOC  Concentration: %dppb\n", tvoc_ppb);
@@ -87,12 +93,6 @@ int main(void) {
         } else {
             /* printf("error reading IAQ values\n"); */
         }
-
-        /*
-        * IMPLEMENT: get absolute humidity to enable humidity compensation
-        * u32 ah = get_absolute_humidity(); // absolute humidity in mg/m^3
-        * sgp_set_absolute_humidity(ah);
-        */
 
         /* Persist the current baseline every hour */
         if (++i % 3600 == 3599) {
