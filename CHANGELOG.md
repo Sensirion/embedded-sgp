@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
  * [`changed]` Rename factory baseline to inceptive baseline
  * [`fixed`] Feature set check for SVM30
+ * [`fixed`] Rebuild when example source code changed
 
 ## [3.1.4] - 2018-11-28
 
