@@ -42,11 +42,11 @@ sensirion_hw_i2c_implementation.o: ${hw_i2c_dir}/sensirion_hw_i2c_implementation
 sensirion_sw_i2c.o: ${sw_i2c_dir}/sensirion_sw_i2c.c
 	$(CC) -I${sw_i2c_dir} $(CFLAGS) -c -o $@ $^
 
-svm30_example_usage_hw_i2c: ${hw_objects} ${sensirion_common_sources} ${sgp_sources} ${sht_sources} ${svm_sources}
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS) svm30_example_usage.c
+svm30_example_usage_hw_i2c: ${hw_objects} ${sensirion_common_sources} ${sgp_sources} ${sht_sources} ${svm_sources} svm30_example_usage.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS)
 
-svm30_example_usage_sw_i2c: ${sw_objects} ${sensirion_common_sources} ${sgp_sources} ${sht_sources} ${svm_sources}
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS) svm30_example_usage.c
+svm30_example_usage_sw_i2c: ${sw_objects} ${sensirion_common_sources} ${sgp_sources} ${sht_sources} ${svm_sources} svm30_example_usage.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS)
 
 clean:
 	$(RM) ${all_objects} ${svm_binaries}

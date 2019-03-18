@@ -33,11 +33,11 @@ sensirion_sw_i2c.o: ${sw_i2c_dir}/sensirion_sw_i2c.c
 
 sgpc3.o: ${sgp_common_dir}/sgp_git_version.c ${sgp_common_dir}/sgp_featureset.h ${sensirion_common_dir}/sensirion_i2c.h sgpc3.c sgpc3.h
 
-sgpc3_example_usage_sw_i2c: ${sensirion_common_objects} ${sw_objects} ${sgp_featuresets} sgp_git_version.o sgpc3.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS) sgpc3_example_usage.c
+sgpc3_example_usage_sw_i2c: ${sensirion_common_objects} ${sw_objects} ${sgp_featuresets} sgp_git_version.o sgpc3.o sgpc3_example_usage.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS)
 
-sgpc3_example_usage_hw_i2c: ${sensirion_common_objects} ${hw_objects} ${sgp_featuresets} sgp_git_version.o sgpc3.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS) sgpc3_example_usage.c
+sgpc3_example_usage_hw_i2c: ${sensirion_common_objects} ${hw_objects} ${sgp_featuresets} sgp_git_version.o sgpc3.o sgpc3_example_usage.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS)
 
 clean:
 	$(RM) ${all_objects} ${sgp_binaries}
