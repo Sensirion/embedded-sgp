@@ -33,11 +33,11 @@ sensirion_sw_i2c.o: ${sw_i2c_dir}/sensirion_sw_i2c.c
 
 sgp30.o: ${sgp_common_dir}/sgp_featureset.h ${sensirion_common_dir}/sensirion_i2c.h sgp30.c sgp30.h
 
-sgp30_example_usage_sw_i2c: ${sensirion_common_objects} ${sw_objects} ${sgp_featuresets} sgp_git_version.o sgp30.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS) sgp30_example_usage.c
+sgp30_example_usage_sw_i2c: ${sensirion_common_objects} ${sw_objects} ${sgp_featuresets} sgp_git_version.o sgp30.o sgp30_example_usage.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS)
 
-sgp30_example_usage_hw_i2c: ${sensirion_common_objects} ${hw_objects} ${sgp_featuresets} sgp_git_version.o sgp30.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS) sgp30_example_usage.c
+sgp30_example_usage_hw_i2c: ${sensirion_common_objects} ${hw_objects} ${sgp_featuresets} sgp_git_version.o sgp30.o sgp30_example_usage.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LOADLIBES) $(LDLIBS)
 
 clean:
 	$(RM) ${all_objects} ${sgp_binaries}
