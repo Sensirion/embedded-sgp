@@ -38,39 +38,39 @@
 extern "C" {
 #endif
 
-s16 sgp_probe(void);
-s16 sgp_iaq_init(void);
+s16 sgp30_probe(void);
+s16 sgp30_iaq_init(void);
 
-const char *sgp_get_driver_version(void);
-u8 sgp_get_configured_address(void);
-s16 sgp_get_feature_set_version(u16 *feature_set_version, u8 *product_type);
-s16 sgp_get_serial_id(u64 *serial_id);
+const char *sgp30_get_driver_version(void);
+u8 sgp30_get_configured_address(void);
+s16 sgp30_get_feature_set_version(u16 *feature_set_version, u8 *product_type);
+s16 sgp30_get_serial_id(u64 *serial_id);
 
-s16 sgp_get_iaq_baseline(u32 *baseline);
-s16 sgp_set_iaq_baseline(u32 baseline);
-s16 sgp_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline);
-s16 sgp_set_tvoc_baseline(u16 tvoc_baseline);
+s16 sgp30_get_iaq_baseline(u32 *baseline);
+s16 sgp30_set_iaq_baseline(u32 baseline);
+s16 sgp30_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline);
+s16 sgp30_set_tvoc_baseline(u16 tvoc_baseline);
 
-s16 sgp_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm);
-s16 sgp_measure_iaq(void);
-s16 sgp_read_iaq(u16 *tvoc_ppb, u16 *co2_eq_ppm);
+s16 sgp30_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm);
+s16 sgp30_measure_iaq(void);
+s16 sgp30_read_iaq(u16 *tvoc_ppb, u16 *co2_eq_ppm);
 
-s16 sgp_measure_tvoc_blocking_read(u16 *tvoc_ppb);
-s16 sgp_measure_tvoc(void);
-s16 sgp_read_tvoc(u16 *tvoc_ppb);
+s16 sgp30_measure_tvoc_blocking_read(u16 *tvoc_ppb);
+s16 sgp30_measure_tvoc(void);
+s16 sgp30_read_tvoc(u16 *tvoc_ppb);
 
-s16 sgp_measure_co2_eq_blocking_read(u16 *co2_eq_ppm);
-s16 sgp_measure_co2_eq(void);
-s16 sgp_read_co2_eq(u16 *co2_eq_ppm);
+s16 sgp30_measure_co2_eq_blocking_read(u16 *co2_eq_ppm);
+s16 sgp30_measure_co2_eq(void);
+s16 sgp30_read_co2_eq(u16 *co2_eq_ppm);
 
-s16 sgp_measure_signals_blocking_read(u16 *ethanol_signal,
+s16 sgp30_measure_signals_blocking_read(u16 *ethanol_signal,
                                       u16 *h2_signal);
-s16 sgp_measure_signals(void);
-s16 sgp_read_signals(u16 *ethanol_signal, u16 *h2_signal);
+s16 sgp30_measure_signals(void);
+s16 sgp30_read_signals(u16 *ethanol_signal, u16 *h2_signal);
 
-s16 sgp_measure_test(u16 *test_result);
+s16 sgp30_measure_test(u16 *test_result);
 
-s16 sgp_set_absolute_humidity(u32 absolute_humidity);
+s16 sgp30_set_absolute_humidity(u32 absolute_humidity);
 
 #ifdef __cplusplus
 }

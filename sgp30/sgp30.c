@@ -52,37 +52,37 @@ static const u8 SGP_I2C_ADDRESS = 0x58;
 /* command and constants for reading the serial ID */
 #define SGP_CMD_GET_SERIAL_ID_DURATION_US   500
 #define SGP_CMD_GET_SERIAL_ID_WORDS         3
-static const u16 sgp_cmd_get_serial_id = 0x3682;
+static const u16 sgp30_cmd_get_serial_id = 0x3682;
 
 /* command and constants for reading the featureset version */
 #define SGP_CMD_GET_FEATURESET_DURATION_US  1000
 #define SGP_CMD_GET_FEATURESET_WORDS        1
-static const u16 sgp_cmd_get_featureset = 0x202f;
+static const u16 sgp30_cmd_get_featureset = 0x202f;
 
 /* command and constants for on-chip self-test */
 #define SGP_CMD_MEASURE_TEST_DURATION_US    220000
 #define SGP_CMD_MEASURE_TEST_WORDS          1
 #define SGP_CMD_MEASURE_TEST_OK             0xd400
-static const u16 sgp_cmd_measure_test = 0x2032;
+static const u16 sgp30_cmd_measure_test = 0x2032;
 
-static const struct sgp_otp_featureset sgp_features_unknown = {
+static const struct sgp_otp_featureset sgp30_features_unknown = {
     .profiles = NULL,
     .number_of_profiles = 0,
 };
 
-enum sgp_state_code {
+enum sgp30_state_code {
     WAIT_STATE,
     MEASURING_PROFILE_STATE
 };
 
-struct sgp_info {
+struct sgp30_info {
     u64 serial_id;
     u16 feature_set_version;
 };
 
-static struct sgp_data {
-    enum sgp_state_code current_state;
-    struct sgp_info info;
+static struct sgp30_data {
+    enum sgp30_state_code current_state;
+    struct sgp30_info info;
     const struct sgp_otp_featureset *otp_features;
     union {
         u16 words[SGP_BUFFER_WORDS];
@@ -151,12 +151,12 @@ static s16 read_measurement(const struct sgp_profile *profile) {
 
 
 /**
- * sgp_run_profile() - run a profile and read write its return to client_data
+ * sgp30_run_profile() - run a profile and read write its return to client_data
  * @profile     A pointer to the profile
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-static s16 sgp_run_profile(const struct sgp_profile *profile) {
+static s16 sgp30_run_profile(const struct sgp_profile *profile) {
     u32 duration_us = profile->duration_us + 5;
     s16 ret;
 
@@ -176,12 +176,12 @@ static s16 sgp_run_profile(const struct sgp_profile *profile) {
 
 
 /**
- * sgp_get_profile_by_number() - get a profile by its identifier number
+ * sgp30_get_profile_by_number() - get a profile by its identifier number
  * @number      The number that identifies the profile
  *
  * Return:      A pointer to the profile or NULL if the profile does not exists
  */
-static const struct sgp_profile *sgp_get_profile_by_number(u16 number) {
+static const struct sgp_profile *sgp30_get_profile_by_number(u16 number) {
     u8 i;
     const struct sgp_profile *profile = NULL;
 
@@ -200,43 +200,43 @@ static const struct sgp_profile *sgp_get_profile_by_number(u16 number) {
 
 
 /**
- * sgp_run_profile_by_number() - run a profile by its identifier number
+ * sgp30_run_profile_by_number() - run a profile by its identifier number
  * @number:     The number that identifies the profile
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-static s16 sgp_run_profile_by_number(u16 number) {
+static s16 sgp30_run_profile_by_number(u16 number) {
     const struct sgp_profile *profile;
 
-    profile = sgp_get_profile_by_number(number);
+    profile = sgp30_get_profile_by_number(number);
     if (profile == NULL)
         return STATUS_FAIL;
 
-    return sgp_run_profile(profile);
+    return sgp30_run_profile(profile);
 }
 
 
 /**
- * sgp_detect_featureset_version() - extracts the featureset and initializes
+ * sgp30_detect_featureset_version() - extracts the featureset and initializes
  *                                   client_data.
  *
  * @featureset:  Pointer to the featureset bits
  *
  * Return:    STATUS_OK on success, STATUS_FAIL otherwise
  */
-static s16 sgp_detect_featureset_version(u16 *featureset) {
+static s16 sgp30_detect_featureset_version(u16 *featureset) {
     s16 i, j;
     u16 feature_set_version = *featureset;
-    const struct sgp_otp_featureset *sgp_featureset;
+    const struct sgp_otp_featureset *sgp30_featureset;
 
     client_data.info.feature_set_version = feature_set_version;
-    client_data.otp_features = &sgp_features_unknown;
+    client_data.otp_features = &sgp30_features_unknown;
     for (i = 0; i < sgp_supported_featuresets.number_of_supported_featuresets; ++i) {
-        sgp_featureset = sgp_supported_featuresets.featuresets[i];
-        for (j = 0; j < sgp_featureset->number_of_supported_featureset_versions; ++j) {
+        sgp30_featureset = sgp_supported_featuresets.featuresets[i];
+        for (j = 0; j < sgp30_featureset->number_of_supported_featureset_versions; ++j) {
             if (SGP_FS_COMPAT(feature_set_version,
-                              sgp_featureset->supported_featureset_versions[j])) {
-                client_data.otp_features = sgp_featureset;
+                              sgp30_featureset->supported_featureset_versions[j])) {
+                client_data.otp_features = sgp30_featureset;
                 return STATUS_OK;
             }
         }
@@ -246,7 +246,7 @@ static s16 sgp_detect_featureset_version(u16 *featureset) {
 
 
 /**
- * sgp_measure_test() - Run the on-chip self-test
+ * sgp30_measure_test() - Run the on-chip self-test
  *
  * This method is executed synchronously and blocks for the duration of the
  * measurement (~220ms)
@@ -257,13 +257,13 @@ static s16 sgp_detect_featureset_version(u16 *featureset) {
  *
  * Return: STATUS_OK on a successful self-test, an error code otherwise
  */
-s16 sgp_measure_test(u16 *test_result) {
+s16 sgp30_measure_test(u16 *test_result) {
     u16 measure_test_word_buf[SGP_CMD_MEASURE_TEST_WORDS];
     s16 ret;
 
     *test_result = 0;
 
-    ret = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS, sgp_cmd_measure_test,
+    ret = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS, sgp30_cmd_measure_test,
                                          SGP_CMD_MEASURE_TEST_DURATION_US,
                                          measure_test_word_buf,
                                          SENSIRION_NUM_WORDS(measure_test_word_buf));
@@ -279,17 +279,17 @@ s16 sgp_measure_test(u16 *test_result) {
 
 
 /**
- * sgp_measure_iaq() - Measure IAQ values async
+ * sgp30_measure_iaq() - Measure IAQ values async
  *
- * The profile is executed asynchronously. Use sgp_read_iaq to get the values.
+ * The profile is executed asynchronously. Use sgp30_read_iaq to get the values.
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
-s16 sgp_measure_iaq() {
+s16 sgp30_measure_iaq() {
     const struct sgp_profile *profile;
     s16 ret;
 
-    profile = sgp_get_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE);
+    profile = sgp30_get_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE);
     if (profile == NULL)
         return STATUS_FAIL;
 
@@ -304,21 +304,21 @@ s16 sgp_measure_iaq() {
 
 
 /**
- * sgp_read_iaq() - Read IAQ values async
+ * sgp30_read_iaq() - Read IAQ values async
  *
  * Read the IAQ values. This command can only be exectued after a measurement
- * has started with sgp_measure_iaq and is finished.
+ * has started with sgp30_measure_iaq and is finished.
  *
  * @tvoc_ppb:   The tVOC ppb value will be written to this location
  * @co2_eq_ppm: The CO2-Equivalent ppm value will be written to this location
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp_read_iaq(u16 *tvoc_ppb, u16 *co2_eq_ppm) {
+s16 sgp30_read_iaq(u16 *tvoc_ppb, u16 *co2_eq_ppm) {
     const struct sgp_profile *profile;
     s16 ret;
 
-    profile = sgp_get_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE);
+    profile = sgp30_get_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE);
     if (profile == NULL)
         return STATUS_FAIL;
 
@@ -334,7 +334,7 @@ s16 sgp_read_iaq(u16 *tvoc_ppb, u16 *co2_eq_ppm) {
 
 
 /**
- * sgp_measure_iaq_blocking_read() - Measure IAQ concentrations tVOC, CO2-Eq.
+ * sgp30_measure_iaq_blocking_read() - Measure IAQ concentrations tVOC, CO2-Eq.
  *
  * @tvoc_ppb:   The tVOC ppb value will be written to this location
  * @co2_eq_ppm: The CO2-Equivalent ppm value will be written to this location
@@ -343,10 +343,10 @@ s16 sgp_read_iaq(u16 *tvoc_ppb, u16 *co2_eq_ppm) {
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm) {
+s16 sgp30_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm) {
     s16 ret;
 
-    ret = sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE);
+    ret = sgp30_run_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE);
     if (ret != STATUS_OK)
         return ret;
 
@@ -358,91 +358,91 @@ s16 sgp_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm) {
 
 
 /**
- * sgp_measure_tvoc() - Measure tVOC concentration async
+ * sgp30_measure_tvoc() - Measure tVOC concentration async
  *
- * The profile is executed asynchronously. Use sgp_read_tvoc to get the
+ * The profile is executed asynchronously. Use sgp30_read_tvoc to get the
  * ppb value.
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
-s16 sgp_measure_tvoc() {
-    return sgp_measure_iaq();
+s16 sgp30_measure_tvoc() {
+    return sgp30_measure_iaq();
 }
 
 
 /**
- * sgp_read_tvoc() - Read tVOC concentration async
+ * sgp30_read_tvoc() - Read tVOC concentration async
  *
  * Read the tVOC value. This command can only be exectued after a measurement
- * has started with sgp_measure_tvoc and is finished.
+ * has started with sgp30_measure_tvoc and is finished.
  *
  * @tvoc_ppb:   The tVOC ppb value will be written to this location
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp_read_tvoc(u16 *tvoc_ppb) {
+s16 sgp30_read_tvoc(u16 *tvoc_ppb) {
     u16 co2_eq_ppm;
-    return sgp_read_iaq(tvoc_ppb, &co2_eq_ppm);
+    return sgp30_read_iaq(tvoc_ppb, &co2_eq_ppm);
 }
 
 
 /**
- * sgp_measure_tvoc_blocking_read() - Measure tVOC concentration
+ * sgp30_measure_tvoc_blocking_read() - Measure tVOC concentration
  *
  * The profile is executed synchronously.
  *
  * Return:  tVOC concentration in ppb. Negative if it fails.
  */
-s16 sgp_measure_tvoc_blocking_read(u16 *tvoc_ppb) {
+s16 sgp30_measure_tvoc_blocking_read(u16 *tvoc_ppb) {
     u16 co2_eq_ppm;
-    return sgp_measure_iaq_blocking_read(tvoc_ppb, &co2_eq_ppm);
+    return sgp30_measure_iaq_blocking_read(tvoc_ppb, &co2_eq_ppm);
 }
 
 
 /**
- * sgp_measure_co2_eq() - Measure tVOC concentration async
+ * sgp30_measure_co2_eq() - Measure tVOC concentration async
  *
- * The profile is executed asynchronously. Use sgp_read_co2_eq to get the
+ * The profile is executed asynchronously. Use sgp30_read_co2_eq to get the
  * ppm value.
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
-s16 sgp_measure_co2_eq() {
-    return sgp_measure_iaq();
+s16 sgp30_measure_co2_eq() {
+    return sgp30_measure_iaq();
 }
 
 
 /**
- * sgp_read_co2_eq() - Read CO2-Equivalent concentration async
+ * sgp30_read_co2_eq() - Read CO2-Equivalent concentration async
  *
  * Read the CO2-Equivalent value. This command can only be exectued after a
- * measurement was started with sgp_measure_co2_eq() and is finished.
+ * measurement was started with sgp30_measure_co2_eq() and is finished.
  *
  * @co2_eq_ppm: The CO2-Equivalent ppm value will be written to this location
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp_read_co2_eq(u16 *co2_eq_ppm) {
+s16 sgp30_read_co2_eq(u16 *co2_eq_ppm) {
     u16 tvoc_ppb;
-    return sgp_read_iaq(&tvoc_ppb, co2_eq_ppm);
+    return sgp30_read_iaq(&tvoc_ppb, co2_eq_ppm);
 }
 
 
 /**
- * sgp_measure_co2_eq_blocking_read() - Measure CO2-Equivalent concentration
+ * sgp30_measure_co2_eq_blocking_read() - Measure CO2-Equivalent concentration
  *
  * The profile is executed synchronously.
  *
  * Return:  CO2-Equivalent concentration in ppm. Negative if it fails.
  */
-s16 sgp_measure_co2_eq_blocking_read(u16 *co2_eq_ppm) {
+s16 sgp30_measure_co2_eq_blocking_read(u16 *co2_eq_ppm) {
     u16 tvoc_ppb;
-    return sgp_measure_iaq_blocking_read(&tvoc_ppb, co2_eq_ppm);
+    return sgp30_measure_iaq_blocking_read(&tvoc_ppb, co2_eq_ppm);
 }
 
 
 /**
- * sgp_measure_signals_blocking_read() - Measure signals
+ * sgp30_measure_signals_blocking_read() - Measure signals
  * The profile is executed synchronously.
  *
  * @ethanol_signal: Output variable for the ethanol signal
@@ -450,10 +450,10 @@ s16 sgp_measure_co2_eq_blocking_read(u16 *co2_eq_ppm) {
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp_measure_signals_blocking_read(u16 *ethanol_signal, u16 *h2_signal) {
+s16 sgp30_measure_signals_blocking_read(u16 *ethanol_signal, u16 *h2_signal) {
     s16 ret;
 
-    ret = sgp_run_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
+    ret = sgp30_run_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
     if (ret != STATUS_OK)
         return ret;
 
@@ -465,18 +465,18 @@ s16 sgp_measure_signals_blocking_read(u16 *ethanol_signal, u16 *h2_signal) {
 
 
 /**
- * sgp_measure_signals() - Measure signals async
+ * sgp30_measure_signals() - Measure signals async
  *
- * The profile is executed asynchronously. Use sgp_read_signals to get the
+ * The profile is executed asynchronously. Use sgp30_read_signals to get the
  * signal values.
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
-s16 sgp_measure_signals() {
+s16 sgp30_measure_signals() {
     const struct sgp_profile *profile;
     s16 ret;
 
-    profile = sgp_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
+    profile = sgp30_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
     if (profile == NULL)
         return STATUS_FAIL;
 
@@ -491,20 +491,20 @@ s16 sgp_measure_signals() {
 
 
 /**
- * sgp_read_signals() - Read signals async
+ * sgp30_read_signals() - Read signals async
  * This command can only be exectued after a measurement started with
- * sgp_measure_signals and has finished.
+ * sgp30_measure_signals and has finished.
  *
  * @ethanol_signal: Output variable for ethanol signal.
  * @h2_signal: Output variable for h2 signal.
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp_read_signals(u16 *ethanol_signal, u16 *h2_signal) {
+s16 sgp30_read_signals(u16 *ethanol_signal, u16 *h2_signal) {
     const struct sgp_profile *profile;
     s16 ret;
 
-    profile = sgp_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
+    profile = sgp30_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
     if (profile == NULL)
         return STATUS_FAIL;
 
@@ -519,24 +519,24 @@ s16 sgp_read_signals(u16 *ethanol_signal, u16 *h2_signal) {
 }
 
 /**
- * sgp_get_iaq_baseline() - read out the baseline from the chip
+ * sgp30_get_iaq_baseline() - read out the baseline from the chip
  *
  * The IAQ baseline should be retrieved and persisted for a faster sensor
- * startup. See sgp_set_iaq_baseline() for further documentation.
+ * startup. See sgp30_set_iaq_baseline() for further documentation.
  *
  * A valid baseline value is only returned approx. 60min after a call to
- * sgp_iaq_init() when it is not followed by a call to sgp_set_iaq_baseline()
+ * sgp30_iaq_init() when it is not followed by a call to sgp30_set_iaq_baseline()
  * with a valid baseline.
  * This functions returns STATUS_FAIL if the baseline value is not valid.
  *
  * @baseline:   Pointer to raw u32 where to store the baseline
  *              If the method returns STATUS_FAIL, the baseline value must be
- *              discarded and must not be passed to sgp_set_iaq_baseline().
+ *              discarded and must not be passed to sgp30_set_iaq_baseline().
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-s16 sgp_get_iaq_baseline(u32 *baseline) {
-    s16 ret = sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_BASELINE);
+s16 sgp30_get_iaq_baseline(u32 *baseline) {
+    s16 ret = sgp30_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_BASELINE);
     if (ret != STATUS_OK)
         return ret;
 
@@ -551,16 +551,16 @@ s16 sgp_get_iaq_baseline(u32 *baseline) {
 
 
 /**
- * sgp_set_iaq_baseline() - set the on-chip baseline
+ * sgp30_set_iaq_baseline() - set the on-chip baseline
  * @baseline:   A raw u32 baseline
  *              This value must be unmodified from what was retrieved by a
- *              successful call to sgp_get_iaq_baseline() with return value
+ *              successful call to sgp30_get_iaq_baseline() with return value
  *              STATUS_OK. A persisted baseline should not be set if it is
  *              older than one week.
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp_set_iaq_baseline(u32 baseline) {
+s16 sgp30_set_iaq_baseline(u32 baseline) {
     const struct sgp_profile *profile;
     u16 words[SENSIRION_NUM_WORDS(baseline)] = {
         (u16)((baseline & 0xffff0000) >> 16),
@@ -570,7 +570,7 @@ s16 sgp_set_iaq_baseline(u32 baseline) {
     if (!SGP_VALID_IAQ_BASELINE(baseline))
         return STATUS_FAIL;
 
-    profile = sgp_get_profile_by_number(PROFILE_NUMBER_IAQ_SET_BASELINE);
+    profile = sgp30_get_profile_by_number(PROFILE_NUMBER_IAQ_SET_BASELINE);
     if (profile == NULL)
         return STATUS_FAIL;
 
@@ -580,7 +580,7 @@ s16 sgp_set_iaq_baseline(u32 baseline) {
 
 
 /**
- * sgp_get_tvoc_inceptive_baseline() - read the chip's tVOC inceptive baseline
+ * sgp30_get_tvoc_inceptive_baseline() - read the chip's tVOC inceptive baseline
  *
  * The inceptive baseline must only be used on the very first startup of the
  * sensor. It ensures that measured concentrations are consistent with the air
@@ -590,14 +590,14 @@ s16 sgp_set_iaq_baseline(u32 baseline) {
  *              Pointer to raw u16 where to store the inceptive baseline
  *              If the method returns STATUS_FAIL, the inceptive baseline value
  *              must be discarded and must not be passed to
- *              sgp_set_tvoc_baseline().
+ *              sgp30_set_tvoc_baseline().
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline) {
+s16 sgp30_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline) {
     s16 ret;
 
-    ret = sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE);
+    ret = sgp30_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE);
     if (ret != STATUS_OK)
         return ret;
 
@@ -608,21 +608,21 @@ s16 sgp_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline) {
 
 
 /**
- * sgp_set_tvoc_baseline() - set the on-chip tVOC baseline
+ * sgp30_set_tvoc_baseline() - set the on-chip tVOC baseline
  * @baseline:   A raw u16 tVOC baseline
  *              This value must be unmodified from what was retrieved by a
- *              successful call to sgp_get_tvoc_inceptive_baseline() with return
+ *              successful call to sgp30_get_tvoc_inceptive_baseline() with return
  *              value STATUS_OK.
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp_set_tvoc_baseline(u16 tvoc_baseline) {
+s16 sgp30_set_tvoc_baseline(u16 tvoc_baseline) {
     const struct sgp_profile *profile;
 
     if (!SGP_VALID_IAQ_BASELINE(tvoc_baseline))
         return STATUS_FAIL;
 
-    profile = sgp_get_profile_by_number(PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE);
+    profile = sgp30_get_profile_by_number(PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE);
     if (profile == NULL)
         return STATUS_FAIL;
 
@@ -633,7 +633,7 @@ s16 sgp_set_tvoc_baseline(u16 tvoc_baseline) {
 
 
 /**
- * sgp_set_absolute_humidity() - set the absolute humidity for compensation
+ * sgp30_set_absolute_humidity() - set the absolute humidity for compensation
  *
  * The absolute humidity must be provided in mg/m^3 and the value must be
  * between 0 and 256000 mg/m^3.
@@ -643,7 +643,7 @@ s16 sgp_set_tvoc_baseline(u16 tvoc_baseline) {
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp_set_absolute_humidity(u32 absolute_humidity) {
+s16 sgp30_set_absolute_humidity(u32 absolute_humidity) {
     u64 ah = absolute_humidity;
     const struct sgp_profile *profile;
     u16 ah_scaled;
@@ -651,7 +651,7 @@ s16 sgp_set_absolute_humidity(u32 absolute_humidity) {
     if (!SGP_REQUIRE_FS(client_data.info.feature_set_version, 1, 0))
         return STATUS_FAIL; /* feature unavailable */
 
-    profile = sgp_get_profile_by_number(PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY);
+    profile = sgp30_get_profile_by_number(PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY);
     if (profile == NULL)
         return STATUS_FAIL;
 
@@ -668,27 +668,27 @@ s16 sgp_set_absolute_humidity(u32 absolute_humidity) {
 
 
 /**
- * sgp_get_driver_version() - Return the driver version
+ * sgp30_get_driver_version() - Return the driver version
  * Return:  Driver version string
  */
-const char *sgp_get_driver_version()
+const char *sgp30_get_driver_version()
 {
     return SGP_DRV_VERSION_STR;
 }
 
 
 /**
- * sgp_get_configured_address() - returns the configured I2C address
+ * sgp30_get_configured_address() - returns the configured I2C address
  *
  * Return:      u8 I2C address
  */
-u8 sgp_get_configured_address() {
+u8 sgp30_get_configured_address() {
     return SGP_I2C_ADDRESS;
 }
 
 
 /**
- * sgp_get_feature_set_version() - Retrieve the sensor's feature set version and
+ * sgp30_get_feature_set_version() - Retrieve the sensor's feature set version and
  *                                 product type
  *
  * @feature_set_version:    The feature set version
@@ -696,7 +696,7 @@ u8 sgp_get_configured_address() {
  *
  * Return:  STATUS_OK on success
  */
-s16 sgp_get_feature_set_version(u16 *feature_set_version, u8 *product_type) {
+s16 sgp30_get_feature_set_version(u16 *feature_set_version, u8 *product_type) {
     *feature_set_version = client_data.info.feature_set_version & 0x00FF;
     *product_type = (u8)((client_data.info.feature_set_version & 0xF000) >> 12);
     return STATUS_OK;
@@ -704,36 +704,36 @@ s16 sgp_get_feature_set_version(u16 *feature_set_version, u8 *product_type) {
 
 
 /**
- * sgp_get_serial_id() - Retrieve the sensor's serial id
+ * sgp30_get_serial_id() - Retrieve the sensor's serial id
  *
  * @serial_id:    Output variable for the serial id
  *
  * Return:  STATUS_OK on success
  */
-s16 sgp_get_serial_id(u64 *serial_id) {
+s16 sgp30_get_serial_id(u64 *serial_id) {
     *serial_id = client_data.info.serial_id;
     return STATUS_OK;
 }
 
 
 /**
- * sgp_iaq_init() - reset the SGP's internal IAQ baselines
+ * sgp30_iaq_init() - reset the SGP's internal IAQ baselines
  *
  * Return:  STATUS_OK on success.
  */
-s16 sgp_iaq_init() {
-    return sgp_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT);
+s16 sgp30_iaq_init() {
+    return sgp30_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT);
 }
 
 
 /**
- * sgp_probe() - check if SGP sensor is available and initialize it
+ * sgp30_probe() - check if SGP sensor is available and initialize it
  *
- * This call aleady initializes the IAQ baselines (sgp_iaq_init())
+ * This call aleady initializes the IAQ baselines (sgp30_iaq_init())
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
-s16 sgp_probe() {
+s16 sgp30_probe() {
     s16 err;
     u64 *serial_buf = &client_data.buffer.u64_value;
 
@@ -745,7 +745,7 @@ s16 sgp_probe() {
 
     /* try to read the serial ID */
     err = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS,
-                                         sgp_cmd_get_serial_id,
+                                         sgp30_cmd_get_serial_id,
                                          SGP_CMD_GET_SERIAL_ID_DURATION_US,
                                          client_data.buffer.words,
                                          SGP_CMD_GET_SERIAL_ID_WORDS);
@@ -758,16 +758,16 @@ s16 sgp_probe() {
 
     /* read the featureset version */
     err = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS,
-                                         sgp_cmd_get_featureset,
+                                         sgp30_cmd_get_featureset,
                                          SGP_CMD_GET_FEATURESET_DURATION_US,
                                          client_data.buffer.words,
                                          SGP_CMD_GET_FEATURESET_WORDS);
     if (err != STATUS_OK)
         return err;
 
-    err = sgp_detect_featureset_version(client_data.buffer.words);
+    err = sgp30_detect_featureset_version(client_data.buffer.words);
     if (err != STATUS_OK)
         return err;
 
-    return sgp_iaq_init();
+    return sgp30_iaq_init();
 }

@@ -56,7 +56,7 @@ int main(void) {
      * (A) If no baseline is available or the most recent baseline is more than
      *     one week old, it must discarded. A new baseline is found with
      *     sgp_iaq_init() */
-    err = sgp_iaq_init();
+    err = sgp30_iaq_init();
     /* (B) If a recent baseline is available, set it after sgp_iaq_init() for
      * faster start-up */
     /* IMPLEMENT: retrieve iaq_baseline from presistent storage;
@@ -79,7 +79,7 @@ int main(void) {
 
         /* Persist the current baseline every hour */
         if (++i % 3600 == 3599) {
-            err = sgp_get_iaq_baseline(&iaq_baseline);
+            err = sgp30_get_iaq_baseline(&iaq_baseline);
             if (err == STATUS_OK) {
                 /* IMPLEMENT: store baseline to presistent storage */
             }
