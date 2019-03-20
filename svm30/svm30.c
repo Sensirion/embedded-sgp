@@ -105,15 +105,15 @@ s16 svm_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm,
     if (err != STATUS_OK)
         return err;
 
-    sgp_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
+    sgp30_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
     if (SGP_REQUIRE_FS(sgp_feature_set, 1, 0)) {
         absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
-        sgp_set_absolute_humidity(absolute_humidity);
+        sgp30_set_absolute_humidity(absolute_humidity);
     }
 
     svm_compensate_rht(temperature, humidity);
 
-    err = sgp_measure_iaq_blocking_read(tvoc_ppb, co2_eq_ppm);
+    err = sgp30_measure_iaq_blocking_read(tvoc_ppb, co2_eq_ppm);
     if (err != STATUS_OK)
         return err;
 
@@ -144,13 +144,13 @@ s16 svm_measure_signals_blocking_read(u16 *ethanol_signal, u16 *h2_signal,
     if (err != STATUS_OK)
         return err;
 
-    sgp_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
+    sgp30_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
     if (SGP_REQUIRE_FS(sgp_feature_set, 1, 0)) {
         absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
-        sgp_set_absolute_humidity(absolute_humidity);
+        sgp30_set_absolute_humidity(absolute_humidity);
     }
 
-    err = sgp_measure_signals_blocking_read(ethanol_signal, h2_signal);
+    err = sgp30_measure_signals_blocking_read(ethanol_signal, h2_signal);
     if (err != STATUS_OK)
         return err;
 
@@ -160,7 +160,7 @@ s16 svm_measure_signals_blocking_read(u16 *ethanol_signal, u16 *h2_signal,
 /**
  * svm_probe() - check if an SVM30 module is available and initialize it
  *
- * This call aleady initializes the IAQ baselines (sgp_iaq_init())
+ * This call aleady initializes the IAQ baselines (sgp30_iaq_init())
  *
  * Return:  STATUS_OK on success.
  */
@@ -171,5 +171,5 @@ s16 svm_probe() {
     if (err != STATUS_OK)
         return err;
 
-    return sgp_probe();
+    return sgp30_probe();
 }

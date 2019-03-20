@@ -47,7 +47,7 @@ int main(void) {
 
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
-    while (sgp_probe() != STATUS_OK) {
+    while (sgpc3_probe() != STATUS_OK) {
         /* printf("SGP sensor probing failed\n"); */
         /* sleep(1); */
     }
@@ -57,10 +57,10 @@ int main(void) {
     /* Read signals.
      * Do not run measure_signals between IAQ measurements
      * (iaq, tVOC) without saving the baseline before the call and
-     * restoring it after with sgp_get_iaq_baseline / sgp_set_iaq_baseline.
+     * restoring it after with sgpc3_get_iaq_baseline / sgpc3_set_iaq_baseline.
      * If a recent baseline is not available, reset it using
-     * sgp_iaq_init_continuous prior to running IAQ measurements.  */
-    err = sgp_measure_signals_blocking_read(&ethanol_signal);
+     * sgpc3_iaq_init_continuous prior to running IAQ measurements.  */
+    err = sgpc3_measure_signals_blocking_read(&ethanol_signal);
 
     if (err == STATUS_OK) {
         /* Print ethanol signal */
@@ -72,12 +72,12 @@ int main(void) {
     /* Consider the two cases (A) and (B):
      * (A) If no baseline is available or the most recent baseline is more than
      *     one week old, it must discarded. A new baseline is found with
-     *     sgp_iaq_init_continuous() */
-    err = sgp_iaq_init_continuous();
+     *     sgpc3_iaq_init_continuous() */
+    err = sgpc3_iaq_init_continuous();
     /* (B) If a recent baseline is available, set it after
-     *      sgp_iaq_init_continuous() for faster start-up */
+     *      sgpc3_iaq_init_continuous() for faster start-up */
     /* IMPLEMENT: retrieve iaq_baseline from presistent storage;
-     * err = sgp_set_iaq_baseline(iaq_baseline);
+     * err = sgpc3_set_iaq_baseline(iaq_baseline);
      */
 
     /* IMPLEMENT: sleep for the desired accelerated warm-up duration */
@@ -85,7 +85,7 @@ int main(void) {
 
     /* Run periodic IAQ measurements at defined intervals */
     while (1) {
-        err = sgp_measure_iaq_blocking_read(&tvoc_ppb);
+        err = sgpc3_measure_iaq_blocking_read(&tvoc_ppb);
         if (err == STATUS_OK) {
             /* printf("tVOC  Concentration: %dppb\n", tvoc_ppb); */
         } else {
@@ -94,7 +94,7 @@ int main(void) {
 
         /* Persist the current baseline every hour */
         if (++i % 1800 == 1799) {
-            err = sgp_get_iaq_baseline(&iaq_baseline);
+            err = sgpc3_get_iaq_baseline(&iaq_baseline);
             if (err == STATUS_OK) {
                 /* IMPLEMENT: store baseline to presistent storage */
             }

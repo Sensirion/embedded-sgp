@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
  * [`changed]` Rename factory baseline to inceptive baseline
+ * [`changed`] Prefix all methods with `sgp30_` / `sgpc3_` instead of `sgp_`
  * [`fixed`] Feature set check for SVM30
  * [`fixed`] Rebuild when example source code changed
 
