@@ -43,7 +43,7 @@ int main(void) {
     s16 err;
     u16 tvoc_ppb, co2_eq_ppm;
     u32 iaq_baseline;
-    u16 ethanol_signal, h2_signal;
+    u16 ethanol_raw_signal, h2_raw_signal;
 
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
@@ -54,15 +54,15 @@ int main(void) {
     /* printf("SGP sensor probing successful\n"); */
 
 
-    /* Read gas signals */
-    err = sgp30_measure_signals_blocking_read(&ethanol_signal,
-                                            &h2_signal);
+    /* Read gas raw signals */
+    err = sgp30_measure_raw_blocking_read(&ethanol_raw_signal,
+                                          &h2_raw_signal);
     if (err == STATUS_OK) {
-        /* Print ethanol signal and h2 signal */
-        /* printf("Ethanol signal: %u\n", ethanol_signal); */
-        /* printf("H2 signal: %u\n", h2_signal); */
+        /* Print ethanol raw signal and h2 raw signal */
+        /* printf("Ethanol raw signal: %u\n", ethanol_raw_signal); */
+        /* printf("H2 raw signal: %u\n", h2_raw_signal); */
     } else {
-        /* printf("error reading signals\n"); */
+        /* printf("error reading raw signals\n"); */
     }
 
 

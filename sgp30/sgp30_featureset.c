@@ -30,12 +30,12 @@
 #include "sensirion_common.h"
 #include "sgp_featureset.h"
 
-#define PROFILE_NUMBER_SIGNALS 10
+#define PROFILE_NUMBER_RAW_SIGNALS 10
 #define PROFILE_NUMBER_SET_AH 12
 #define PROFILE_IAQ_SET_TVOC_BASELINE 14
 
 const u8 PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE = PROFILE_IAQ_SET_TVOC_BASELINE;
-const u8 PROFILE_NUMBER_MEASURE_SIGNALS = PROFILE_NUMBER_SIGNALS;
+const u8 PROFILE_NUMBER_MEASURE_RAW_SIGNALS = PROFILE_NUMBER_RAW_SIGNALS;
 const u8 PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY = PROFILE_NUMBER_SET_AH;
 
 static const struct sgp_signal ETHANOL_SIGNAL_FS9 = {
@@ -136,7 +136,7 @@ static const struct sgp_profile SGP_PROFILE_IAQ_SET_BASELINE = {
 };
 
 static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS9 = {
-    .number            = PROFILE_NUMBER_SIGNALS,
+    .number            = PROFILE_NUMBER_RAW_SIGNALS,
     .duration_us       = 200000,
     .signals           = SGP_PROFILE_MEASURE_SIGNALS_SIGNALS9,
     .number_of_signals = ARRAY_SIZE(SGP_PROFILE_MEASURE_SIGNALS_SIGNALS9),

@@ -442,41 +442,41 @@ s16 sgp30_measure_co2_eq_blocking_read(u16 *co2_eq_ppm) {
 
 
 /**
- * sgp30_measure_signals_blocking_read() - Measure signals
+ * sgp30_measure_raw_blocking_read() - Measure raw signals
  * The profile is executed synchronously.
  *
- * @ethanol_signal: Output variable for the ethanol signal
- * @h2_signal: Output variable for the h2 signal
+ * @ethanol_raw_signal: Output variable for the ethanol raw signal
+ * @h2_raw_signal:      Output variable for the h2 raw signal
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp30_measure_signals_blocking_read(u16 *ethanol_signal, u16 *h2_signal) {
+s16 sgp30_measure_raw_blocking_read(u16 *ethanol_raw_signal, u16 *h2_raw_signal) {
     s16 ret;
 
-    ret = sgp30_run_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
+    ret = sgp30_run_profile_by_number(PROFILE_NUMBER_MEASURE_RAW_SIGNALS);
     if (ret != STATUS_OK)
         return ret;
 
-    *ethanol_signal = client_data.buffer.words[0];
-    *h2_signal = client_data.buffer.words[1];
+    *ethanol_raw_signal = client_data.buffer.words[0];
+    *h2_raw_signal = client_data.buffer.words[1];
 
     return STATUS_OK;
 }
 
 
 /**
- * sgp30_measure_signals() - Measure signals async
+ * sgp30_measure_raw() - Measure raw signals async
  *
- * The profile is executed asynchronously. Use sgp30_read_signals to get the
+ * The profile is executed asynchronously. Use sgp30_read_raw to get the
  * signal values.
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
-s16 sgp30_measure_signals() {
+s16 sgp30_measure_raw() {
     const struct sgp_profile *profile;
     s16 ret;
 
-    profile = sgp30_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
+    profile = sgp30_get_profile_by_number(PROFILE_NUMBER_MEASURE_RAW_SIGNALS);
     if (profile == NULL)
         return STATUS_FAIL;
 
@@ -491,20 +491,20 @@ s16 sgp30_measure_signals() {
 
 
 /**
- * sgp30_read_signals() - Read signals async
+ * sgp30_read_raw() - Read raw signals async
  * This command can only be exectued after a measurement started with
- * sgp30_measure_signals and has finished.
+ * sgp30_measure_raw and has finished.
  *
- * @ethanol_signal: Output variable for ethanol signal.
- * @h2_signal: Output variable for h2 signal.
+ * @ethanol_raw_signal: Output variable for ethanol raw signal.
+ * @h2_raw_signal: Output variable for h2 raw signal.
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp30_read_signals(u16 *ethanol_signal, u16 *h2_signal) {
+s16 sgp30_read_raw(u16 *ethanol_raw_signal, u16 *h2_raw_signal) {
     const struct sgp_profile *profile;
     s16 ret;
 
-    profile = sgp30_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
+    profile = sgp30_get_profile_by_number(PROFILE_NUMBER_MEASURE_RAW_SIGNALS);
     if (profile == NULL)
         return STATUS_FAIL;
 
@@ -512,8 +512,8 @@ s16 sgp30_read_signals(u16 *ethanol_signal, u16 *h2_signal) {
     if (ret != STATUS_OK)
         return ret;
 
-    *ethanol_signal = client_data.buffer.words[0];
-    *h2_signal = client_data.buffer.words[1];
+    *ethanol_raw_signal = client_data.buffer.words[0];
+    *h2_raw_signal = client_data.buffer.words[1];
 
     return STATUS_OK;
 }

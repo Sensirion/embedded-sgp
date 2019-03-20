@@ -121,20 +121,20 @@ s16 svm_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm,
 }
 
 /**
- * svm_measure_signals_blocking_read() - Measure signals
+ * svm_measure_raw_blocking_read() - Measure raw signals
  *
  * The output values are written to the memory locations passed as parameters:
- * @ethanol_signal: The ethanol signal
- * @h2_signal:      The h2 signal
- * @temperature:    Temperature in [degree Celsius] multiplied by 1000
- * @humidity:   Relative humidity in [%RH (0..100)] multiplied by 1000
+ * @ethanol_raw_signal: The ethanol signal
+ * @h2_raw_signal:      The h2 signal
+ * @temperature:        Temperature in [degree Celsius] multiplied by 1000
+ * @humidity:           Relative humidity in [%RH (0..100)] multiplied by 1000
  *
  * The profile is executed synchronously.
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-s16 svm_measure_signals_blocking_read(u16 *ethanol_signal, u16 *h2_signal,
-                                      s32 *temperature, s32 *humidity) {
+s16 svm_measure_raw_blocking_read(u16 *ethanol_raw_signal, u16 *h2_raw_signal,
+                                  s32 *temperature, s32 *humidity) {
     u32 absolute_humidity;
     u16 sgp_feature_set;
     u8 sgp_product_type;
@@ -150,7 +150,7 @@ s16 svm_measure_signals_blocking_read(u16 *ethanol_signal, u16 *h2_signal,
         sgp30_set_absolute_humidity(absolute_humidity);
     }
 
-    err = sgp30_measure_signals_blocking_read(ethanol_signal, h2_signal);
+    err = sgp30_measure_raw_blocking_read(ethanol_raw_signal, h2_raw_signal);
     if (err != STATUS_OK)
         return err;
 

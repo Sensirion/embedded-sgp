@@ -63,10 +63,10 @@ s16 sgp30_measure_co2_eq_blocking_read(u16 *co2_eq_ppm);
 s16 sgp30_measure_co2_eq(void);
 s16 sgp30_read_co2_eq(u16 *co2_eq_ppm);
 
-s16 sgp30_measure_signals_blocking_read(u16 *ethanol_signal,
-                                      u16 *h2_signal);
-s16 sgp30_measure_signals(void);
-s16 sgp30_read_signals(u16 *ethanol_signal, u16 *h2_signal);
+s16 sgp30_measure_raw_blocking_read(u16 *ethanol_raw_signal,
+                                    u16 *h2_raw_signal);
+s16 sgp30_measure_raw(void);
+s16 sgp30_read_raw(u16 *ethanol_raw_signal, u16 *h2_raw_signal);
 
 s16 sgp30_measure_test(u16 *test_result);
 
