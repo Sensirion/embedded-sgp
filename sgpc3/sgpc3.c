@@ -279,13 +279,13 @@ s16 sgpc3_measure_test(u16 *test_result) {
 
 
 /**
- * sgpc3_measure_iaq() - Measure IAQ values async
+ * sgpc3_measure_tvoc() - Measure tVOC values async
  *
- * The profile is executed asynchronously. Use sgpc3_read_iaq to get the values.
+ * The profile is executed asynchronously. Use sgpc3_read_tvoc to get the values.
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_measure_iaq() {
+s16 sgpc3_measure_tvoc() {
     const struct sgp_profile *profile;
     s16 ret;
 
@@ -304,16 +304,16 @@ s16 sgpc3_measure_iaq() {
 
 
 /**
- * sgpc3_read_iaq() - Read IAQ values async
+ * sgpc3_read_tvoc() - Read tVOC values async
  *
- * Read the IAQ values. This command can only be exectued after a measurement
- * has started with sgpc3_measure_iaq and is finished.
+ * Read the tVOC values. This command can only be exectued after a measurement
+ * has started with sgpc3_measure_tvoc and is finished.
  *
  * @tvoc_ppb:   The tVOC ppb value will be written to this location
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_read_iaq(u16 *tvoc_ppb) {
+s16 sgpc3_read_tvoc(u16 *tvoc_ppb) {
     const struct sgp_profile *profile;
     s16 ret;
 
@@ -332,7 +332,7 @@ s16 sgpc3_read_iaq(u16 *tvoc_ppb) {
 
 
 /**
- * sgpc3_measure_iaq_blocking_read() - Measure tVOC concentration
+ * sgpc3_measure_tvoc_blocking_read() - Measure tVOC concentration
  *
  * @tvoc_ppb:   The tVOC ppb value will be written to this location
  *
@@ -340,7 +340,7 @@ s16 sgpc3_read_iaq(u16 *tvoc_ppb) {
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_measure_iaq_blocking_read(u16 *tvoc_ppb) {
+s16 sgpc3_measure_tvoc_blocking_read(u16 *tvoc_ppb) {
     s16 ret;
 
     ret = sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE);
@@ -350,46 +350,6 @@ s16 sgpc3_measure_iaq_blocking_read(u16 *tvoc_ppb) {
     *tvoc_ppb = client_data.buffer.words[0];
 
     return STATUS_OK;
-}
-
-
-/**
- * sgpc3_measure_tvoc() - Measure tVOC concentration async
- *
- * The profile is executed asynchronously. Use sgpc3_read_tvoc to get the
- * ppb value.
- *
- * Return:  STATUS_OK on success, an error code otherwise
- */
-s16 sgpc3_measure_tvoc() {
-    return sgpc3_measure_iaq();
-}
-
-
-/**
- * sgpc3_read_tvoc() - Read tVOC concentration async
- *
- * Read the tVOC value. This command can only be exectued after a measurement
- * has started with sgpc3_measure_tvoc and is finished.
- *
- * @tvoc_ppb:   The tVOC ppb value will be written to this location
- *
- * Return:      STATUS_OK on success, an error code otherwise
- */
-s16 sgpc3_read_tvoc(u16 *tvoc_ppb) {
-    return sgpc3_read_iaq(tvoc_ppb);
-}
-
-
-/**
- * sgpc3_measure_tvoc_blocking_read() - Measure tVOC concentration
- *
- * The profile is executed synchronously.
- *
- * Return:  tVOC concentration in ppb. Negative if it fails.
- */
-s16 sgpc3_measure_tvoc_blocking_read(u16 *tvoc_ppb) {
-    return sgpc3_measure_iaq_blocking_read(tvoc_ppb);
 }
 
 

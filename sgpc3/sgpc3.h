@@ -55,10 +55,6 @@ s16 sgpc3_get_iaq_baseline(u16 *baseline);
 s16 sgpc3_set_iaq_baseline(u16 baseline);
 s16 sgpc3_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline);
 
-s16 sgpc3_measure_iaq_blocking_read(u16 *tvoc_ppb);
-s16 sgpc3_measure_iaq(void);
-s16 sgpc3_read_iaq(u16 *tvoc_ppb);
-
 s16 sgpc3_measure_tvoc_blocking_read(u16 *tvoc_ppb);
 s16 sgpc3_measure_tvoc(void);
 s16 sgpc3_read_tvoc(u16 *tvoc_ppb);

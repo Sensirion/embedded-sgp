@@ -55,11 +55,11 @@ int main(void) {
 
 
     /* Read raw signals.
-     * Do not run measure_raw between IAQ measurements
-     * (iaq, tVOC) without saving the baseline before the call and
+     * Do not run measure_raw between tVOC measurements
+     * without saving the baseline before the call and
      * restoring it after with sgpc3_get_iaq_baseline / sgpc3_set_iaq_baseline.
      * If a recent baseline is not available, reset it using
-     * sgpc3_iaq_init_continuous prior to running IAQ measurements.  */
+     * sgpc3_iaq_init_continuous prior to running tVOC measurements.  */
     err = sgpc3_measure_raw_blocking_read(&ethanol_raw_signal);
 
     if (err == STATUS_OK) {
@@ -83,13 +83,13 @@ int main(void) {
     /* IMPLEMENT: sleep for the desired accelerated warm-up duration */
     /* sleep(64); */
 
-    /* Run periodic IAQ measurements at defined intervals */
+    /* Run periodic tVOC measurements at defined intervals */
     while (1) {
-        err = sgpc3_measure_iaq_blocking_read(&tvoc_ppb);
+        err = sgpc3_measure_tvoc_blocking_read(&tvoc_ppb);
         if (err == STATUS_OK) {
             /* printf("tVOC  Concentration: %dppb\n", tvoc_ppb); */
         } else {
-            /* printf("error reading IAQ values\n"); */
+            /* printf("error reading tVOC value\n"); */
         }
 
         /* Persist the current baseline every hour */
@@ -100,7 +100,7 @@ int main(void) {
             }
         }
 
-        /* The IAQ measurement must be triggered exactly once every two seconds
+        /* The tVOC measurement must be triggered exactly once every two seconds
          * to get accurate values and to respect the duty cycle/power budget.
          */
         /* sleep(2); */
