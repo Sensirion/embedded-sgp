@@ -32,6 +32,7 @@
 
 #include <stdio.h> // printf
 #include <unistd.h> // sleep
+#include <inttypes.h> // PRIu64
 
 /* TO USE CONSOLE OUTPUT (printf) AND WAIT (sleep) YOU MAY NEED TO ADAPT THE
  * INCLUDES ABOVE OR DEFINE THEM ACCORDING TO YOUR PLATFORM.
@@ -46,6 +47,14 @@ int main(void) {
     u32 iaq_baseline;
     u16 ethanol_raw_signal, h2_raw_signal;
 
+    const char *driver_version = sgp30_get_driver_version();
+    if (driver_version) {
+        printf("SGP30 driver version %s\n", driver_version);
+    } else {
+        printf("fatal: Getting driver version failed\n");
+        return -1;
+    }
+
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
     while (sgp30_probe() != STATUS_OK) {
@@ -54,6 +63,22 @@ int main(void) {
     }
     printf("SGP sensor probing successful\n");
 
+    u16 feature_set_version;
+    u8 product_type;
+    err = sgp30_get_feature_set_version(&feature_set_version, &product_type);
+    if (err == STATUS_OK) {
+        printf("Feature set version: %u\n", feature_set_version);
+        printf("Product type: %u\n", product_type);
+    } else {
+        printf("sgp30_get_feature_set_version failed!\n");
+    }
+    u64 serial_id;
+    err = sgp30_get_serial_id(&serial_id);
+    if (err == STATUS_OK) {
+        printf("SerialID: %" PRIu64 "\n", serial_id);
+    } else {
+        printf("sgp30_get_serial_id failed!\n");
+    }
 
     /* Read gas raw signals */
     err = sgp30_measure_raw_blocking_read(&ethanol_raw_signal,
