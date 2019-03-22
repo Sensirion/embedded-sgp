@@ -97,6 +97,11 @@ int main(void) {
      *     one week old, it must discarded. A new baseline is found with
      *     sgp30_iaq_init() */
     err = sgp30_iaq_init();
+    if (err == STATUS_OK) {
+        printf("sgp30_iaq_init done\n");
+    } else {
+        printf("sgp30_iaq_init failed!\n");
+    }
     /* (B) If a recent baseline is available, set it after sgp30_iaq_init() for
      * faster start-up */
     /* IMPLEMENT: retrieve iaq_baseline from presistent storage;

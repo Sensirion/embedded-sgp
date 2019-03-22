@@ -100,6 +100,12 @@ int main(void) {
      *     one week old, it must discarded. A new baseline is found with
      *     sgpc3_iaq_init_continuous() */
     err = sgpc3_iaq_init_continuous();
+    if (err == STATUS_OK) {
+        printf("sgpc3_iaq_init_continuous done\n");
+    } else {
+        printf("sgpc3_iaq_init_continuous failed!\n");
+    }
+
     /* (B) If a recent baseline is available, set it after
      *      sgpc3_iaq_init_continuous() for faster start-up */
     /* IMPLEMENT: retrieve iaq_baseline from presistent storage;
