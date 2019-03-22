@@ -1,5 +1,6 @@
 sensirion_common_dir := ../embedded-common
 sgp_common_dir := ../sgp-common
+platform ?= sample-implementations/linux_user_space
 sw_i2c_dir := ${sensirion_common_dir}/sw_i2c
 hw_i2c_dir := ${sensirion_common_dir}/hw_i2c
 
@@ -23,10 +24,10 @@ sgp_git_version.o: ${sgp_common_dir}/sgp_git_version.c
 	$(CC) $(CFLAGS) -c -o $@ $^
 sensirion_common.o: ${sensirion_common_dir}/sensirion_common.c
 	$(CC) $(CFLAGS) -c -o $@ $^
-sensirion_sw_i2c_implementation.o: ${sw_i2c_dir}/sensirion_sw_i2c_implementation.c
-	$(CC) $(CFLAGS) -c -o $@ $^
-sensirion_hw_i2c_implementation.o: ${hw_i2c_dir}/sensirion_hw_i2c_implementation.c
-	$(CC) $(CFLAGS) -c -o $@ $^
+sensirion_sw_i2c_implementation.o: ${sw_i2c_dir}/${platform}/sensirion_sw_i2c_implementation.c
+	$(CC) $(CFLAGS) -I${sw_i2c_dir} -c -o $@ $^
+sensirion_hw_i2c_implementation.o: ${hw_i2c_dir}/${platform}/sensirion_hw_i2c_implementation.c
+	$(CC) $(CFLAGS) -I${sw_i2c_dir} -c -o $@ $^
 
 sensirion_sw_i2c.o: ${sw_i2c_dir}/sensirion_sw_i2c.c
 	$(CC) -I${sw_i2c_dir} $(CFLAGS) -c -o $@ $^
