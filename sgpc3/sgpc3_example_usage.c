@@ -30,13 +30,14 @@
 
 #include "sgpc3.h"
 
-/* TO USE CONSOLE OUTPUT (printf) AND WAIT (sleep) PLEASE ADAPT THEM TO YOUR
- * PLATFORM.
- *
- * #include <stdio.h> // printf
- * #include <unistd.h> // sleep
- */
+#include <stdio.h> // printf
+#include <unistd.h> // sleep
 
+/* TO USE CONSOLE OUTPUT (printf) AND WAIT (sleep) YOU MAY NEED TO ADAPT THE
+ * INCLUDES ABOVE OR DEFINE THEM ACCORDING TO YOUR PLATFORM.
+ * #define printf(...)
+ * #define sleep(...)
+ */
 
 int main(void) {
     u16 i = 0;
@@ -48,11 +49,10 @@ int main(void) {
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
     while (sgpc3_probe() != STATUS_OK) {
-        /* printf("SGP sensor probing failed\n"); */
-        /* sleep(1); */
+        printf("SGP sensor probing failed\n");
+        sleep(1);
     }
-    /* printf("SGP sensor probing successful\n"); */
-
+    printf("SGP sensor probing successful\n");
 
     /* Read raw signals.
      * Do not run measure_raw between tVOC measurements
@@ -64,9 +64,9 @@ int main(void) {
 
     if (err == STATUS_OK) {
         /* Print raw ethanol signal */
-        /* printf("Ethanol raw signal: %u\n", ethanol_raw_signal); */
+        printf("Ethanol raw signal: %u\n", ethanol_raw_signal);
     } else {
-        /* printf("error reading raw signal\n"); */
+        printf("error reading raw signal\n");
     }
 
     /* Consider the two cases (A) and (B):
@@ -81,15 +81,15 @@ int main(void) {
      */
 
     /* IMPLEMENT: sleep for the desired accelerated warm-up duration */
-    /* sleep(64); */
+    sleep(64);
 
     /* Run periodic tVOC measurements at defined intervals */
     while (1) {
         err = sgpc3_measure_tvoc_blocking_read(&tvoc_ppb);
         if (err == STATUS_OK) {
-            /* printf("tVOC  Concentration: %dppb\n", tvoc_ppb); */
+            printf("tVOC  Concentration: %dppb\n", tvoc_ppb);
         } else {
-            /* printf("error reading tVOC value\n"); */
+            printf("error reading tVOC value\n");
         }
 
         /* Persist the current baseline every hour */
@@ -103,7 +103,7 @@ int main(void) {
         /* The tVOC measurement must be triggered exactly once every two seconds
          * to get accurate values and to respect the duty cycle/power budget.
          */
-        /* sleep(2); */
+        sleep(2);
     }
     return 0;
 }
