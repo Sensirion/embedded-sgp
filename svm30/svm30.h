@@ -46,8 +46,8 @@ s16 svm_probe(void);
 s16 svm_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm,
                                   s32 *temperature, s32 *humidity);
 
-s16 svm_measure_signals_blocking_read(u16 *ethanol_signal, u16 *h2_signal,
-                                      s32 *temperature, s32 *humidity);
+s16 svm_measure_raw_blocking_read(u16 *ethanol_raw_signal, u16 *h2_raw_signal,
+                                  s32 *temperature, s32 *humidity);
 
 #ifdef __cplusplus
 }

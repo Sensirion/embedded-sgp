@@ -43,7 +43,7 @@ int main(void) {
     s16 err;
     u16 tvoc_ppb;
     u16 iaq_baseline;
-    u16 ethanol_signal;
+    u16 ethanol_raw_signal;
 
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
@@ -54,19 +54,19 @@ int main(void) {
     /* printf("SGP sensor probing successful\n"); */
 
 
-    /* Read signals.
-     * Do not run measure_signals between IAQ measurements
-     * (iaq, tVOC) without saving the baseline before the call and
+    /* Read raw signals.
+     * Do not run measure_raw between tVOC measurements
+     * without saving the baseline before the call and
      * restoring it after with sgpc3_get_iaq_baseline / sgpc3_set_iaq_baseline.
      * If a recent baseline is not available, reset it using
-     * sgpc3_iaq_init_continuous prior to running IAQ measurements.  */
-    err = sgpc3_measure_signals_blocking_read(&ethanol_signal);
+     * sgpc3_iaq_init_continuous prior to running tVOC measurements.  */
+    err = sgpc3_measure_raw_blocking_read(&ethanol_raw_signal);
 
     if (err == STATUS_OK) {
-        /* Print ethanol signal */
-        /* printf("Ethanol signal: %u\n", ethanol_signal); */
+        /* Print raw ethanol signal */
+        /* printf("Ethanol raw signal: %u\n", ethanol_raw_signal); */
     } else {
-        /* printf("error reading signals\n"); */
+        /* printf("error reading raw signal\n"); */
     }
 
     /* Consider the two cases (A) and (B):
@@ -83,13 +83,13 @@ int main(void) {
     /* IMPLEMENT: sleep for the desired accelerated warm-up duration */
     /* sleep(64); */
 
-    /* Run periodic IAQ measurements at defined intervals */
+    /* Run periodic tVOC measurements at defined intervals */
     while (1) {
-        err = sgpc3_measure_iaq_blocking_read(&tvoc_ppb);
+        err = sgpc3_measure_tvoc_blocking_read(&tvoc_ppb);
         if (err == STATUS_OK) {
             /* printf("tVOC  Concentration: %dppb\n", tvoc_ppb); */
         } else {
-            /* printf("error reading IAQ values\n"); */
+            /* printf("error reading tVOC value\n"); */
         }
 
         /* Persist the current baseline every hour */
@@ -100,7 +100,7 @@ int main(void) {
             }
         }
 
-        /* The IAQ measurement must be triggered exactly once every two seconds
+        /* The tVOC measurement must be triggered exactly once every two seconds
          * to get accurate values and to respect the duty cycle/power budget.
          */
         /* sleep(2); */

@@ -55,21 +55,17 @@ s16 sgpc3_get_iaq_baseline(u16 *baseline);
 s16 sgpc3_set_iaq_baseline(u16 baseline);
 s16 sgpc3_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline);
 
-s16 sgpc3_measure_iaq_blocking_read(u16 *tvoc_ppb);
-s16 sgpc3_measure_iaq(void);
-s16 sgpc3_read_iaq(u16 *tvoc_ppb);
-
 s16 sgpc3_measure_tvoc_blocking_read(u16 *tvoc_ppb);
 s16 sgpc3_measure_tvoc(void);
 s16 sgpc3_read_tvoc(u16 *tvoc_ppb);
 
-s16 sgpc3_measure_signals_blocking_read(u16 *ethanol_signal);
-s16 sgpc3_measure_signals(void);
-s16 sgpc3_read_signals(u16 *ethanol_signal);
-
-s16 sgpc3_measure_raw_blocking_read(u16 *tvoc_ppb, u16 *ethanol_signal);
+s16 sgpc3_measure_raw_blocking_read(u16 *ethanol_raw_signal);
 s16 sgpc3_measure_raw(void);
-s16 sgpc3_read_raw(u16 *tvoc_ppb, u16 *ethanol_signal);
+s16 sgpc3_read_raw(u16 *ethanol_raw_signal);
+
+s16 sgpc3_measure_tvoc_and_raw_blocking_read(u16 *tvoc_ppb, u16 *ethanol_raw_signal);
+s16 sgpc3_measure_tvoc_and_raw(void);
+s16 sgpc3_read_tvoc_and_raw(u16 *tvoc_ppb, u16 *ethanol_raw_signal);
 
 s16 sgpc3_set_power_mode(u16 power_mode);
 s16 sgpc3_set_absolute_humidity(u32 absolute_humidity);

@@ -279,13 +279,13 @@ s16 sgpc3_measure_test(u16 *test_result) {
 
 
 /**
- * sgpc3_measure_iaq() - Measure IAQ values async
+ * sgpc3_measure_tvoc() - Measure tVOC values async
  *
- * The profile is executed asynchronously. Use sgpc3_read_iaq to get the values.
+ * The profile is executed asynchronously. Use sgpc3_read_tvoc to get the values.
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_measure_iaq() {
+s16 sgpc3_measure_tvoc() {
     const struct sgp_profile *profile;
     s16 ret;
 
@@ -304,16 +304,16 @@ s16 sgpc3_measure_iaq() {
 
 
 /**
- * sgpc3_read_iaq() - Read IAQ values async
+ * sgpc3_read_tvoc() - Read tVOC values async
  *
- * Read the IAQ values. This command can only be exectued after a measurement
- * has started with sgpc3_measure_iaq and is finished.
+ * Read the tVOC values. This command can only be exectued after a measurement
+ * has started with sgpc3_measure_tvoc and is finished.
  *
  * @tvoc_ppb:   The tVOC ppb value will be written to this location
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_read_iaq(u16 *tvoc_ppb) {
+s16 sgpc3_read_tvoc(u16 *tvoc_ppb) {
     const struct sgp_profile *profile;
     s16 ret;
 
@@ -332,7 +332,7 @@ s16 sgpc3_read_iaq(u16 *tvoc_ppb) {
 
 
 /**
- * sgpc3_measure_iaq_blocking_read() - Measure tVOC concentration
+ * sgpc3_measure_tvoc_blocking_read() - Measure tVOC concentration
  *
  * @tvoc_ppb:   The tVOC ppb value will be written to this location
  *
@@ -340,7 +340,7 @@ s16 sgpc3_read_iaq(u16 *tvoc_ppb) {
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_measure_iaq_blocking_read(u16 *tvoc_ppb) {
+s16 sgpc3_measure_tvoc_blocking_read(u16 *tvoc_ppb) {
     s16 ret;
 
     ret = sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_MEASURE);
@@ -354,77 +354,37 @@ s16 sgpc3_measure_iaq_blocking_read(u16 *tvoc_ppb) {
 
 
 /**
- * sgpc3_measure_tvoc() - Measure tVOC concentration async
+ * sgpc3_measure_raw_blocking_read() - Measure raw signals
+ * The profile is executed synchronously.
  *
- * The profile is executed asynchronously. Use sgpc3_read_tvoc to get the
- * ppb value.
- *
- * Return:  STATUS_OK on success, an error code otherwise
- */
-s16 sgpc3_measure_tvoc() {
-    return sgpc3_measure_iaq();
-}
-
-
-/**
- * sgpc3_read_tvoc() - Read tVOC concentration async
- *
- * Read the tVOC value. This command can only be exectued after a measurement
- * has started with sgpc3_measure_tvoc and is finished.
- *
- * @tvoc_ppb:   The tVOC ppb value will be written to this location
+ * @ethanol_raw_signal: Output variable for the ethanol raw signal
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_read_tvoc(u16 *tvoc_ppb) {
-    return sgpc3_read_iaq(tvoc_ppb);
-}
-
-
-/**
- * sgpc3_measure_tvoc_blocking_read() - Measure tVOC concentration
- *
- * The profile is executed synchronously.
- *
- * Return:  tVOC concentration in ppb. Negative if it fails.
- */
-s16 sgpc3_measure_tvoc_blocking_read(u16 *tvoc_ppb) {
-    return sgpc3_measure_iaq_blocking_read(tvoc_ppb);
-}
-
-
-/**
- * sgpc3_measure_signals_blocking_read() - Measure signals
- * The profile is executed synchronously.
- *
- * @ethanol_signal: Output variable for the ethanol signal
- *
- * Return:      STATUS_OK on success, an error code otherwise
- */
-s16 sgpc3_measure_signals_blocking_read(u16 *ethanol_signal) {
-    s16 ret = sgpc3_run_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
+s16 sgpc3_measure_raw_blocking_read(u16 *ethanol_raw_signal) {
+    s16 ret = sgpc3_run_profile_by_number(PROFILE_NUMBER_MEASURE_RAW_SIGNALS);
     if (ret != STATUS_OK)
         return ret;
 
-    *ethanol_signal = client_data.buffer.words[0];
+    *ethanol_raw_signal = client_data.buffer.words[0];
 
     return STATUS_OK;
 }
 
 
 /**
- * sgpc3_measure_signals() - Measure signals async
+ * sgpc3_measure_raw() - Measure raw signals async
  *
- * The profile is executed asynchronously. Use sgpc3_read_signals to get
+ * The profile is executed asynchronously. Use sgpc3_read_raw to get
  * the signal values.
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_measure_signals(void) {
+s16 sgpc3_measure_raw(void) {
     const struct sgp_profile *profile;
     s16 ret;
 
-    profile = sgpc3_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
+    profile = sgpc3_get_profile_by_number(PROFILE_NUMBER_MEASURE_RAW_SIGNALS);
     if (profile == NULL)
         return STATUS_FAIL;
 
@@ -439,19 +399,19 @@ s16 sgpc3_measure_signals(void) {
 
 
 /**
- * sgpc3_read_signals() - Read signals async
+ * sgpc3_read_raw() - Read raw signals async
  * This command can only be exectued after a measurement has been started with
- * sgpc3_measure_signals and has finished.
+ * sgpc3_measure_raw and has finished.
  *
- * @ethanol_signal: Output variable for ethanol signal.
+ * @ethanol_raw_signal: Output variable for ethanol signal.
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_read_signals(u16 *ethanol_signal) {
+s16 sgpc3_read_raw(u16 *ethanol_raw_signal) {
     const struct sgp_profile *profile;
     s16 ret;
 
-    profile = sgpc3_get_profile_by_number(PROFILE_NUMBER_MEASURE_SIGNALS);
+    profile = sgpc3_get_profile_by_number(PROFILE_NUMBER_MEASURE_RAW_SIGNALS);
     if (profile == NULL)
         return STATUS_FAIL;
 
@@ -459,22 +419,22 @@ s16 sgpc3_read_signals(u16 *ethanol_signal) {
     if (ret != STATUS_OK)
         return ret;
 
-    *ethanol_signal = client_data.buffer.words[0];
+    *ethanol_raw_signal = client_data.buffer.words[0];
 
     return STATUS_OK;
 }
 
 
 /**
- * sgpc3_measure_raw_blocking_read() - Measure tvoc and signals
+ * sgpc3_measure_tvoc_and_raw_blocking_read() - Measure tvoc and raw signals
  * The profile is executed synchronously.
  *
- * @tvoc_ppb:              The tVOC ppb value will be written to this location
- * @ethanol_signal: Output variable for the ethanol signal
+ * @tvoc_ppb:           The tVOC ppb value will be written to this location
+ * @ethanol_raw_signal: Output variable for the ethanol raw signal
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_measure_raw_blocking_read(u16 *tvoc_ppb, u16 *ethanol_signal) {
+s16 sgpc3_measure_tvoc_and_raw_blocking_read(u16 *tvoc_ppb, u16 *ethanol_raw_signal) {
     s16 ret;
 
     ret = sgpc3_run_profile_by_number(PROFILE_NUMBER_MEASURE_RAW);
@@ -482,21 +442,21 @@ s16 sgpc3_measure_raw_blocking_read(u16 *tvoc_ppb, u16 *ethanol_signal) {
         return ret;
 
     *tvoc_ppb = client_data.buffer.words[0];
-    *ethanol_signal = client_data.buffer.words[1];
+    *ethanol_raw_signal = client_data.buffer.words[1];
 
     return STATUS_OK;
 }
 
 
 /**
- * sgpc3_measure_raw() - Measure raw async
+ * sgpc3_measure_tvoc_and_raw() - Measure raw async
  *
- * The profile is executed asynchronously. Use sgpc3_read_raw to get
- * the tvoc and signal values.
+ * The profile is executed asynchronously. Use sgpc3_read_tvoc_and_raw to get
+ * the tvoc and raw signal values.
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_measure_raw() {
+s16 sgpc3_measure_tvoc_and_raw() {
     const struct sgp_profile *profile;
     s16 ret;
 
@@ -515,16 +475,16 @@ s16 sgpc3_measure_raw() {
 
 
 /**
- * sgpc3_read_raw() - Read tvoc and signals async
+ * sgpc3_read_tvoc_and_raw() - Read tvoc and raw signals async
  * This command can only be exectued after a measurement has been started with
- * sgpc3_measure_raw and has finished.
+ * sgpc3_measure_tvoc_and_raw and has finished.
  *
- * @tvoc_ppb:              The tVOC ppb value will be written to this location
- * @ethanol_signal: Output variable for ethanol signal.
+ * @tvoc_ppb:           The tVOC ppb value will be written to this location
+ * @ethanol_raw_signal: Output variable for ethanol raw signal.
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_read_raw(u16 *tvoc_ppb, u16 *ethanol_signal) {
+s16 sgpc3_read_tvoc_and_raw(u16 *tvoc_ppb, u16 *ethanol_raw_signal) {
     const struct sgp_profile *profile;
     s16 ret;
 
@@ -537,7 +497,7 @@ s16 sgpc3_read_raw(u16 *tvoc_ppb, u16 *ethanol_signal) {
         return ret;
 
     *tvoc_ppb = client_data.buffer.words[0];
-    *ethanol_signal = client_data.buffer.words[1];
+    *ethanol_raw_signal = client_data.buffer.words[1];
 
     return STATUS_OK;
 }
