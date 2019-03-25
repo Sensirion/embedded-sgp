@@ -99,11 +99,18 @@ int main(void) {
      * (A) If no baseline is available or the most recent baseline is more than
      *     one week old, it must discarded. A new baseline is found with
      *     sgpc3_iaq_init_continuous() */
-    err = sgpc3_iaq_init_continuous();
-    if (err == STATUS_OK) {
-        printf("sgpc3_iaq_init_continuous done\n");
+    if (feature_set_version >= 0x06) {
+        err = sgpc3_iaq_init_continuous();
+        /* IMPLEMENT: sleep for the desired accelerated warm-up duration */
+        sleep(64);
     } else {
-        printf("sgpc3_iaq_init_continuous failed!\n");
+        /* feature sets older than 0x06 do not support iaq_init_continuous */
+        err = sgpc3_iaq_init64();
+    }
+    if (err == STATUS_OK) {
+        printf("Init done\n");
+    } else {
+        printf("Init failed!\n");
     }
 
     /* (B) If a recent baseline is available, set it after
@@ -111,9 +118,6 @@ int main(void) {
     /* IMPLEMENT: retrieve iaq_baseline from presistent storage;
      * err = sgpc3_set_iaq_baseline(iaq_baseline);
      */
-
-    /* IMPLEMENT: sleep for the desired accelerated warm-up duration */
-    sleep(64);
 
     /* Run periodic tVOC measurements at defined intervals */
     while (1) {
