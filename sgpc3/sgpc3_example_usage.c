@@ -85,7 +85,7 @@ int main(void) {
      * without saving the baseline before the call and
      * restoring it after with sgpc3_get_tvoc_baseline / sgpc3_set_tvoc_baseline.
      * If a recent baseline is not available, reset it using
-     * sgpc3_iaq_init_continuous prior to running tVOC measurements.  */
+     * sgpc3_tvoc_init_preheat prior to running tVOC measurements. */
     err = sgpc3_measure_raw_blocking_read(&ethanol_raw_signal);
 
     if (err == STATUS_OK) {
@@ -98,13 +98,13 @@ int main(void) {
     /* Consider the two cases (A) and (B):
      * (A) If no baseline is available or the most recent baseline is more than
      *     one week old, it must discarded. A new baseline is found with
-     *     sgpc3_iaq_init_continuous() */
+     *     sgpc3_tvoc_init_preheat() */
     if (feature_set_version >= 0x06) {
         err = sgpc3_tvoc_init_preheat();
         /* IMPLEMENT: sleep for the desired accelerated warm-up duration */
         sleep(64);
     } else {
-        /* feature sets older than 0x06 do not support iaq_init_continuous */
+        /* feature sets older than 0x06 do not support tvoc_init_preheat */
         err = sgpc3_tvoc_init_64s_fs5();
     }
     if (err == STATUS_OK) {
@@ -114,7 +114,7 @@ int main(void) {
     }
 
     /* (B) If a recent baseline is available, set it after
-     *      sgpc3_iaq_init_continuous() for faster start-up */
+     *      sgpc3_tvoc_init_preheat() for faster start-up */
     /* IMPLEMENT: retrieve tvoc_baseline from presistent storage;
      * err = sgpc3_set_tvoc_baseline(tvoc_baseline);
      */
