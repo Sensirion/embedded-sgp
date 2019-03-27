@@ -30,13 +30,15 @@
 
 #include "sgp30.h"
 
-/* TO USE CONSOLE OUTPUT (printf) AND WAIT (sleep) PLEASE ADAPT THEM TO YOUR
- * PLATFORM.
- *
- * #include <stdio.h> // printf
- * #include <unistd.h> // sleep
- */
+#include <stdio.h> // printf
+#include <unistd.h> // sleep
+#include <inttypes.h> // PRIu64
 
+/* TO USE CONSOLE OUTPUT (printf) AND WAIT (sleep) YOU MAY NEED TO ADAPT THE
+ * INCLUDES ABOVE OR DEFINE THEM ACCORDING TO YOUR PLATFORM.
+ * #define printf(...)
+ * #define sleep(...)
+ */
 
 int main(void) {
     u16 i = 0;
@@ -45,24 +47,48 @@ int main(void) {
     u32 iaq_baseline;
     u16 ethanol_raw_signal, h2_raw_signal;
 
+    const char *driver_version = sgp30_get_driver_version();
+    if (driver_version) {
+        printf("SGP30 driver version %s\n", driver_version);
+    } else {
+        printf("fatal: Getting driver version failed\n");
+        return -1;
+    }
+
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
     while (sgp30_probe() != STATUS_OK) {
-        /* printf("SGP sensor probing failed\n"); */
-        /* sleep(1); */
+        printf("SGP sensor probing failed\n");
+        sleep(1);
     }
-    /* printf("SGP sensor probing successful\n"); */
+    printf("SGP sensor probing successful\n");
 
+    u16 feature_set_version;
+    u8 product_type;
+    err = sgp30_get_feature_set_version(&feature_set_version, &product_type);
+    if (err == STATUS_OK) {
+        printf("Feature set version: %u\n", feature_set_version);
+        printf("Product type: %u\n", product_type);
+    } else {
+        printf("sgp30_get_feature_set_version failed!\n");
+    }
+    u64 serial_id;
+    err = sgp30_get_serial_id(&serial_id);
+    if (err == STATUS_OK) {
+        printf("SerialID: %" PRIu64 "\n", serial_id);
+    } else {
+        printf("sgp30_get_serial_id failed!\n");
+    }
 
     /* Read gas raw signals */
     err = sgp30_measure_raw_blocking_read(&ethanol_raw_signal,
                                           &h2_raw_signal);
     if (err == STATUS_OK) {
         /* Print ethanol raw signal and h2 raw signal */
-        /* printf("Ethanol raw signal: %u\n", ethanol_raw_signal); */
-        /* printf("H2 raw signal: %u\n", h2_raw_signal); */
+        printf("Ethanol raw signal: %u\n", ethanol_raw_signal);
+        printf("H2 raw signal: %u\n", h2_raw_signal);
     } else {
-        /* printf("error reading raw signals\n"); */
+        printf("error reading raw signals\n");
     }
 
 
@@ -71,6 +97,11 @@ int main(void) {
      *     one week old, it must discarded. A new baseline is found with
      *     sgp30_iaq_init() */
     err = sgp30_iaq_init();
+    if (err == STATUS_OK) {
+        printf("sgp30_iaq_init done\n");
+    } else {
+        printf("sgp30_iaq_init failed!\n");
+    }
     /* (B) If a recent baseline is available, set it after sgp30_iaq_init() for
      * faster start-up */
     /* IMPLEMENT: retrieve iaq_baseline from presistent storage;
@@ -87,11 +118,10 @@ int main(void) {
 
         err = sgp30_measure_iaq_blocking_read(&tvoc_ppb, &co2_eq_ppm);
         if (err == STATUS_OK) {
-            /* printf("tVOC  Concentration: %dppb\n", tvoc_ppb);
-             * printf("CO2eq Concentration: %dppm\n", co2_eq_ppm);
-             */
+            printf("tVOC  Concentration: %dppb\n", tvoc_ppb);
+            printf("CO2eq Concentration: %dppm\n", co2_eq_ppm);
         } else {
-            /* printf("error reading IAQ values\n"); */
+            printf("error reading IAQ values\n");
         }
 
         /* Persist the current baseline every hour */
@@ -105,7 +135,7 @@ int main(void) {
         /* The IAQ measurement must be triggered exactly once per second (SGP30)
          * to get accurate values.
          */
-        /* sleep(1); // SGP30 */
+        sleep(1); // SGP30
     }
     return 0;
 }

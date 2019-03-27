@@ -30,13 +30,15 @@
 
 #include "sgpc3.h"
 
-/* TO USE CONSOLE OUTPUT (printf) AND WAIT (sleep) PLEASE ADAPT THEM TO YOUR
- * PLATFORM.
- *
- * #include <stdio.h> // printf
- * #include <unistd.h> // sleep
- */
+#include <stdio.h> // printf
+#include <unistd.h> // sleep
+#include <inttypes.h> // PRIu64
 
+/* TO USE CONSOLE OUTPUT (printf) AND WAIT (sleep) YOU MAY NEED TO ADAPT THE
+ * INCLUDES ABOVE OR DEFINE THEM ACCORDING TO YOUR PLATFORM.
+ * #define printf(...)
+ * #define sleep(...)
+ */
 
 int main(void) {
     u16 i = 0;
@@ -45,14 +47,38 @@ int main(void) {
     u16 iaq_baseline;
     u16 ethanol_raw_signal;
 
+    const char *driver_version = sgpc3_get_driver_version();
+    if (driver_version) {
+        printf("SGPC3 driver version %s\n", driver_version);
+    } else {
+        printf("fatal: Getting driver version failed\n");
+        return -1;
+    }
+
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
     while (sgpc3_probe() != STATUS_OK) {
-        /* printf("SGP sensor probing failed\n"); */
-        /* sleep(1); */
+        printf("SGP sensor probing failed\n");
+        sleep(1);
     }
-    /* printf("SGP sensor probing successful\n"); */
+    printf("SGP sensor probing successful\n");
 
+    u16 feature_set_version;
+    u8 product_type;
+    err = sgpc3_get_feature_set_version(&feature_set_version, &product_type);
+    if (err == STATUS_OK) {
+        printf("Feature set version: %u\n", feature_set_version);
+        printf("Product type: %u\n", product_type);
+    } else {
+        printf("sgpc3_get_feature_set_version failed!\n");
+    }
+    u64 serial_id;
+    err = sgpc3_get_serial_id(&serial_id);
+    if (err == STATUS_OK) {
+        printf("SerialID: %" PRIu64 "\n", serial_id);
+    } else {
+        printf("sgpc3_get_serial_id failed!\n");
+    }
 
     /* Read raw signals.
      * Do not run measure_raw between tVOC measurements
@@ -64,32 +90,42 @@ int main(void) {
 
     if (err == STATUS_OK) {
         /* Print raw ethanol signal */
-        /* printf("Ethanol raw signal: %u\n", ethanol_raw_signal); */
+        printf("Ethanol raw signal: %u\n", ethanol_raw_signal);
     } else {
-        /* printf("error reading raw signal\n"); */
+        printf("error reading raw signal\n");
     }
 
     /* Consider the two cases (A) and (B):
      * (A) If no baseline is available or the most recent baseline is more than
      *     one week old, it must discarded. A new baseline is found with
      *     sgpc3_iaq_init_continuous() */
-    err = sgpc3_iaq_init_continuous();
+    if (feature_set_version >= 0x06) {
+        err = sgpc3_iaq_init_continuous();
+        /* IMPLEMENT: sleep for the desired accelerated warm-up duration */
+        sleep(64);
+    } else {
+        /* feature sets older than 0x06 do not support iaq_init_continuous */
+        err = sgpc3_iaq_init64();
+    }
+    if (err == STATUS_OK) {
+        printf("Init done\n");
+    } else {
+        printf("Init failed!\n");
+    }
+
     /* (B) If a recent baseline is available, set it after
      *      sgpc3_iaq_init_continuous() for faster start-up */
     /* IMPLEMENT: retrieve iaq_baseline from presistent storage;
      * err = sgpc3_set_iaq_baseline(iaq_baseline);
      */
 
-    /* IMPLEMENT: sleep for the desired accelerated warm-up duration */
-    /* sleep(64); */
-
     /* Run periodic tVOC measurements at defined intervals */
     while (1) {
         err = sgpc3_measure_tvoc_blocking_read(&tvoc_ppb);
         if (err == STATUS_OK) {
-            /* printf("tVOC  Concentration: %dppb\n", tvoc_ppb); */
+            printf("tVOC  Concentration: %dppb\n", tvoc_ppb);
         } else {
-            /* printf("error reading tVOC value\n"); */
+            printf("error reading tVOC value\n");
         }
 
         /* Persist the current baseline every hour */
@@ -103,7 +139,7 @@ int main(void) {
         /* The tVOC measurement must be triggered exactly once every two seconds
          * to get accurate values and to respect the duty cycle/power budget.
          */
-        /* sleep(2); */
+        sleep(2);
     }
     return 0;
 }
