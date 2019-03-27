@@ -44,7 +44,7 @@ int main(void) {
     u16 i = 0;
     s16 err;
     u16 tvoc_ppb;
-    u16 iaq_baseline;
+    u16 tvoc_baseline;
     u16 ethanol_raw_signal;
 
     const char *driver_version = sgpc3_get_driver_version();
@@ -83,7 +83,7 @@ int main(void) {
     /* Read raw signals.
      * Do not run measure_raw between tVOC measurements
      * without saving the baseline before the call and
-     * restoring it after with sgpc3_get_iaq_baseline / sgpc3_set_iaq_baseline.
+     * restoring it after with sgpc3_get_tvoc_baseline / sgpc3_set_tvoc_baseline.
      * If a recent baseline is not available, reset it using
      * sgpc3_iaq_init_continuous prior to running tVOC measurements.  */
     err = sgpc3_measure_raw_blocking_read(&ethanol_raw_signal);
@@ -115,8 +115,8 @@ int main(void) {
 
     /* (B) If a recent baseline is available, set it after
      *      sgpc3_iaq_init_continuous() for faster start-up */
-    /* IMPLEMENT: retrieve iaq_baseline from presistent storage;
-     * err = sgpc3_set_iaq_baseline(iaq_baseline);
+    /* IMPLEMENT: retrieve tvoc_baseline from presistent storage;
+     * err = sgpc3_set_tvoc_baseline(tvoc_baseline);
      */
 
     /* Run periodic tVOC measurements at defined intervals */
@@ -130,7 +130,7 @@ int main(void) {
 
         /* Persist the current baseline every hour */
         if (++i % 1800 == 1799) {
-            err = sgpc3_get_iaq_baseline(&iaq_baseline);
+            err = sgpc3_get_tvoc_baseline(&tvoc_baseline);
             if (err == STATUS_OK) {
                 /* IMPLEMENT: store baseline to presistent storage */
             }

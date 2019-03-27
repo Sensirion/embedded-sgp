@@ -51,8 +51,8 @@ u8 sgpc3_get_configured_address(void);
 s16 sgpc3_get_feature_set_version(u16 *feature_set_version, u8 *product_type);
 s16 sgpc3_get_serial_id(u64 *serial_id);
 
-s16 sgpc3_get_iaq_baseline(u16 *baseline);
-s16 sgpc3_set_iaq_baseline(u16 baseline);
+s16 sgpc3_get_tvoc_baseline(u16 *baseline);
+s16 sgpc3_set_tvoc_baseline(u16 baseline);
 s16 sgpc3_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline);
 
 s16 sgpc3_measure_tvoc_blocking_read(u16 *tvoc_ppb);
