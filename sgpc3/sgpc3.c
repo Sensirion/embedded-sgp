@@ -634,8 +634,8 @@ s16 sgpc3_set_absolute_humidity(u32 absolute_humidity) {
  * available.
  *
  * @power_mode: Power mode to set:
- *              0: Ultra low power mode (30s measurement interval)
- *              1: (Default) Low power mode (2s measurement interval)
+ *              0: ULP (ultra low power mode 30s measurement interval)
+ *              1: (Default) LP (low power mode 2s measurement interval)
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
@@ -730,7 +730,8 @@ s16 sgpc3_tvoc_init_no_preheat() {
  * accelerated startup time of 64s.
  *
  * Note: legacy command for old SGPC3 fs<=5: initializes algo, for only TVOC,
- * with preheating for 64s. Does not work for the ULP power mode!
+ * with preheating for 64s. Does not work for the ULP mode! See
+ * sgpc3_set_power_mode()
  *
  * Return:  STATUS_OK on success.
  */
