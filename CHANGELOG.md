@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2019-03-27
+
  * [`changed]` Rename factory baseline to inceptive baseline
  * [`changed`] Prefix all methods with `sgp30_` / `sgpc3_` instead of `sgp_`
  * [`changed`] Unify naming of measurement, initialization and baseline methods
@@ -43,7 +45,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
  * First public release
 
-[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/3.1.4...master
+[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/4.0.0...master
+[4.0.0]: https://github.com/Sensirion/embedded-sgp/compare/3.1.4...4.0.0
 [3.1.4]: https://github.com/Sensirion/embedded-sgp/compare/3.1.3...3.1.4
 [3.1.3]: https://github.com/Sensirion/embedded-sgp/compare/3.1.2...3.1.3
 [3.1.2]: https://github.com/Sensirion/embedded-sgp/compare/3.1.1...3.1.2
