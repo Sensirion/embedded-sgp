@@ -41,7 +41,7 @@
                                          (SGP_WORD_LEN + CRC8_LEN))
 #define SGP_BUFFER_WORDS                (SGP_BUFFER_SIZE / SGP_WORD_LEN)
 #define SGP_MAX_PROFILE_RET_LEN         4 * (SGP_WORD_LEN + CRC8_LEN)
-#define SGP_VALID_IAQ_BASELINE(b)       ((b) != 0)
+#define SGP_VALID_TVOC_BASELINE(b)      ((b) != 0)
 
 #ifdef SGP_ADDRESS
 static const u8 SGP_I2C_ADDRESS = SGP_ADDRESS;
@@ -503,30 +503,30 @@ s16 sgpc3_read_tvoc_and_raw(u16 *tvoc_ppb, u16 *ethanol_raw_signal) {
 }
 
 /**
- * sgpc3_get_iaq_baseline() - read out the baseline from the chip
+ * sgpc3_get_tvoc_baseline() - read out the baseline from the chip
  *
  * The IAQ baseline should be retrieved and persisted for a faster sensor
- * startup. See sgpc3_set_iaq_baseline() for further documentation.
+ * startup. See sgpc3_set_tvoc_baseline() for further documentation.
  *
  * A valid baseline value is only returned approx. 60min after a call to
- * sgpc3_iaq_init() when it is not followed by a call to sgpc3_set_iaq_baseline()
- * with a valid baseline.
+ * sgpc3_iaq_init_preheat() when it is not followed by a call to
+ * sgpc3_set_tvoc_baseline() with a valid baseline.
  * This functions returns STATUS_FAIL if the baseline value is not valid.
  *
  * @baseline:   Pointer to raw u16 where to store the baseline
  *              If the method returns STATUS_FAIL, the baseline value must be
- *              discarded and must not be passed to sgpc3_set_iaq_baseline().
+ *              discarded and must not be passed to sgpc3_set_tvoc_baseline().
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_get_iaq_baseline(u16 *baseline) {
+s16 sgpc3_get_tvoc_baseline(u16 *baseline) {
     s16 ret = sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_BASELINE);
     if (ret != STATUS_OK)
         return ret;
 
     *baseline = client_data.buffer.words[0];
 
-    if (!SGP_VALID_IAQ_BASELINE(*baseline))
+    if (!SGP_VALID_TVOC_BASELINE(*baseline))
         return STATUS_FAIL;
 
     return STATUS_OK;
@@ -534,19 +534,19 @@ s16 sgpc3_get_iaq_baseline(u16 *baseline) {
 
 
 /**
- * sgpc3_set_iaq_baseline() - set the on-chip baseline
+ * sgpc3_set_tvoc_baseline() - set the on-chip baseline
  * @baseline:   A raw u16 baseline
  *              This value must be unmodified from what was retrieved by a
- *              successful call to sgpc3_get_iaq_baseline() with return value
+ *              successful call to sgpc3_get_tvoc_baseline() with return value
  *              STATUS_OK. A persisted baseline should not be set if it is
  *              older than one week.
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_set_iaq_baseline(u16 baseline) {
+s16 sgpc3_set_tvoc_baseline(u16 baseline) {
     const struct sgp_profile *profile;
 
-    if (!SGP_VALID_IAQ_BASELINE(baseline))
+    if (!SGP_VALID_TVOC_BASELINE(baseline))
         return STATUS_FAIL;
 
     profile = sgpc3_get_profile_by_number(PROFILE_NUMBER_IAQ_SET_BASELINE);
@@ -571,7 +571,7 @@ s16 sgpc3_set_iaq_baseline(u16 baseline) {
  *              Pointer to raw u16 where to store the inceptive baseline
  *              If the method returns STATUS_FAIL, the inceptive baseline value
  *              must be discarded and must not be passed to
- *              sgpc3_set_iaq_baseline().
+ *              sgpc3_set_tvoc_baseline().
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
@@ -634,8 +634,8 @@ s16 sgpc3_set_absolute_humidity(u32 absolute_humidity) {
  * available.
  *
  * @power_mode: Power mode to set:
- *              0: Ultra low power mode (30s measurement interval)
- *              1: (Default) Low power mode (2s measurement interval)
+ *              0: ULP (ultra low power mode 30s measurement interval)
+ *              1: (Default) LP (low power mode 2s measurement interval)
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
@@ -705,71 +705,44 @@ s16 sgpc3_get_serial_id(u64 *serial_id) {
 
 
 /**
- * sgpc3_iaq_init_continuous() - reset the SGP's internal IAQ baselines and
+ * sgpc3_tvoc_init_preheat() - reset the SGP's internal TVOC baselines and
  *                             run accelerated startup until the first
  *                             sgpc3_measure_iaq()
  *
  * Return:  STATUS_OK on success.
  */
-s16 sgpc3_iaq_init_continuous() {
+s16 sgpc3_tvoc_init_preheat() {
     return sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT_CONTINUOUS);
 }
 
 /**
- * sgpc3_iaq_init() - reset the SGP's internal IAQ baselines using the default
- *                  accelerated startup time of 64s
+ * sgpc3_tvoc_init_no_preheat() - reset the SGP's internal TVOC baselines
+ * without accelerated startup time
  *
  * Return:  STATUS_OK on success.
  */
-s16 sgpc3_iaq_init() {
-    return sgpc3_iaq_init64();
-}
-
-/**
- * sgpc3_iaq_init0() - reset the SGP's internal IAQ baselines without accelerated
- *                   startup time
- *
- * Return:  STATUS_OK on success.
- */
-s16 sgpc3_iaq_init0() {
+s16 sgpc3_tvoc_init_no_preheat() {
     return sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT0);
 }
 
 /**
- * sgpc3_iaq_init16() - reset the SGP's internal IAQ baselines using accelerated
- *                    startup time of 16s
+ * sgpc3_tvoc_init_64s_fs5() - reset the SGP's internal TVOC baselines using
+ * accelerated startup time of 64s.
+ *
+ * Note: legacy command for old SGPC3 fs<=5: initializes algo, for only TVOC,
+ * with preheating for 64s. Does not work for the ULP mode! See
+ * sgpc3_set_power_mode()
  *
  * Return:  STATUS_OK on success.
  */
-s16 sgpc3_iaq_init16() {
-    return sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT16);
-}
-
-/**
- * sgpc3_iaq_init64() - reset the SGP's internal IAQ baselines using accelerated
- *                    startup time of 64s
- *
- * Return:  STATUS_OK on success.
- */
-s16 sgpc3_iaq_init64() {
+s16 sgpc3_tvoc_init_64s_fs5() {
     return sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT64);
 }
 
 /**
- * sgpc3_iaq_init184() - reset the SGP's internal IAQ baselines using accelerated
- *                     startup time of 184s
- *
- * Return:  STATUS_OK on success.
- */
-s16 sgpc3_iaq_init184() {
-    return sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT184);
-}
-
-
-/**
  * sgpc3_probe() - check if SGP sensor is available and initialize it
  *
- * This call aleady initializes the IAQ baselines (sgpc3_iaq_init())
+ * This call aleady initializes the TVOC baselines (sgpc3_tvoc_init_no_preheat())
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
@@ -809,5 +782,5 @@ s16 sgpc3_probe() {
     if (err != STATUS_OK)
         return err;
 
-    return sgpc3_iaq_init();
+    return sgpc3_tvoc_init_no_preheat();
 }
