@@ -505,11 +505,11 @@ s16 sgpc3_read_tvoc_and_raw(u16 *tvoc_ppb, u16 *ethanol_raw_signal) {
 /**
  * sgpc3_get_tvoc_baseline() - read out the baseline from the chip
  *
- * The IAQ baseline should be retrieved and persisted for a faster sensor
+ * The TVOC baseline should be retrieved and persisted for a faster sensor
  * startup. See sgpc3_set_tvoc_baseline() for further documentation.
  *
  * A valid baseline value is only returned approx. 60min after a call to
- * sgpc3_iaq_init_preheat() when it is not followed by a call to
+ * sgpc3_tvoc_init_preheat() when it is not followed by a call to
  * sgpc3_set_tvoc_baseline() with a valid baseline.
  * This functions returns STATUS_FAIL if the baseline value is not valid.
  *
@@ -626,7 +626,7 @@ s16 sgpc3_set_absolute_humidity(u32 absolute_humidity) {
 /**
  * sgpc3_set_power_mode() - set the power mode
  *
- * The measurement interval for both IAQ and ethanol measurements changes
+ * The measurement interval for both TVOC and ethanol measurements changes
  * according to the power mode. See application notes for further
  * documentation.
  *
@@ -707,7 +707,7 @@ s16 sgpc3_get_serial_id(u64 *serial_id) {
 /**
  * sgpc3_tvoc_init_preheat() - reset the SGP's internal TVOC baselines and
  *                             run accelerated startup until the first
- *                             sgpc3_measure_iaq()
+ *                             sgpc3_measure_tvoc()
  *
  * Return:  STATUS_OK on success.
  */
