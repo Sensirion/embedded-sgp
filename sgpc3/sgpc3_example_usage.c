@@ -100,12 +100,12 @@ int main(void) {
      *     one week old, it must discarded. A new baseline is found with
      *     sgpc3_iaq_init_continuous() */
     if (feature_set_version >= 0x06) {
-        err = sgpc3_iaq_init_continuous();
+        err = sgpc3_tvoc_init_preheat();
         /* IMPLEMENT: sleep for the desired accelerated warm-up duration */
         sleep(64);
     } else {
         /* feature sets older than 0x06 do not support iaq_init_continuous */
-        err = sgpc3_iaq_init64();
+        err = sgpc3_tvoc_init_64s_fs5();
     }
     if (err == STATUS_OK) {
         printf("Init done\n");

@@ -509,8 +509,8 @@ s16 sgpc3_read_tvoc_and_raw(u16 *tvoc_ppb, u16 *ethanol_raw_signal) {
  * startup. See sgpc3_set_tvoc_baseline() for further documentation.
  *
  * A valid baseline value is only returned approx. 60min after a call to
- * sgpc3_iaq_init() when it is not followed by a call to sgpc3_set_tvoc_baseline()
- * with a valid baseline.
+ * sgpc3_iaq_init_preheat() when it is not followed by a call to
+ * sgpc3_set_tvoc_baseline() with a valid baseline.
  * This functions returns STATUS_FAIL if the baseline value is not valid.
  *
  * @baseline:   Pointer to raw u16 where to store the baseline
@@ -705,71 +705,43 @@ s16 sgpc3_get_serial_id(u64 *serial_id) {
 
 
 /**
- * sgpc3_iaq_init_continuous() - reset the SGP's internal IAQ baselines and
+ * sgpc3_tvoc_init_preheat() - reset the SGP's internal TVOC baselines and
  *                             run accelerated startup until the first
  *                             sgpc3_measure_iaq()
  *
  * Return:  STATUS_OK on success.
  */
-s16 sgpc3_iaq_init_continuous() {
+s16 sgpc3_tvoc_init_preheat() {
     return sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT_CONTINUOUS);
 }
 
 /**
- * sgpc3_iaq_init() - reset the SGP's internal IAQ baselines using the default
- *                  accelerated startup time of 64s
+ * sgpc3_tvoc_init_no_preheat() - reset the SGP's internal TVOC baselines
+ * without accelerated startup time
  *
  * Return:  STATUS_OK on success.
  */
-s16 sgpc3_iaq_init() {
-    return sgpc3_iaq_init64();
-}
-
-/**
- * sgpc3_iaq_init0() - reset the SGP's internal IAQ baselines without accelerated
- *                   startup time
- *
- * Return:  STATUS_OK on success.
- */
-s16 sgpc3_iaq_init0() {
+s16 sgpc3_tvoc_init_no_preheat() {
     return sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT0);
 }
 
 /**
- * sgpc3_iaq_init16() - reset the SGP's internal IAQ baselines using accelerated
- *                    startup time of 16s
+ * sgpc3_tvoc_init_64s_fs5() - reset the SGP's internal TVOC baselines using
+ * accelerated startup time of 64s.
+ *
+ * Note: legacy command for old SGPC3 fs<=5: initializes algo, for only TVOC,
+ * with preheating for 64s. Does not work for the ULP power mode!
  *
  * Return:  STATUS_OK on success.
  */
-s16 sgpc3_iaq_init16() {
-    return sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT16);
-}
-
-/**
- * sgpc3_iaq_init64() - reset the SGP's internal IAQ baselines using accelerated
- *                    startup time of 64s
- *
- * Return:  STATUS_OK on success.
- */
-s16 sgpc3_iaq_init64() {
+s16 sgpc3_tvoc_init_64s_fs5() {
     return sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT64);
 }
 
 /**
- * sgpc3_iaq_init184() - reset the SGP's internal IAQ baselines using accelerated
- *                     startup time of 184s
- *
- * Return:  STATUS_OK on success.
- */
-s16 sgpc3_iaq_init184() {
-    return sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT184);
-}
-
-
-/**
  * sgpc3_probe() - check if SGP sensor is available and initialize it
  *
- * This call aleady initializes the IAQ baselines (sgpc3_iaq_init())
+ * This call aleady initializes the TVOC baselines (sgpc3_tvoc_init_no_preheat())
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
@@ -809,5 +781,5 @@ s16 sgpc3_probe() {
     if (err != STATUS_OK)
         return err;
 
-    return sgpc3_iaq_init();
+    return sgpc3_tvoc_init_no_preheat();
 }

@@ -39,12 +39,9 @@ extern "C" {
 #endif
 
 s16 sgpc3_probe(void);
-s16 sgpc3_iaq_init(void);
-s16 sgpc3_iaq_init0(void);
-s16 sgpc3_iaq_init16(void);
-s16 sgpc3_iaq_init64(void);
-s16 sgpc3_iaq_init184(void);
-s16 sgpc3_iaq_init_continuous(void);
+s16 sgpc3_tvoc_init_preheat(void);
+s16 sgpc3_tvoc_init_no_preheat(void);
+s16 sgpc3_tvoc_init_64s_fs5(void);
 
 const char *sgpc3_get_driver_version(void);
 u8 sgpc3_get_configured_address(void);
