@@ -18,30 +18,29 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "sgp30.h"
 #include "sensirion_arch_config.h"
-#include "sensirion_i2c.h"
 #include "sensirion_common.h"
+#include "sensirion_i2c.h"
 #include "sgp_featureset.h"
 #include "sgp_git_version.h"
-#include "sgp30.h"
 
-
-#define SGP_RAM_WORDS                   4
-#define SGP_BUFFER_SIZE                 ((SGP_RAM_WORDS + 2) * \
-                                         (SGP_WORD_LEN + CRC8_LEN))
-#define SGP_BUFFER_WORDS                (SGP_BUFFER_SIZE / SGP_WORD_LEN)
-#define SGP_MAX_PROFILE_RET_LEN         4 * (SGP_WORD_LEN + CRC8_LEN)
-#define SGP_VALID_IAQ_BASELINE(b)       ((b) != 0)
+#define SGP_RAM_WORDS 4
+#define SGP_BUFFER_SIZE ((SGP_RAM_WORDS + 2) * (SGP_WORD_LEN + CRC8_LEN))
+#define SGP_BUFFER_WORDS (SGP_BUFFER_SIZE / SGP_WORD_LEN)
+#define SGP_MAX_PROFILE_RET_LEN 4 * (SGP_WORD_LEN + CRC8_LEN)
+#define SGP_VALID_IAQ_BASELINE(b) ((b) != 0)
 
 #ifdef SGP_ADDRESS
 static const u8 SGP_I2C_ADDRESS = SGP_ADDRESS;
@@ -50,19 +49,19 @@ static const u8 SGP_I2C_ADDRESS = 0x58;
 #endif
 
 /* command and constants for reading the serial ID */
-#define SGP_CMD_GET_SERIAL_ID_DURATION_US   500
-#define SGP_CMD_GET_SERIAL_ID_WORDS         3
+#define SGP_CMD_GET_SERIAL_ID_DURATION_US 500
+#define SGP_CMD_GET_SERIAL_ID_WORDS 3
 static const u16 sgp30_cmd_get_serial_id = 0x3682;
 
 /* command and constants for reading the featureset version */
-#define SGP_CMD_GET_FEATURESET_DURATION_US  1000
-#define SGP_CMD_GET_FEATURESET_WORDS        1
+#define SGP_CMD_GET_FEATURESET_DURATION_US 1000
+#define SGP_CMD_GET_FEATURESET_WORDS 1
 static const u16 sgp30_cmd_get_featureset = 0x202f;
 
 /* command and constants for on-chip self-test */
-#define SGP_CMD_MEASURE_TEST_DURATION_US    220000
-#define SGP_CMD_MEASURE_TEST_WORDS          1
-#define SGP_CMD_MEASURE_TEST_OK             0xd400
+#define SGP_CMD_MEASURE_TEST_DURATION_US 220000
+#define SGP_CMD_MEASURE_TEST_WORDS 1
+#define SGP_CMD_MEASURE_TEST_OK 0xd400
 static const u16 sgp30_cmd_measure_test = 0x2032;
 
 static const struct sgp_otp_featureset sgp30_features_unknown = {
@@ -70,10 +69,7 @@ static const struct sgp_otp_featureset sgp30_features_unknown = {
     .number_of_profiles = 0,
 };
 
-enum sgp30_state_code {
-    WAIT_STATE,
-    MEASURING_PROFILE_STATE
-};
+enum sgp30_state_code { WAIT_STATE, MEASURING_PROFILE_STATE };
 
 struct sgp30_info {
     u64 serial_id;
@@ -89,7 +85,6 @@ static struct sgp30_data {
         u64 u64_value;
     } buffer;
 } client_data;
-
 
 /**
  * unpack_signals() - unpack signals which are stored in
@@ -149,7 +144,6 @@ static s16 read_measurement(const struct sgp_profile *profile) {
     }
 }
 
-
 /**
  * sgp30_run_profile() - run a profile and read write its return to client_data
  * @profile     A pointer to the profile
@@ -174,7 +168,6 @@ static s16 sgp30_run_profile(const struct sgp_profile *profile) {
     return STATUS_OK;
 }
 
-
 /**
  * sgp30_get_profile_by_number() - get a profile by its identifier number
  * @number      The number that identifies the profile
@@ -198,7 +191,6 @@ static const struct sgp_profile *sgp30_get_profile_by_number(u16 number) {
     return profile;
 }
 
-
 /**
  * sgp30_run_profile_by_number() - run a profile by its identifier number
  * @number:     The number that identifies the profile
@@ -215,7 +207,6 @@ static s16 sgp30_run_profile_by_number(u16 number) {
     return sgp30_run_profile(profile);
 }
 
-
 /**
  * sgp30_detect_featureset_version() - extracts the featureset and initializes
  *                                   client_data.
@@ -231,11 +222,15 @@ static s16 sgp30_detect_featureset_version(u16 *featureset) {
 
     client_data.info.feature_set_version = feature_set_version;
     client_data.otp_features = &sgp30_features_unknown;
-    for (i = 0; i < sgp_supported_featuresets.number_of_supported_featuresets; ++i) {
+    for (i = 0; i < sgp_supported_featuresets.number_of_supported_featuresets;
+         ++i) {
         sgp30_featureset = sgp_supported_featuresets.featuresets[i];
-        for (j = 0; j < sgp30_featureset->number_of_supported_featureset_versions; ++j) {
-            if (SGP_FS_COMPAT(feature_set_version,
-                              sgp30_featureset->supported_featureset_versions[j])) {
+        for (j = 0;
+             j < sgp30_featureset->number_of_supported_featureset_versions;
+             ++j) {
+            if (SGP_FS_COMPAT(
+                    feature_set_version,
+                    sgp30_featureset->supported_featureset_versions[j])) {
                 client_data.otp_features = sgp30_featureset;
                 return STATUS_OK;
             }
@@ -243,7 +238,6 @@ static s16 sgp30_detect_featureset_version(u16 *featureset) {
     }
     return STATUS_FAIL;
 }
-
 
 /**
  * sgp30_measure_test() - Run the on-chip self-test
@@ -263,10 +257,10 @@ s16 sgp30_measure_test(u16 *test_result) {
 
     *test_result = 0;
 
-    ret = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS, sgp30_cmd_measure_test,
-                                         SGP_CMD_MEASURE_TEST_DURATION_US,
-                                         measure_test_word_buf,
-                                         SENSIRION_NUM_WORDS(measure_test_word_buf));
+    ret = sensirion_i2c_delayed_read_cmd(
+        SGP_I2C_ADDRESS, sgp30_cmd_measure_test,
+        SGP_CMD_MEASURE_TEST_DURATION_US, measure_test_word_buf,
+        SENSIRION_NUM_WORDS(measure_test_word_buf));
     if (ret != STATUS_OK)
         return ret;
 
@@ -276,7 +270,6 @@ s16 sgp30_measure_test(u16 *test_result) {
 
     return STATUS_FAIL;
 }
-
 
 /**
  * sgp30_measure_iaq() - Measure IAQ values async
@@ -301,7 +294,6 @@ s16 sgp30_measure_iaq() {
 
     return STATUS_OK;
 }
-
 
 /**
  * sgp30_read_iaq() - Read IAQ values async
@@ -332,7 +324,6 @@ s16 sgp30_read_iaq(u16 *tvoc_ppb, u16 *co2_eq_ppm) {
     return STATUS_OK;
 }
 
-
 /**
  * sgp30_measure_iaq_blocking_read() - Measure IAQ concentrations tVOC, CO2-Eq.
  *
@@ -356,7 +347,6 @@ s16 sgp30_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm) {
     return STATUS_OK;
 }
 
-
 /**
  * sgp30_measure_tvoc() - Measure tVOC concentration async
  *
@@ -368,7 +358,6 @@ s16 sgp30_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm) {
 s16 sgp30_measure_tvoc() {
     return sgp30_measure_iaq();
 }
-
 
 /**
  * sgp30_read_tvoc() - Read tVOC concentration async
@@ -385,7 +374,6 @@ s16 sgp30_read_tvoc(u16 *tvoc_ppb) {
     return sgp30_read_iaq(tvoc_ppb, &co2_eq_ppm);
 }
 
-
 /**
  * sgp30_measure_tvoc_blocking_read() - Measure tVOC concentration
  *
@@ -398,7 +386,6 @@ s16 sgp30_measure_tvoc_blocking_read(u16 *tvoc_ppb) {
     return sgp30_measure_iaq_blocking_read(tvoc_ppb, &co2_eq_ppm);
 }
 
-
 /**
  * sgp30_measure_co2_eq() - Measure tVOC concentration async
  *
@@ -410,7 +397,6 @@ s16 sgp30_measure_tvoc_blocking_read(u16 *tvoc_ppb) {
 s16 sgp30_measure_co2_eq() {
     return sgp30_measure_iaq();
 }
-
 
 /**
  * sgp30_read_co2_eq() - Read CO2-Equivalent concentration async
@@ -427,7 +413,6 @@ s16 sgp30_read_co2_eq(u16 *co2_eq_ppm) {
     return sgp30_read_iaq(&tvoc_ppb, co2_eq_ppm);
 }
 
-
 /**
  * sgp30_measure_co2_eq_blocking_read() - Measure CO2-Equivalent concentration
  *
@@ -440,7 +425,6 @@ s16 sgp30_measure_co2_eq_blocking_read(u16 *co2_eq_ppm) {
     return sgp30_measure_iaq_blocking_read(&tvoc_ppb, co2_eq_ppm);
 }
 
-
 /**
  * sgp30_measure_raw_blocking_read() - Measure raw signals
  * The profile is executed synchronously.
@@ -450,7 +434,8 @@ s16 sgp30_measure_co2_eq_blocking_read(u16 *co2_eq_ppm) {
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgp30_measure_raw_blocking_read(u16 *ethanol_raw_signal, u16 *h2_raw_signal) {
+s16 sgp30_measure_raw_blocking_read(u16 *ethanol_raw_signal,
+                                    u16 *h2_raw_signal) {
     s16 ret;
 
     ret = sgp30_run_profile_by_number(PROFILE_NUMBER_MEASURE_RAW_SIGNALS);
@@ -462,7 +447,6 @@ s16 sgp30_measure_raw_blocking_read(u16 *ethanol_raw_signal, u16 *h2_raw_signal)
 
     return STATUS_OK;
 }
-
 
 /**
  * sgp30_measure_raw() - Measure raw signals async
@@ -488,7 +472,6 @@ s16 sgp30_measure_raw() {
 
     return STATUS_OK;
 }
-
 
 /**
  * sgp30_read_raw() - Read raw signals async
@@ -525,9 +508,9 @@ s16 sgp30_read_raw(u16 *ethanol_raw_signal, u16 *h2_raw_signal) {
  * startup. See sgp30_set_iaq_baseline() for further documentation.
  *
  * A valid baseline value is only returned approx. 60min after a call to
- * sgp30_iaq_init() when it is not followed by a call to sgp30_set_iaq_baseline()
- * with a valid baseline.
- * This functions returns STATUS_FAIL if the baseline value is not valid.
+ * sgp30_iaq_init() when it is not followed by a call to
+ * sgp30_set_iaq_baseline() with a valid baseline. This functions returns
+ * STATUS_FAIL if the baseline value is not valid.
  *
  * @baseline:   Pointer to raw u32 where to store the baseline
  *              If the method returns STATUS_FAIL, the baseline value must be
@@ -541,14 +524,13 @@ s16 sgp30_get_iaq_baseline(u32 *baseline) {
         return ret;
 
     *baseline = (((u32)client_data.buffer.words[0]) << 16) |
-                 (u32)client_data.buffer.words[1];
+                (u32)client_data.buffer.words[1];
 
     if (!SGP_VALID_IAQ_BASELINE(*baseline))
         return STATUS_FAIL;
 
     return STATUS_OK;
 }
-
 
 /**
  * sgp30_set_iaq_baseline() - set the on-chip baseline
@@ -563,9 +545,7 @@ s16 sgp30_get_iaq_baseline(u32 *baseline) {
 s16 sgp30_set_iaq_baseline(u32 baseline) {
     const struct sgp_profile *profile;
     u16 words[SENSIRION_NUM_WORDS(baseline)] = {
-        (u16)((baseline & 0xffff0000) >> 16),
-        (u16)(baseline & 0x0000ffff)
-    };
+        (u16)((baseline & 0xffff0000) >> 16), (u16)(baseline & 0x0000ffff)};
 
     if (!SGP_VALID_IAQ_BASELINE(baseline))
         return STATUS_FAIL;
@@ -577,7 +557,6 @@ s16 sgp30_set_iaq_baseline(u32 baseline) {
     return sensirion_i2c_write_cmd_with_args(SGP_I2C_ADDRESS, profile->command,
                                              words, SENSIRION_NUM_WORDS(words));
 }
-
 
 /**
  * sgp30_get_tvoc_inceptive_baseline() - read the chip's tVOC inceptive baseline
@@ -597,7 +576,8 @@ s16 sgp30_set_iaq_baseline(u32 baseline) {
 s16 sgp30_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline) {
     s16 ret;
 
-    ret = sgp30_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE);
+    ret = sgp30_run_profile_by_number(
+        PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE);
     if (ret != STATUS_OK)
         return ret;
 
@@ -606,13 +586,12 @@ s16 sgp30_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline) {
     return STATUS_OK;
 }
 
-
 /**
  * sgp30_set_tvoc_baseline() - set the on-chip tVOC baseline
  * @baseline:   A raw u16 tVOC baseline
  *              This value must be unmodified from what was retrieved by a
- *              successful call to sgp30_get_tvoc_inceptive_baseline() with return
- *              value STATUS_OK.
+ *              successful call to sgp30_get_tvoc_inceptive_baseline() with
+ * return value STATUS_OK.
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
@@ -626,11 +605,10 @@ s16 sgp30_set_tvoc_baseline(u16 tvoc_baseline) {
     if (profile == NULL)
         return STATUS_FAIL;
 
-    return sensirion_i2c_write_cmd_with_args(SGP_I2C_ADDRESS, profile->command,
-                                             &tvoc_baseline,
-                                             SENSIRION_NUM_WORDS(tvoc_baseline));
+    return sensirion_i2c_write_cmd_with_args(
+        SGP_I2C_ADDRESS, profile->command, &tvoc_baseline,
+        SENSIRION_NUM_WORDS(tvoc_baseline));
 }
-
 
 /**
  * sgp30_set_absolute_humidity() - set the absolute humidity for compensation
@@ -666,16 +644,13 @@ s16 sgp30_set_absolute_humidity(u32 absolute_humidity) {
                                              SENSIRION_NUM_WORDS(ah_scaled));
 }
 
-
 /**
  * sgp30_get_driver_version() - Return the driver version
  * Return:  Driver version string
  */
-const char *sgp30_get_driver_version()
-{
+const char *sgp30_get_driver_version() {
     return SGP_DRV_VERSION_STR;
 }
-
 
 /**
  * sgp30_get_configured_address() - returns the configured I2C address
@@ -686,10 +661,9 @@ u8 sgp30_get_configured_address() {
     return SGP_I2C_ADDRESS;
 }
 
-
 /**
- * sgp30_get_feature_set_version() - Retrieve the sensor's feature set version and
- *                                 product type
+ * sgp30_get_feature_set_version() - Retrieve the sensor's feature set version
+ * and product type
  *
  * @feature_set_version:    The feature set version
  * @product_type:           The product type: 0 for sgp30, 1: sgpc3
@@ -701,7 +675,6 @@ s16 sgp30_get_feature_set_version(u16 *feature_set_version, u8 *product_type) {
     *product_type = (u8)((client_data.info.feature_set_version & 0xF000) >> 12);
     return STATUS_OK;
 }
-
 
 /**
  * sgp30_get_serial_id() - Retrieve the sensor's serial id
@@ -715,7 +688,6 @@ s16 sgp30_get_serial_id(u64 *serial_id) {
     return STATUS_OK;
 }
 
-
 /**
  * sgp30_iaq_init() - reset the SGP's internal IAQ baselines
  *
@@ -724,7 +696,6 @@ s16 sgp30_get_serial_id(u64 *serial_id) {
 s16 sgp30_iaq_init() {
     return sgp30_run_profile_by_number(PROFILE_NUMBER_IAQ_INIT);
 }
-
 
 /**
  * sgp30_probe() - check if SGP sensor is available and initialize it
@@ -744,11 +715,10 @@ s16 sgp30_probe() {
     sensirion_i2c_init();
 
     /* try to read the serial ID */
-    err = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS,
-                                         sgp30_cmd_get_serial_id,
-                                         SGP_CMD_GET_SERIAL_ID_DURATION_US,
-                                         client_data.buffer.words,
-                                         SGP_CMD_GET_SERIAL_ID_WORDS);
+    err = sensirion_i2c_delayed_read_cmd(
+        SGP_I2C_ADDRESS, sgp30_cmd_get_serial_id,
+        SGP_CMD_GET_SERIAL_ID_DURATION_US, client_data.buffer.words,
+        SGP_CMD_GET_SERIAL_ID_WORDS);
     if (err != STATUS_OK)
         return err;
 
@@ -757,11 +727,10 @@ s16 sgp30_probe() {
     client_data.info.serial_id = be64_to_cpu(*serial_buf) >> 16;
 
     /* read the featureset version */
-    err = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS,
-                                         sgp30_cmd_get_featureset,
-                                         SGP_CMD_GET_FEATURESET_DURATION_US,
-                                         client_data.buffer.words,
-                                         SGP_CMD_GET_FEATURESET_WORDS);
+    err = sensirion_i2c_delayed_read_cmd(
+        SGP_I2C_ADDRESS, sgp30_cmd_get_featureset,
+        SGP_CMD_GET_FEATURESET_DURATION_US, client_data.buffer.words,
+        SGP_CMD_GET_FEATURESET_WORDS);
     if (err != STATUS_OK)
         return err;
 

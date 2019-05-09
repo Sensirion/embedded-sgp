@@ -18,21 +18,22 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "sgpc3.h"
 
-#include <stdio.h> // printf
-#include <unistd.h> // sleep
-#include <inttypes.h> // PRIu64
+#include <inttypes.h>  // PRIu64
+#include <stdio.h>     // printf
+#include <unistd.h>    // sleep
 
 /* TO USE CONSOLE OUTPUT (printf) AND WAIT (sleep) YOU MAY NEED TO ADAPT THE
  * INCLUDES ABOVE OR DEFINE THEM ACCORDING TO YOUR PLATFORM.
@@ -83,9 +84,9 @@ int main(void) {
     /* Read raw signals.
      * Do not run measure_raw between tVOC measurements
      * without saving the baseline before the call and
-     * restoring it after with sgpc3_get_tvoc_baseline / sgpc3_set_tvoc_baseline.
-     * If a recent baseline is not available, reset it using
-     * sgpc3_tvoc_init_preheat prior to running tVOC measurements. */
+     * restoring it after with sgpc3_get_tvoc_baseline /
+     * sgpc3_set_tvoc_baseline. If a recent baseline is not available, reset it
+     * using sgpc3_tvoc_init_preheat prior to running tVOC measurements. */
     err = sgpc3_measure_raw_blocking_read(&ethanol_raw_signal);
 
     if (err == STATUS_OK) {
