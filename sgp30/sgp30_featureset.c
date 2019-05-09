@@ -35,9 +35,10 @@
 #define PROFILE_NUMBER_SET_AH 12
 #define PROFILE_IAQ_SET_TVOC_BASELINE 14
 
-const u8 PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE = PROFILE_IAQ_SET_TVOC_BASELINE;
-const u8 PROFILE_NUMBER_MEASURE_RAW_SIGNALS = PROFILE_NUMBER_RAW_SIGNALS;
-const u8 PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY = PROFILE_NUMBER_SET_AH;
+const uint8_t PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE =
+    PROFILE_IAQ_SET_TVOC_BASELINE;
+const uint8_t PROFILE_NUMBER_MEASURE_RAW_SIGNALS = PROFILE_NUMBER_RAW_SIGNALS;
+const uint8_t PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY = PROFILE_NUMBER_SET_AH;
 
 static const struct sgp_signal ETHANOL_SIGNAL_FS9 = {
     .conversion_function = NULL,
@@ -177,28 +178,31 @@ static const struct sgp_profile *sgp_profiles33[] = {
     &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
 };
 
-static const u16 supported_featureset_versions_fs9[] = {9};
-static const u16 supported_featureset_versions_fs32[] = {0x20};
-static const u16 supported_featureset_versions_fs33[] = {0x21};
+static const uint16_t supported_featureset_versions_fs9[] = {9};
+static const uint16_t supported_featureset_versions_fs32[] = {0x20};
+static const uint16_t supported_featureset_versions_fs33[] = {0x21};
 
 static const struct sgp_otp_featureset sgp_featureset9 = {
     .profiles = sgp_profiles9,
     .number_of_profiles = ARRAY_SIZE(sgp_profiles9),
-    .supported_featureset_versions = (u16 *)supported_featureset_versions_fs9,
+    .supported_featureset_versions =
+        (uint16_t *)supported_featureset_versions_fs9,
     .number_of_supported_featureset_versions =
         ARRAY_SIZE(supported_featureset_versions_fs9)};
 
 static const struct sgp_otp_featureset sgp_featureset32 = {
     .profiles = sgp_profiles32,
     .number_of_profiles = ARRAY_SIZE(sgp_profiles32),
-    .supported_featureset_versions = (u16 *)supported_featureset_versions_fs32,
+    .supported_featureset_versions =
+        (uint16_t *)supported_featureset_versions_fs32,
     .number_of_supported_featureset_versions =
         ARRAY_SIZE(supported_featureset_versions_fs32)};
 
 static const struct sgp_otp_featureset sgp_featureset33 = {
     .profiles = sgp_profiles33,
     .number_of_profiles = ARRAY_SIZE(sgp_profiles33),
-    .supported_featureset_versions = (u16 *)supported_featureset_versions_fs33,
+    .supported_featureset_versions =
+        (uint16_t *)supported_featureset_versions_fs33,
     .number_of_supported_featureset_versions =
         ARRAY_SIZE(supported_featureset_versions_fs33)};
 

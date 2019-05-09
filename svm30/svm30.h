@@ -42,13 +42,14 @@ extern "C" {
 
 const char *svm_get_driver_version();
 
-s16 svm_probe(void);
+int16_t svm_probe(void);
 
-s16 svm_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm,
-                                  s32 *temperature, s32 *humidity);
+int16_t svm_measure_iaq_blocking_read(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm,
+                                      int32_t *temperature, int32_t *humidity);
 
-s16 svm_measure_raw_blocking_read(u16 *ethanol_raw_signal, u16 *h2_raw_signal,
-                                  s32 *temperature, s32 *humidity);
+int16_t svm_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
+                                      uint16_t *h2_raw_signal,
+                                      int32_t *temperature, int32_t *humidity);
 
 #ifdef __cplusplus
 }

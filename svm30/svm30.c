@@ -37,11 +37,11 @@
 
 #define T_LO (-20000)
 #define T_HI 70000
-static const u32 AH_LUT_100RH[] = {1078,  2364,  4849,  9383,   17243,
-                                   30264, 50983, 82785, 130048, 198277};
-static const u32 T_STEP = (T_HI - T_LO) / (ARRAY_SIZE(AH_LUT_100RH) - 1);
+static const uint32_t AH_LUT_100RH[] = {1078,  2364,  4849,  9383,   17243,
+                                        30264, 50983, 82785, 130048, 198277};
+static const uint32_t T_STEP = (T_HI - T_LO) / (ARRAY_SIZE(AH_LUT_100RH) - 1);
 
-static void svm_compensate_rht(s32 *temperature, s32 *humidity) {
+static void svm_compensate_rht(int32_t *temperature, int32_t *humidity) {
     *temperature = ((*temperature * 8225) >> 13) - 500;
     *humidity = (*humidity * 8397) >> 13;
 }
@@ -50,14 +50,14 @@ static void svm_compensate_rht(s32 *temperature, s32 *humidity) {
  * Convert relative humidity [%RH*1000] and temperature [mC] to
  * absolute humidity [mg/m^3]
  */
-static u32 sensirion_calc_absolute_humidity(const s32 *temperature,
-                                            const s32 *humidity) {
-    u32 t, i, rem, norm_humi, ret;
+static uint32_t sensirion_calc_absolute_humidity(const int32_t *temperature,
+                                                 const int32_t *humidity) {
+    uint32_t t, i, rem, norm_humi, ret;
 
     if (*humidity == 0)
         return 0;
 
-    norm_humi = ((u32)*humidity * 82) >> 13;
+    norm_humi = ((uint32_t)*humidity * 82) >> 13;
     t = *temperature - T_LO;
     i = t / T_STEP;
     rem = t % T_STEP;
@@ -93,12 +93,12 @@ const char *svm_get_driver_version() {
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-s16 svm_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm,
-                                  s32 *temperature, s32 *humidity) {
-    u32 absolute_humidity;
-    u16 sgp_feature_set;
-    u8 sgp_product_type;
-    s16 err;
+int16_t svm_measure_iaq_blocking_read(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm,
+                                      int32_t *temperature, int32_t *humidity) {
+    uint32_t absolute_humidity;
+    uint16_t sgp_feature_set;
+    uint8_t sgp_product_type;
+    int16_t err;
 
     err = sht_measure_blocking_read(temperature, humidity);
     if (err != STATUS_OK)
@@ -133,12 +133,13 @@ s16 svm_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm,
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-s16 svm_measure_raw_blocking_read(u16 *ethanol_raw_signal, u16 *h2_raw_signal,
-                                  s32 *temperature, s32 *humidity) {
-    u32 absolute_humidity;
-    u16 sgp_feature_set;
-    u8 sgp_product_type;
-    s16 err;
+int16_t svm_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
+                                      uint16_t *h2_raw_signal,
+                                      int32_t *temperature, int32_t *humidity) {
+    uint32_t absolute_humidity;
+    uint16_t sgp_feature_set;
+    uint8_t sgp_product_type;
+    int16_t err;
 
     err = sht_measure_blocking_read(temperature, humidity);
     if (err != STATUS_OK)
@@ -165,8 +166,8 @@ s16 svm_measure_raw_blocking_read(u16 *ethanol_raw_signal, u16 *h2_raw_signal,
  *
  * Return:  STATUS_OK on success.
  */
-s16 svm_probe() {
-    s16 err;
+int16_t svm_probe() {
+    int16_t err;
 
     err = sht_probe();
     if (err != STATUS_OK)
