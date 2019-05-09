@@ -18,30 +18,29 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "sgpc3.h"
 #include "sensirion_arch_config.h"
-#include "sensirion_i2c.h"
 #include "sensirion_common.h"
+#include "sensirion_i2c.h"
 #include "sgp_featureset.h"
 #include "sgp_git_version.h"
-#include "sgpc3.h"
 
-
-#define SGP_RAM_WORDS                   4
-#define SGP_BUFFER_SIZE                 ((SGP_RAM_WORDS + 2) * \
-                                         (SGP_WORD_LEN + CRC8_LEN))
-#define SGP_BUFFER_WORDS                (SGP_BUFFER_SIZE / SGP_WORD_LEN)
-#define SGP_MAX_PROFILE_RET_LEN         4 * (SGP_WORD_LEN + CRC8_LEN)
-#define SGP_VALID_TVOC_BASELINE(b)      ((b) != 0)
+#define SGP_RAM_WORDS 4
+#define SGP_BUFFER_SIZE ((SGP_RAM_WORDS + 2) * (SGP_WORD_LEN + CRC8_LEN))
+#define SGP_BUFFER_WORDS (SGP_BUFFER_SIZE / SGP_WORD_LEN)
+#define SGP_MAX_PROFILE_RET_LEN 4 * (SGP_WORD_LEN + CRC8_LEN)
+#define SGP_VALID_TVOC_BASELINE(b) ((b) != 0)
 
 #ifdef SGP_ADDRESS
 static const u8 SGP_I2C_ADDRESS = SGP_ADDRESS;
@@ -50,19 +49,19 @@ static const u8 SGP_I2C_ADDRESS = 0x58;
 #endif
 
 /* command and constants for reading the serial ID */
-#define SGP_CMD_GET_SERIAL_ID_DURATION_US   500
-#define SGP_CMD_GET_SERIAL_ID_WORDS         3
+#define SGP_CMD_GET_SERIAL_ID_DURATION_US 500
+#define SGP_CMD_GET_SERIAL_ID_WORDS 3
 static const u16 sgpc3_cmd_get_serial_id = 0x3682;
 
 /* command and constants for reading the featureset version */
-#define SGP_CMD_GET_FEATURESET_DURATION_US  1000
-#define SGP_CMD_GET_FEATURESET_WORDS        1
+#define SGP_CMD_GET_FEATURESET_DURATION_US 1000
+#define SGP_CMD_GET_FEATURESET_WORDS 1
 static const u16 sgpc3_cmd_get_featureset = 0x202f;
 
 /* command and constants for on-chip self-test */
-#define SGP_CMD_MEASURE_TEST_DURATION_US    220000
-#define SGP_CMD_MEASURE_TEST_WORDS          1
-#define SGP_CMD_MEASURE_TEST_OK             0xd400
+#define SGP_CMD_MEASURE_TEST_DURATION_US 220000
+#define SGP_CMD_MEASURE_TEST_WORDS 1
+#define SGP_CMD_MEASURE_TEST_OK 0xd400
 static const u16 sgpc3_cmd_measure_test = 0x2032;
 
 static const struct sgp_otp_featureset sgpc3_features_unknown = {
@@ -70,10 +69,7 @@ static const struct sgp_otp_featureset sgpc3_features_unknown = {
     .number_of_profiles = 0,
 };
 
-enum sgpc3_state_code {
-    WAIT_STATE,
-    MEASURING_PROFILE_STATE
-};
+enum sgpc3_state_code { WAIT_STATE, MEASURING_PROFILE_STATE };
 
 struct sgpc3_info {
     u64 serial_id;
@@ -89,7 +85,6 @@ static struct sgpc3_data {
         u64 u64_value;
     } buffer;
 } client_data;
-
 
 /**
  * unpack_signals() - unpack signals which are stored in
@@ -149,7 +144,6 @@ static s16 read_measurement(const struct sgp_profile *profile) {
     }
 }
 
-
 /**
  * sgpc3_run_profile() - run a profile and read write its return to client_data
  * @profile     A pointer to the profile
@@ -174,7 +168,6 @@ static s16 sgpc3_run_profile(const struct sgp_profile *profile) {
     return STATUS_OK;
 }
 
-
 /**
  * sgpc3_get_profile_by_number() - get a profile by its identifier number
  * @number      The number that identifies the profile
@@ -198,7 +191,6 @@ static const struct sgp_profile *sgpc3_get_profile_by_number(u16 number) {
     return profile;
 }
 
-
 /**
  * sgpc3_run_profile_by_number() - run a profile by its identifier number
  * @number:     The number that identifies the profile
@@ -215,7 +207,6 @@ static s16 sgpc3_run_profile_by_number(u16 number) {
     return sgpc3_run_profile(profile);
 }
 
-
 /**
  * sgpc3_detect_featureset_version() - extracts the featureset and initializes
  *                                   client_data.
@@ -231,11 +222,15 @@ static s16 sgpc3_detect_featureset_version(u16 *featureset) {
 
     client_data.info.feature_set_version = feature_set_version;
     client_data.otp_features = &sgpc3_features_unknown;
-    for (i = 0; i < sgp_supported_featuresets.number_of_supported_featuresets; ++i) {
+    for (i = 0; i < sgp_supported_featuresets.number_of_supported_featuresets;
+         ++i) {
         sgpc3_featureset = sgp_supported_featuresets.featuresets[i];
-        for (j = 0; j < sgpc3_featureset->number_of_supported_featureset_versions; ++j) {
-            if (SGP_FS_COMPAT(feature_set_version,
-                              sgpc3_featureset->supported_featureset_versions[j])) {
+        for (j = 0;
+             j < sgpc3_featureset->number_of_supported_featureset_versions;
+             ++j) {
+            if (SGP_FS_COMPAT(
+                    feature_set_version,
+                    sgpc3_featureset->supported_featureset_versions[j])) {
                 client_data.otp_features = sgpc3_featureset;
                 return STATUS_OK;
             }
@@ -243,7 +238,6 @@ static s16 sgpc3_detect_featureset_version(u16 *featureset) {
     }
     return STATUS_FAIL;
 }
-
 
 /**
  * sgpc3_measure_test() - Run the on-chip self-test
@@ -263,10 +257,10 @@ s16 sgpc3_measure_test(u16 *test_result) {
 
     *test_result = 0;
 
-    ret = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS, sgpc3_cmd_measure_test,
-                                         SGP_CMD_MEASURE_TEST_DURATION_US,
-                                         measure_test_word_buf,
-                                         SENSIRION_NUM_WORDS(measure_test_word_buf));
+    ret = sensirion_i2c_delayed_read_cmd(
+        SGP_I2C_ADDRESS, sgpc3_cmd_measure_test,
+        SGP_CMD_MEASURE_TEST_DURATION_US, measure_test_word_buf,
+        SENSIRION_NUM_WORDS(measure_test_word_buf));
     if (ret != STATUS_OK)
         return ret;
 
@@ -277,11 +271,11 @@ s16 sgpc3_measure_test(u16 *test_result) {
     return STATUS_FAIL;
 }
 
-
 /**
  * sgpc3_measure_tvoc() - Measure tVOC values async
  *
- * The profile is executed asynchronously. Use sgpc3_read_tvoc to get the values.
+ * The profile is executed asynchronously. Use sgpc3_read_tvoc to get the
+ * values.
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
@@ -301,7 +295,6 @@ s16 sgpc3_measure_tvoc() {
 
     return STATUS_OK;
 }
-
 
 /**
  * sgpc3_read_tvoc() - Read tVOC values async
@@ -330,7 +323,6 @@ s16 sgpc3_read_tvoc(u16 *tvoc_ppb) {
     return STATUS_OK;
 }
 
-
 /**
  * sgpc3_measure_tvoc_blocking_read() - Measure tVOC concentration
  *
@@ -352,7 +344,6 @@ s16 sgpc3_measure_tvoc_blocking_read(u16 *tvoc_ppb) {
     return STATUS_OK;
 }
 
-
 /**
  * sgpc3_measure_raw_blocking_read() - Measure raw signals
  * The profile is executed synchronously.
@@ -370,7 +361,6 @@ s16 sgpc3_measure_raw_blocking_read(u16 *ethanol_raw_signal) {
 
     return STATUS_OK;
 }
-
 
 /**
  * sgpc3_measure_raw() - Measure raw signals async
@@ -396,7 +386,6 @@ s16 sgpc3_measure_raw(void) {
 
     return STATUS_OK;
 }
-
 
 /**
  * sgpc3_read_raw() - Read raw signals async
@@ -424,7 +413,6 @@ s16 sgpc3_read_raw(u16 *ethanol_raw_signal) {
     return STATUS_OK;
 }
 
-
 /**
  * sgpc3_measure_tvoc_and_raw_blocking_read() - Measure tvoc and raw signals
  * The profile is executed synchronously.
@@ -434,7 +422,8 @@ s16 sgpc3_read_raw(u16 *ethanol_raw_signal) {
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-s16 sgpc3_measure_tvoc_and_raw_blocking_read(u16 *tvoc_ppb, u16 *ethanol_raw_signal) {
+s16 sgpc3_measure_tvoc_and_raw_blocking_read(u16 *tvoc_ppb,
+                                             u16 *ethanol_raw_signal) {
     s16 ret;
 
     ret = sgpc3_run_profile_by_number(PROFILE_NUMBER_MEASURE_RAW);
@@ -446,7 +435,6 @@ s16 sgpc3_measure_tvoc_and_raw_blocking_read(u16 *tvoc_ppb, u16 *ethanol_raw_sig
 
     return STATUS_OK;
 }
-
 
 /**
  * sgpc3_measure_tvoc_and_raw() - Measure raw async
@@ -472,7 +460,6 @@ s16 sgpc3_measure_tvoc_and_raw() {
 
     return STATUS_OK;
 }
-
 
 /**
  * sgpc3_read_tvoc_and_raw() - Read tvoc and raw signals async
@@ -532,7 +519,6 @@ s16 sgpc3_get_tvoc_baseline(u16 *baseline) {
     return STATUS_OK;
 }
 
-
 /**
  * sgpc3_set_tvoc_baseline() - set the on-chip baseline
  * @baseline:   A raw u16 baseline
@@ -558,14 +544,14 @@ s16 sgpc3_set_tvoc_baseline(u16 baseline) {
                                              SENSIRION_NUM_WORDS(baseline));
 }
 
-
 /**
  * sgpc3_get_tvoc_inceptive_baseline() - read the chip's tVOC inceptive baseline
  *
  * The inceptive baseline must only be used on the very first startup of the
  * sensor. It ensures that measured concentrations are consistent with the air
  * quality even before the first clean air event.
- * Note that the inceptive baseline is dependent on the currently set power-mode.
+ * Note that the inceptive baseline is dependent on the currently set
+ * power-mode.
  *
  * @tvoc_inceptive_baseline:
  *              Pointer to raw u16 where to store the inceptive baseline
@@ -578,7 +564,8 @@ s16 sgpc3_set_tvoc_baseline(u16 baseline) {
 s16 sgpc3_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline) {
     s16 ret;
 
-    ret = sgpc3_run_profile_by_number(PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE);
+    ret = sgpc3_run_profile_by_number(
+        PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE);
     if (ret != STATUS_OK)
         return ret;
 
@@ -586,7 +573,6 @@ s16 sgpc3_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline) {
 
     return STATUS_OK;
 }
-
 
 /**
  * sgpc3_set_absolute_humidity() - set the absolute humidity for compensation
@@ -622,7 +608,6 @@ s16 sgpc3_set_absolute_humidity(u32 absolute_humidity) {
                                              SENSIRION_NUM_WORDS(ah_scaled));
 }
 
-
 /**
  * sgpc3_set_power_mode() - set the power mode
  *
@@ -654,16 +639,13 @@ s16 sgpc3_set_power_mode(u16 power_mode) {
                                              SENSIRION_NUM_WORDS(power_mode));
 }
 
-
 /**
  * sgpc3_get_driver_version() - Return the driver version
  * Return:  Driver version string
  */
-const char *sgpc3_get_driver_version()
-{
+const char *sgpc3_get_driver_version() {
     return SGP_DRV_VERSION_STR;
 }
-
 
 /**
  * sgpc3_get_configured_address() - returns the configured I2C address
@@ -674,10 +656,9 @@ u8 sgpc3_get_configured_address() {
     return SGP_I2C_ADDRESS;
 }
 
-
 /**
- * sgpc3_get_feature_set_version() - Retrieve the sensor's feature set version and
- *                                 product type
+ * sgpc3_get_feature_set_version() - Retrieve the sensor's feature set version
+ * and product type
  *
  * @feature_set_version:    The feature set version
  * @product_type:           The product type: 0 for sgp30, 1: sgpc3
@@ -690,7 +671,6 @@ s16 sgpc3_get_feature_set_version(u16 *feature_set_version, u8 *product_type) {
     return STATUS_OK;
 }
 
-
 /**
  * sgpc3_get_serial_id() - Retrieve the sensor's serial id
  *
@@ -702,7 +682,6 @@ s16 sgpc3_get_serial_id(u64 *serial_id) {
     *serial_id = client_data.info.serial_id;
     return STATUS_OK;
 }
-
 
 /**
  * sgpc3_tvoc_init_preheat() - reset the SGP's internal TVOC baselines and
@@ -742,7 +721,8 @@ s16 sgpc3_tvoc_init_64s_fs5() {
 /**
  * sgpc3_probe() - check if SGP sensor is available and initialize it
  *
- * This call aleady initializes the TVOC baselines (sgpc3_tvoc_init_no_preheat())
+ * This call aleady initializes the TVOC baselines
+ * (sgpc3_tvoc_init_no_preheat())
  *
  * Return:  STATUS_OK on success, an error code otherwise
  */
@@ -757,11 +737,10 @@ s16 sgpc3_probe() {
     sensirion_i2c_init();
 
     /* try to read the serial ID */
-    err = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS,
-                                         sgpc3_cmd_get_serial_id,
-                                         SGP_CMD_GET_SERIAL_ID_DURATION_US,
-                                         client_data.buffer.words,
-                                         SGP_CMD_GET_SERIAL_ID_WORDS);
+    err = sensirion_i2c_delayed_read_cmd(
+        SGP_I2C_ADDRESS, sgpc3_cmd_get_serial_id,
+        SGP_CMD_GET_SERIAL_ID_DURATION_US, client_data.buffer.words,
+        SGP_CMD_GET_SERIAL_ID_WORDS);
     if (err != STATUS_OK)
         return err;
 
@@ -770,11 +749,10 @@ s16 sgpc3_probe() {
     client_data.info.serial_id = be64_to_cpu(*serial_buf) >> 16;
 
     /* read the featureset version */
-    err = sensirion_i2c_delayed_read_cmd(SGP_I2C_ADDRESS,
-                                         sgpc3_cmd_get_featureset,
-                                         SGP_CMD_GET_FEATURESET_DURATION_US,
-                                         client_data.buffer.words,
-                                         SGP_CMD_GET_FEATURESET_WORDS);
+    err = sensirion_i2c_delayed_read_cmd(
+        SGP_I2C_ADDRESS, sgpc3_cmd_get_featureset,
+        SGP_CMD_GET_FEATURESET_DURATION_US, client_data.buffer.words,
+        SGP_CMD_GET_FEATURESET_WORDS);
     if (err != STATUS_OK)
         return err;
 

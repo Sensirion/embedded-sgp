@@ -18,21 +18,22 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "sgp30.h"
 
-#include <stdio.h> // printf
-#include <unistd.h> // sleep
-#include <inttypes.h> // PRIu64
+#include <inttypes.h>  // PRIu64
+#include <stdio.h>     // printf
+#include <unistd.h>    // sleep
 
 /* TO USE CONSOLE OUTPUT (printf) AND WAIT (sleep) YOU MAY NEED TO ADAPT THE
  * INCLUDES ABOVE OR DEFINE THEM ACCORDING TO YOUR PLATFORM.
@@ -81,8 +82,7 @@ int main(void) {
     }
 
     /* Read gas raw signals */
-    err = sgp30_measure_raw_blocking_read(&ethanol_raw_signal,
-                                          &h2_raw_signal);
+    err = sgp30_measure_raw_blocking_read(&ethanol_raw_signal, &h2_raw_signal);
     if (err == STATUS_OK) {
         /* Print ethanol raw signal and h2 raw signal */
         printf("Ethanol raw signal: %u\n", ethanol_raw_signal);
@@ -90,7 +90,6 @@ int main(void) {
     } else {
         printf("error reading raw signals\n");
     }
-
 
     /* Consider the two cases (A) and (B):
      * (A) If no baseline is available or the most recent baseline is more than
@@ -111,10 +110,10 @@ int main(void) {
     /* Run periodic IAQ measurements at defined intervals */
     while (1) {
         /*
-        * IMPLEMENT: get absolute humidity to enable humidity compensation
-        * u32 ah = get_absolute_humidity(); // absolute humidity in mg/m^3
-        * sgp30_set_absolute_humidity(ah);
-        */
+         * IMPLEMENT: get absolute humidity to enable humidity compensation
+         * u32 ah = get_absolute_humidity(); // absolute humidity in mg/m^3
+         * sgp30_set_absolute_humidity(ah);
+         */
 
         err = sgp30_measure_iaq_blocking_read(&tvoc_ppb, &co2_eq_ppm);
         if (err == STATUS_OK) {
@@ -135,7 +134,7 @@ int main(void) {
         /* The IAQ measurement must be triggered exactly once per second (SGP30)
          * to get accurate values.
          */
-        sleep(1); // SGP30
+        sleep(1);  // SGP30
     }
     return 0;
 }

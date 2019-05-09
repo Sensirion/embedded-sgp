@@ -18,27 +18,27 @@
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "sensirion_common.h"
-#include "sgp_git_version.h"
 #include "sgp30.h"
 #include "sgp_featureset.h"
+#include "sgp_git_version.h"
 #include "sht.h"
 
 #define T_LO (-20000)
 #define T_HI 70000
-static const u32 AH_LUT_100RH[] = {
-    1078, 2364, 4849, 9383, 17243, 30264, 50983, 82785, 130048, 198277
-};
+static const u32 AH_LUT_100RH[] = {1078,  2364,  4849,  9383,   17243,
+                                   30264, 50983, 82785, 130048, 198277};
 static const u32 T_STEP = (T_HI - T_LO) / (ARRAY_SIZE(AH_LUT_100RH) - 1);
 
 static void svm_compensate_rht(s32 *temperature, s32 *humidity) {
@@ -70,7 +70,7 @@ static u32 sensirion_calc_absolute_humidity(const s32 *temperature,
 
     } else {
         ret = (AH_LUT_100RH[i] +
-                 ((AH_LUT_100RH[i + 1] - AH_LUT_100RH[i]) * rem / T_STEP));
+               ((AH_LUT_100RH[i + 1] - AH_LUT_100RH[i]) * rem / T_STEP));
     }
     return ret * norm_humi / 1000;
 }
@@ -79,8 +79,7 @@ static u32 sensirion_calc_absolute_humidity(const s32 *temperature,
  * svm_get_driver_version() - Return the driver version
  * Return:  Driver version string
  */
-const char *svm_get_driver_version()
-{
+const char *svm_get_driver_version() {
     return SGP_DRV_VERSION_STR;
 }
 
@@ -107,7 +106,8 @@ s16 svm_measure_iaq_blocking_read(u16 *tvoc_ppb, u16 *co2_eq_ppm,
 
     sgp30_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
     if (SGP_REQUIRE_FS(sgp_feature_set, 1, 0)) {
-        absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
+        absolute_humidity =
+            sensirion_calc_absolute_humidity(temperature, humidity);
         sgp30_set_absolute_humidity(absolute_humidity);
     }
 
@@ -146,7 +146,8 @@ s16 svm_measure_raw_blocking_read(u16 *ethanol_raw_signal, u16 *h2_raw_signal,
 
     sgp30_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
     if (SGP_REQUIRE_FS(sgp_feature_set, 1, 0)) {
-        absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
+        absolute_humidity =
+            sensirion_calc_absolute_humidity(temperature, humidity);
         sgp30_set_absolute_humidity(absolute_humidity);
     }
 
