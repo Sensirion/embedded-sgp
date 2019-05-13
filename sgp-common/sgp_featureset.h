@@ -48,16 +48,16 @@ extern "C" {
 #define PROFILE_NUMBER_IAQ_GET_BASELINE 2
 #define PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE 22
 #define PROFILE_NUMBER_IAQ_SET_BASELINE 3
-extern const u8 PROFILE_NUMBER_MEASURE_RAW_SIGNALS;
-extern const u8 PROFILE_NUMBER_MEASURE_RAW;
-extern const u8 PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY;
-extern const u8 PROFILE_NUMBER_IAQ_INIT0;
-extern const u8 PROFILE_NUMBER_IAQ_INIT16;
-extern const u8 PROFILE_NUMBER_IAQ_INIT64;
-extern const u8 PROFILE_NUMBER_IAQ_INIT184;
-extern const u8 PROFILE_NUMBER_IAQ_INIT_CONTINUOUS;
-extern const u8 PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE;
-extern const u8 PROFILE_NUMBER_SET_POWER_MODE;
+extern const uint8_t PROFILE_NUMBER_MEASURE_RAW_SIGNALS;
+extern const uint8_t PROFILE_NUMBER_MEASURE_RAW;
+extern const uint8_t PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY;
+extern const uint8_t PROFILE_NUMBER_IAQ_INIT0;
+extern const uint8_t PROFILE_NUMBER_IAQ_INIT16;
+extern const uint8_t PROFILE_NUMBER_IAQ_INIT64;
+extern const uint8_t PROFILE_NUMBER_IAQ_INIT184;
+extern const uint8_t PROFILE_NUMBER_IAQ_INIT_CONTINUOUS;
+extern const uint8_t PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE;
+extern const uint8_t PROFILE_NUMBER_SET_POWER_MODE;
 
 /**
  * Check if chip featureset is compatible with driver featureset:
@@ -80,31 +80,31 @@ extern const u8 PROFILE_NUMBER_SET_POWER_MODE;
       (((chip_fs)&0x001F) >= (minor))))
 
 struct sgp_signal {
-    u16 (*conversion_function)(u16);
+    uint16_t (*conversion_function)(uint16_t);
     char name[NAME_SIZE];
 };
 
 struct sgp_profile {
     /* expected duration of measurement, i.e., when to return for data */
-    const u32 duration_us;
+    const uint32_t duration_us;
     /* signals */
     const struct sgp_signal **signals;
-    const u16 number_of_signals;
-    const u16 command;
-    const u8 number;
+    const uint16_t number_of_signals;
+    const uint16_t command;
+    const uint8_t number;
     const char name[NAME_SIZE];
 };
 
 struct sgp_otp_featureset {
     const struct sgp_profile **profiles;
-    u16 number_of_profiles;
-    const u16 *supported_featureset_versions;
-    u16 number_of_supported_featureset_versions;
+    uint16_t number_of_profiles;
+    const uint16_t *supported_featureset_versions;
+    uint16_t number_of_supported_featureset_versions;
 };
 
 struct sgp_otp_supported_featuresets {
     const struct sgp_otp_featureset **featuresets;
-    u16 number_of_supported_featuresets;
+    uint16_t number_of_supported_featuresets;
 };
 
 extern const struct sgp_otp_supported_featuresets sgp_supported_featuresets;

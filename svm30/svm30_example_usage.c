@@ -39,11 +39,11 @@
  */
 
 int main(void) {
-    u16 i = 0;
-    s16 err;
-    u16 tvoc_ppb, co2_eq_ppm;
-    u32 iaq_baseline;
-    s32 temperature, humidity;
+    uint16_t i = 0;
+    int16_t err;
+    uint16_t tvoc_ppb, co2_eq_ppm;
+    uint32_t iaq_baseline;
+    int32_t temperature, humidity;
 
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */

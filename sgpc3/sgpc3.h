@@ -39,36 +39,38 @@
 extern "C" {
 #endif
 
-s16 sgpc3_probe(void);
-s16 sgpc3_tvoc_init_preheat(void);
-s16 sgpc3_tvoc_init_no_preheat(void);
-s16 sgpc3_tvoc_init_64s_fs5(void);
+int16_t sgpc3_probe(void);
+int16_t sgpc3_tvoc_init_preheat(void);
+int16_t sgpc3_tvoc_init_no_preheat(void);
+int16_t sgpc3_tvoc_init_64s_fs5(void);
 
 const char *sgpc3_get_driver_version(void);
-u8 sgpc3_get_configured_address(void);
-s16 sgpc3_get_feature_set_version(u16 *feature_set_version, u8 *product_type);
-s16 sgpc3_get_serial_id(u64 *serial_id);
+uint8_t sgpc3_get_configured_address(void);
+int16_t sgpc3_get_feature_set_version(uint16_t *feature_set_version,
+                                      uint8_t *product_type);
+int16_t sgpc3_get_serial_id(uint64_t *serial_id);
 
-s16 sgpc3_get_tvoc_baseline(u16 *baseline);
-s16 sgpc3_set_tvoc_baseline(u16 baseline);
-s16 sgpc3_get_tvoc_inceptive_baseline(u16 *tvoc_inceptive_baseline);
+int16_t sgpc3_get_tvoc_baseline(uint16_t *baseline);
+int16_t sgpc3_set_tvoc_baseline(uint16_t baseline);
+int16_t sgpc3_get_tvoc_inceptive_baseline(uint16_t *tvoc_inceptive_baseline);
 
-s16 sgpc3_measure_tvoc_blocking_read(u16 *tvoc_ppb);
-s16 sgpc3_measure_tvoc(void);
-s16 sgpc3_read_tvoc(u16 *tvoc_ppb);
+int16_t sgpc3_measure_tvoc_blocking_read(uint16_t *tvoc_ppb);
+int16_t sgpc3_measure_tvoc(void);
+int16_t sgpc3_read_tvoc(uint16_t *tvoc_ppb);
 
-s16 sgpc3_measure_raw_blocking_read(u16 *ethanol_raw_signal);
-s16 sgpc3_measure_raw(void);
-s16 sgpc3_read_raw(u16 *ethanol_raw_signal);
+int16_t sgpc3_measure_raw_blocking_read(uint16_t *ethanol_raw_signal);
+int16_t sgpc3_measure_raw(void);
+int16_t sgpc3_read_raw(uint16_t *ethanol_raw_signal);
 
-s16 sgpc3_measure_tvoc_and_raw_blocking_read(u16 *tvoc_ppb,
-                                             u16 *ethanol_raw_signal);
-s16 sgpc3_measure_tvoc_and_raw(void);
-s16 sgpc3_read_tvoc_and_raw(u16 *tvoc_ppb, u16 *ethanol_raw_signal);
+int16_t sgpc3_measure_tvoc_and_raw_blocking_read(uint16_t *tvoc_ppb,
+                                                 uint16_t *ethanol_raw_signal);
+int16_t sgpc3_measure_tvoc_and_raw(void);
+int16_t sgpc3_read_tvoc_and_raw(uint16_t *tvoc_ppb,
+                                uint16_t *ethanol_raw_signal);
 
-s16 sgpc3_set_power_mode(u16 power_mode);
-s16 sgpc3_set_absolute_humidity(u32 absolute_humidity);
-s16 sgpc3_measure_test(u16 *test_result);
+int16_t sgpc3_set_power_mode(uint16_t power_mode);
+int16_t sgpc3_set_absolute_humidity(uint32_t absolute_humidity);
+int16_t sgpc3_measure_test(uint16_t *test_result);
 
 #ifdef __cplusplus
 }

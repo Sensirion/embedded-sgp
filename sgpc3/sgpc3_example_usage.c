@@ -42,11 +42,11 @@
  */
 
 int main(void) {
-    u16 i = 0;
-    s16 err;
-    u16 tvoc_ppb;
-    u16 tvoc_baseline;
-    u16 ethanol_raw_signal;
+    uint16_t i = 0;
+    int16_t err;
+    uint16_t tvoc_ppb;
+    uint16_t tvoc_baseline;
+    uint16_t ethanol_raw_signal;
 
     const char *driver_version = sgpc3_get_driver_version();
     if (driver_version) {
@@ -64,8 +64,8 @@ int main(void) {
     }
     printf("SGP sensor probing successful\n");
 
-    u16 feature_set_version;
-    u8 product_type;
+    uint16_t feature_set_version;
+    uint8_t product_type;
     err = sgpc3_get_feature_set_version(&feature_set_version, &product_type);
     if (err == STATUS_OK) {
         printf("Feature set version: %u\n", feature_set_version);
@@ -73,7 +73,7 @@ int main(void) {
     } else {
         printf("sgpc3_get_feature_set_version failed!\n");
     }
-    u64 serial_id;
+    uint64_t serial_id;
     err = sgpc3_get_serial_id(&serial_id);
     if (err == STATUS_OK) {
         printf("SerialID: %" PRIu64 "\n", serial_id);

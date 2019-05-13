@@ -41,16 +41,18 @@
 #define PROFILE_IAQ_INIT184 13
 #define PROFILE_IAQ_INIT_CONTINUOUS 21
 
-const u8 PROFILE_NUMBER_MEASURE_RAW_SIGNALS = PROFILE_NUMBER_RAW_SIGNALS;
-const u8 PROFILE_NUMBER_MEASURE_RAW = PROFILE_IAQ_MEASURE_RAW;
-const u8 PROFILE_NUMBER_IAQ_INIT0 = PROFILE_IAQ_INIT0;
-const u8 PROFILE_NUMBER_IAQ_INIT16 = PROFILE_IAQ_INIT16;
-const u8 PROFILE_NUMBER_IAQ_INIT64 = PROFILE_IAQ_INIT64;
-const u8 PROFILE_NUMBER_IAQ_INIT184 = PROFILE_IAQ_INIT184;
-const u8 PROFILE_NUMBER_IAQ_INIT_CONTINUOUS = PROFILE_IAQ_INIT_CONTINUOUS;
-const u8 PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE = PROFILE_NUMBER_IAQ_SET_BASELINE;
-const u8 PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY = PROFILE_SET_ABSOLUTE_HUMIDITY;
-const u8 PROFILE_NUMBER_SET_POWER_MODE = PROFILE_SET_POWER_MODE;
+const uint8_t PROFILE_NUMBER_MEASURE_RAW_SIGNALS = PROFILE_NUMBER_RAW_SIGNALS;
+const uint8_t PROFILE_NUMBER_MEASURE_RAW = PROFILE_IAQ_MEASURE_RAW;
+const uint8_t PROFILE_NUMBER_IAQ_INIT0 = PROFILE_IAQ_INIT0;
+const uint8_t PROFILE_NUMBER_IAQ_INIT16 = PROFILE_IAQ_INIT16;
+const uint8_t PROFILE_NUMBER_IAQ_INIT64 = PROFILE_IAQ_INIT64;
+const uint8_t PROFILE_NUMBER_IAQ_INIT184 = PROFILE_IAQ_INIT184;
+const uint8_t PROFILE_NUMBER_IAQ_INIT_CONTINUOUS = PROFILE_IAQ_INIT_CONTINUOUS;
+const uint8_t PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE =
+    PROFILE_NUMBER_IAQ_SET_BASELINE;
+const uint8_t PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY =
+    PROFILE_SET_ABSOLUTE_HUMIDITY;
+const uint8_t PROFILE_NUMBER_SET_POWER_MODE = PROFILE_SET_POWER_MODE;
 
 static const struct sgp_signal ETHANOL_SIGNAL = {
     .conversion_function = NULL,
@@ -232,28 +234,31 @@ static const struct sgp_profile *sgp_profiles_fs6[] = {
     &SGP_PROFILE_SET_POWER_MODE,
 };
 
-static const u16 supported_featureset_versions_fs4[] = {0x1004};
-static const u16 supported_featureset_versions_fs5[] = {0x1005};
-static const u16 supported_featureset_versions_fs6[] = {0x1006};
+static const uint16_t supported_featureset_versions_fs4[] = {0x1004};
+static const uint16_t supported_featureset_versions_fs5[] = {0x1005};
+static const uint16_t supported_featureset_versions_fs6[] = {0x1006};
 
 const struct sgp_otp_featureset sgp_featureset4 = {
     .profiles = sgp_profiles_fs4,
     .number_of_profiles = ARRAY_SIZE(sgp_profiles_fs4),
-    .supported_featureset_versions = (u16 *)supported_featureset_versions_fs4,
+    .supported_featureset_versions =
+        (uint16_t *)supported_featureset_versions_fs4,
     .number_of_supported_featureset_versions =
         ARRAY_SIZE(supported_featureset_versions_fs4)};
 
 const struct sgp_otp_featureset sgp_featureset5 = {
     .profiles = sgp_profiles_fs5,
     .number_of_profiles = ARRAY_SIZE(sgp_profiles_fs5),
-    .supported_featureset_versions = (u16 *)supported_featureset_versions_fs5,
+    .supported_featureset_versions =
+        (uint16_t *)supported_featureset_versions_fs5,
     .number_of_supported_featureset_versions =
         ARRAY_SIZE(supported_featureset_versions_fs5)};
 
 const struct sgp_otp_featureset sgp_featureset6 = {
     .profiles = sgp_profiles_fs6,
     .number_of_profiles = ARRAY_SIZE(sgp_profiles_fs6),
-    .supported_featureset_versions = (u16 *)supported_featureset_versions_fs6,
+    .supported_featureset_versions =
+        (uint16_t *)supported_featureset_versions_fs6,
     .number_of_supported_featureset_versions =
         ARRAY_SIZE(supported_featureset_versions_fs6)};
 
