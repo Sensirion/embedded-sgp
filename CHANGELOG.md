@@ -5,6 +5,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.0.0] - 2019-05-17
+
+* `[added]` `.clang-format` Style-file for clang-format and helper targets
+            `make style-fix` and `make style-check` (#36)
+* `[changed]` Use stdint types (e.g. `uint16_t` instead of `u16`)
+
 ## [4.0.0] - 2019-03-27
 
  * [`changed]` Rename factory baseline to inceptive baseline
@@ -45,7 +51,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
  * First public release
 
-[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/4.0.0...master
+[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/5.0.0...master
+[5.0.0]: https://github.com/Sensirion/embedded-sgp/compare/4.0.0...5.0.0
 [4.0.0]: https://github.com/Sensirion/embedded-sgp/compare/3.1.4...4.0.0
 [3.1.4]: https://github.com/Sensirion/embedded-sgp/compare/3.1.3...3.1.4
 [3.1.3]: https://github.com/Sensirion/embedded-sgp/compare/3.1.2...3.1.3
