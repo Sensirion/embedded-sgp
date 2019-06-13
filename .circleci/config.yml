@@ -14,7 +14,7 @@ jobs:
           name: checkout embedded-sht
           command: |
               git clone git@github.com:Sensirion/embedded-sht.git ../embedded-sht
-              cd ../embedded-sht && make sht-common/git_version.c && cd -
+              cd ../embedded-sht && make sht-common/sht_git_version.c && cd -
       - run:
           name: update common repo
           command: git submodule update --init

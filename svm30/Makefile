@@ -1,8 +1,7 @@
 sht_source_dir := ../../embedded-sht/shtc1
 sht_common_dir := ../../embedded-sht/sht-common
-sht_sources := ${sht_source_dir}/shtc1.c ${sht_common_dir}/sht.h \
-               ${sht_common_dir}/sht_common.c ${sht_common_dir}/sht_common.h \
-               ${sht_common_dir}/git_version.c ${sht_common_dir}/git_version.h
+sht_sources := ${sht_source_dir}/shtc1.c ${sht_source_dir}/shtc1.h \
+               ${sht_common_dir}/sht_git_version.c ${sht_common_dir}/sht_git_version.h
 
 sgp_source_dir := ../sgp30
 sgp_common_dir := ../sgp-common
@@ -20,7 +19,7 @@ sw_i2c_dir := ${sensirion_common_dir}/sw_i2c
 hw_i2c_dir := ${sensirion_common_dir}/hw_i2c
 
 CFLAGS := -Os -Wall -Wstrict-aliasing=1 -I. -I${sensirion_common_dir} -I${sgp_source_dir} \
-          -I${sgp_common_dir} -I${sht_common_dir}
+          -I${sgp_common_dir} -I${sht_source_dir} -I${sht_common_dir}
 
 svm30_binaries := svm30_example_usage_hw_i2c svm30_example_usage_sw_i2c
 svm_binaries += ${svm30_binaries}
