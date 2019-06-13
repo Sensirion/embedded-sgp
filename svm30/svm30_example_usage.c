@@ -45,6 +45,9 @@ int main(void) {
     uint32_t iaq_baseline;
     int32_t temperature, humidity;
 
+    /* Initialize I2C */
+    sensirion_i2c_init();
+
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
     while (svm_probe() != STATUS_OK) {

@@ -715,9 +715,6 @@ int16_t sgp30_probe() {
     *serial_buf = 0;
     client_data.current_state = WAIT_STATE;
 
-    /* Initialize I2C */
-    sensirion_i2c_init();
-
     /* try to read the serial ID */
     err = sensirion_i2c_delayed_read_cmd(
         SGP_I2C_ADDRESS, sgp30_cmd_get_serial_id,
