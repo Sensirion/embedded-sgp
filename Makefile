@@ -1,4 +1,4 @@
-drivers=sgp30 sgpc3 svm30
+drivers=sgp30 sgpc3 svm30 sgpc3_with_shtc1
 clean_drivers=$(foreach d, $(drivers), clean_$(d))
 release_drivers=$(foreach d, $(drivers), release/$(d))
 
@@ -47,10 +47,30 @@ release/svm30: release/sgp30
 	cp -r release/sgp30/ $${pkgdir} && \
 	cp -r ../embedded-sht/sht-common/* $${pkgdir} && \
 	cp -r ../embedded-sht/shtc1/* $${pkgdir} && \
-	cp svm30/Makefile $${pkgdir} && \
-	cp svm30/*.[ch] $${pkgdir} && \
-	cp svm30/default_config.inc $${pkgdir} && \
+	cp $${driver}/Makefile $${pkgdir} && \
+	cp $${driver}/*.[ch] $${pkgdir} && \
+	cp $${driver}/default_config.inc $${pkgdir} && \
 	for i in $${driver}_dir sgp_driver_dir sht_driver_dir sensirion_common_dir sgp_common_dir sht_common_dir sgp30_dir shtc1_dir; \
+		do echo "$$i = ." >> $${pkgdir}/user_config.inc; \
+	done && \
+	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
+	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
+	ln -sf $${pkgname} $@
+
+release/sgpc3_with_shtc1: release/sgpc3
+	export rel=$@ && \
+	export driver=$${rel#release/} && \
+	export tag="$$(git describe --always --dirty)" && \
+	export pkgname="$${driver}-$${tag}" && \
+	export pkgdir="release/$${pkgname}" && \
+	(cd ../embedded-sht && make prepare) && \
+	cp -r release/sgpc3/ $${pkgdir} && \
+	cp -r ../embedded-sht/sht-common/* $${pkgdir} && \
+	cp -r ../embedded-sht/shtc1/* $${pkgdir} && \
+	cp $${driver}/Makefile $${pkgdir} && \
+	cp $${driver}/*.[ch] $${pkgdir} && \
+	cp $${driver}/default_config.inc $${pkgdir} && \
+	for i in $${driver}_dir sgp_driver_dir sht_driver_dir sensirion_common_dir sgp_common_dir sht_common_dir sgpc3_dir shtc1_dir; \
 		do echo "$$i = ." >> $${pkgdir}/user_config.inc; \
 	done && \
 	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \

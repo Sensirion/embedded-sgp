@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`changed`] SVM30: Better approximation error when calculating absolute
               humidity from relative humidity and temperature
 * [`fixed`]   SGP30: Adjust timings according to datasheet
+* [`added`]   SGPC3+SHTC1 combo driver in `shtc3_with_shtc1` directory
 
 ## [5.0.0] - 2019-05-17
 
