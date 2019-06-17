@@ -56,6 +56,9 @@ int main(void) {
         return -1;
     }
 
+    /* Initialize I2C bus */
+    sensirion_i2c_init();
+
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
     while (sgp30_probe() != STATUS_OK) {

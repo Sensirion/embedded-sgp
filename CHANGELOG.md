@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [`changed`]  Move the i2c init call out of `probe()` and into the examples
+
 ## [5.0.0] - 2019-05-17
 
 * `[added]` `.clang-format` Style-file for clang-format and helper targets
