@@ -34,7 +34,7 @@
 #include "sensirion_arch_config.h"
 #include "sensirion_common.h"
 #include "sgp30.h"
-#include "sht.h"
+#include "shtc1.h"
 
 #ifdef __cplusplus
 extern "C" {

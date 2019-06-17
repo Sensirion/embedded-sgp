@@ -33,7 +33,7 @@
 #include "sgp30.h"
 #include "sgp_featureset.h"
 #include "sgp_git_version.h"
-#include "sht.h"
+#include "shtc1.h"
 
 #define T_LO (-20000)
 #define T_HI 70000
@@ -100,7 +100,7 @@ int16_t svm_measure_iaq_blocking_read(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm,
     uint8_t sgp_product_type;
     int16_t err;
 
-    err = sht_measure_blocking_read(temperature, humidity);
+    err = shtc1_measure_blocking_read(temperature, humidity);
     if (err != STATUS_OK)
         return err;
 
@@ -141,7 +141,7 @@ int16_t svm_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
     uint8_t sgp_product_type;
     int16_t err;
 
-    err = sht_measure_blocking_read(temperature, humidity);
+    err = shtc1_measure_blocking_read(temperature, humidity);
     if (err != STATUS_OK)
         return err;
 
@@ -169,7 +169,7 @@ int16_t svm_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
 int16_t svm_probe() {
     int16_t err;
 
-    err = sht_probe();
+    err = shtc1_probe();
     if (err != STATUS_OK)
         return err;
 
