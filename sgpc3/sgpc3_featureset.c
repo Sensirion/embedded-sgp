@@ -244,7 +244,8 @@ const struct sgp_otp_featureset sgp_featureset4 = {
     .supported_featureset_versions =
         (uint16_t *)supported_featureset_versions_fs4,
     .number_of_supported_featureset_versions =
-        ARRAY_SIZE(supported_featureset_versions_fs4)};
+        ARRAY_SIZE(supported_featureset_versions_fs4),
+};
 
 const struct sgp_otp_featureset sgp_featureset5 = {
     .profiles = sgp_profiles_fs5,
@@ -252,7 +253,8 @@ const struct sgp_otp_featureset sgp_featureset5 = {
     .supported_featureset_versions =
         (uint16_t *)supported_featureset_versions_fs5,
     .number_of_supported_featureset_versions =
-        ARRAY_SIZE(supported_featureset_versions_fs5)};
+        ARRAY_SIZE(supported_featureset_versions_fs5),
+};
 
 const struct sgp_otp_featureset sgp_featureset6 = {
     .profiles = sgp_profiles_fs6,
@@ -260,7 +262,8 @@ const struct sgp_otp_featureset sgp_featureset6 = {
     .supported_featureset_versions =
         (uint16_t *)supported_featureset_versions_fs6,
     .number_of_supported_featureset_versions =
-        ARRAY_SIZE(supported_featureset_versions_fs6)};
+        ARRAY_SIZE(supported_featureset_versions_fs6),
+};
 
 /**
  * Supported featuresets
@@ -276,4 +279,5 @@ const struct sgp_otp_featureset *featuresets[] = {
 
 const struct sgp_otp_supported_featuresets sgp_supported_featuresets = {
     .featuresets = featuresets,
-    .number_of_supported_featuresets = ARRAY_SIZE(featuresets)};
+    .number_of_supported_featuresets = ARRAY_SIZE(featuresets),
+};
