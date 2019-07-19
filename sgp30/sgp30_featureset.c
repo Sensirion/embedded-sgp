@@ -166,15 +166,20 @@ static const struct sgp_profile SGP_PROFILE_SET_ABSOLUTE_HUMIDITY = {
 };
 
 static const struct sgp_profile *sgp_profiles_fs9[] = {
-    &SGP_PROFILE_IAQ_INIT,         &SGP_PROFILE_IAQ_MEASURE_FS9,
-    &SGP_PROFILE_IAQ_GET_BASELINE, &SGP_PROFILE_IAQ_SET_BASELINE,
+    &SGP_PROFILE_IAQ_INIT,
+    &SGP_PROFILE_IAQ_MEASURE_FS9,
+    &SGP_PROFILE_IAQ_GET_BASELINE,
+    &SGP_PROFILE_IAQ_SET_BASELINE,
     &SGP_PROFILE_MEASURE_SIGNALS_FS9,
 };
 
 static const struct sgp_profile *sgp_profiles_fs32[] = {
-    &SGP_PROFILE_IAQ_INIT,             &SGP_PROFILE_IAQ_MEASURE_FS9,
-    &SGP_PROFILE_IAQ_GET_BASELINE,     &SGP_PROFILE_IAQ_SET_BASELINE,
-    &SGP_PROFILE_MEASURE_SIGNALS_FS32, &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
+    &SGP_PROFILE_IAQ_INIT,
+    &SGP_PROFILE_IAQ_MEASURE_FS9,
+    &SGP_PROFILE_IAQ_GET_BASELINE,
+    &SGP_PROFILE_IAQ_SET_BASELINE,
+    &SGP_PROFILE_MEASURE_SIGNALS_FS32,
+    &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
 };
 
 static const struct sgp_profile *sgp_profiles_fs33[] = {
@@ -204,7 +209,8 @@ static const struct sgp_otp_featureset sgp_featureset9 = {
     .supported_featureset_versions =
         (uint16_t *)supported_featureset_versions_fs9,
     .number_of_supported_featureset_versions =
-        ARRAY_SIZE(supported_featureset_versions_fs9)};
+        ARRAY_SIZE(supported_featureset_versions_fs9),
+};
 
 static const struct sgp_otp_featureset sgp_featureset32 = {
     .profiles = sgp_profiles_fs32,
@@ -212,7 +218,8 @@ static const struct sgp_otp_featureset sgp_featureset32 = {
     .supported_featureset_versions =
         (uint16_t *)supported_featureset_versions_fs32,
     .number_of_supported_featureset_versions =
-        ARRAY_SIZE(supported_featureset_versions_fs32)};
+        ARRAY_SIZE(supported_featureset_versions_fs32),
+};
 
 static const struct sgp_otp_featureset sgp_featureset33 = {
     .profiles = sgp_profiles_fs33,
@@ -220,7 +227,8 @@ static const struct sgp_otp_featureset sgp_featureset33 = {
     .supported_featureset_versions =
         (uint16_t *)supported_featureset_versions_fs33,
     .number_of_supported_featureset_versions =
-        ARRAY_SIZE(supported_featureset_versions_fs33)};
+        ARRAY_SIZE(supported_featureset_versions_fs33),
+};
 
 /**
  * Supported featuresets
@@ -236,4 +244,5 @@ static const struct sgp_otp_featureset *featuresets[] = {
 
 const struct sgp_otp_supported_featuresets sgp_supported_featuresets = {
     .featuresets = featuresets,
-    .number_of_supported_featuresets = ARRAY_SIZE(featuresets)};
+    .number_of_supported_featuresets = ARRAY_SIZE(featuresets),
+};
