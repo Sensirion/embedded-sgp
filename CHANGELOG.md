@@ -5,7 +5,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-* [`changed`]  Move the i2c init call out of `probe()` and into the examples
+* [`changed`] Move the i2c init call out of `probe()` and into the examples
+* [`changed`] Faster `sgp30_measure_raw_blocking_read` for FS1.0+. Now 25ms
+              instead of 200ms.
 
 ## [5.0.0] - 2019-05-17
 
@@ -15,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.0.0] - 2019-03-27
 
- * [`changed]` Rename factory baseline to inceptive baseline
+ * [`changed`] Rename factory baseline to inceptive baseline
  * [`changed`] Prefix all methods with `sgp30_` / `sgpc3_` instead of `sgp_`
  * [`changed`] Unify naming of measurement, initialization and baseline methods
  * [`fixed`] Feature set check for SVM30

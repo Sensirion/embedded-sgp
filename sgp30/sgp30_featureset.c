@@ -146,6 +146,15 @@ static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS9 = {
     .name = "measure_signals",
 };
 
+static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS32 = {
+    .number = PROFILE_NUMBER_RAW_SIGNALS,
+    .duration_us = 25000, /* more agressive timing since FS1.0 (32) */
+    .signals = SGP_PROFILE_MEASURE_SIGNALS_SIGNALS9, /* same signals as FS0.9 */
+    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_MEASURE_SIGNALS_SIGNALS9),
+    .command = 0x2050,
+    .name = "measure_signals",
+};
+
 static const struct sgp_profile SGP_PROFILE_SET_ABSOLUTE_HUMIDITY = {
     .number = PROFILE_NUMBER_SET_AH,
     .duration_us = 10000,
@@ -162,9 +171,9 @@ static const struct sgp_profile *sgp_profiles9[] = {
 };
 
 static const struct sgp_profile *sgp_profiles32[] = {
-    &SGP_PROFILE_IAQ_INIT,         &SGP_PROFILE_IAQ_MEASURE9,
-    &SGP_PROFILE_IAQ_GET_BASELINE, &SGP_PROFILE_IAQ_SET_BASELINE,
-    &SGP_PROFILE_MEASURE_SIGNALS9, &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
+    &SGP_PROFILE_IAQ_INIT,          &SGP_PROFILE_IAQ_MEASURE9,
+    &SGP_PROFILE_IAQ_GET_BASELINE,  &SGP_PROFILE_IAQ_SET_BASELINE,
+    &SGP_PROFILE_MEASURE_SIGNALS32, &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
 };
 
 static const struct sgp_profile *sgp_profiles33[] = {
@@ -174,11 +183,17 @@ static const struct sgp_profile *sgp_profiles33[] = {
     &SGP_PROFILE_IAQ_SET_BASELINE,
     &SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE,
     &SGP_PROFILE_IAQ_SET_TVOC_BASELINE,
-    &SGP_PROFILE_MEASURE_SIGNALS9,
+    &SGP_PROFILE_MEASURE_SIGNALS32,
     &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
 };
 
+/* Only the oldest supported release must be listed explicitly for each feature
+ * set group, since minor versions are forward compatible when the major version
+ * matches.
+ * E.g. FS1.2 (34) is guaranteed to work with the driver for FS1.1 (33) */
+/* Feature sets 0.x */
 static const uint16_t supported_featureset_versions_fs9[] = {9};
+/* Feature sets 1.x */
 static const uint16_t supported_featureset_versions_fs32[] = {0x20};
 static const uint16_t supported_featureset_versions_fs33[] = {0x21};
 
