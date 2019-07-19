@@ -70,7 +70,7 @@ static const struct sgp_signal BASELINE_WORD2 = {
     .name = "baseline2",
 };
 
-static const struct sgp_signal *SGP_PROFILE_IAQ_MEASURE_SIGNALS9[] = {
+static const struct sgp_signal *SGP_PROFILE_IAQ_MEASURE_SIGNALS_FS9[] = {
     &TVOC_PPB_FS9, &CO2_EQ_PPM};
 
 static const struct sgp_signal
@@ -79,7 +79,7 @@ static const struct sgp_signal
 static const struct sgp_signal *SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS[] = {
     &BASELINE_WORD1, &BASELINE_WORD2};
 
-static const struct sgp_signal *SGP_PROFILE_MEASURE_SIGNALS_SIGNALS9[] = {
+static const struct sgp_signal *SGP_PROFILE_MEASURE_SIGNALS_SIGNALS_FS9[] = {
     &ETHANOL_SIGNAL_FS9, &H2_SIGNAL_FS9};
 
 static const struct sgp_profile SGP_PROFILE_IAQ_INIT = {
@@ -91,11 +91,11 @@ static const struct sgp_profile SGP_PROFILE_IAQ_INIT = {
     .name = "iaq_init",
 };
 
-static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE9 = {
+static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE_FS9 = {
     .number = PROFILE_NUMBER_IAQ_MEASURE,
     .duration_us = 50000,
-    .signals = SGP_PROFILE_IAQ_MEASURE_SIGNALS9,
-    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_MEASURE_SIGNALS9),
+    .signals = SGP_PROFILE_IAQ_MEASURE_SIGNALS_FS9,
+    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_MEASURE_SIGNALS_FS9),
     .command = 0x2008,
     .name = "iaq_measure",
 };
@@ -137,20 +137,21 @@ static const struct sgp_profile SGP_PROFILE_IAQ_SET_BASELINE = {
     .name = "iaq_set_baseline",
 };
 
-static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS9 = {
+static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS_FS9 = {
     .number = PROFILE_NUMBER_RAW_SIGNALS,
     .duration_us = 200000,
-    .signals = SGP_PROFILE_MEASURE_SIGNALS_SIGNALS9,
-    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_MEASURE_SIGNALS_SIGNALS9),
+    .signals = SGP_PROFILE_MEASURE_SIGNALS_SIGNALS_FS9,
+    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_MEASURE_SIGNALS_SIGNALS_FS9),
     .command = 0x2050,
     .name = "measure_signals",
 };
 
-static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS32 = {
+static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS_FS32 = {
     .number = PROFILE_NUMBER_RAW_SIGNALS,
     .duration_us = 25000, /* more agressive timing since FS1.0 (32) */
-    .signals = SGP_PROFILE_MEASURE_SIGNALS_SIGNALS9, /* same signals as FS0.9 */
-    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_MEASURE_SIGNALS_SIGNALS9),
+    /* same signals as FS0.9 */
+    .signals = SGP_PROFILE_MEASURE_SIGNALS_SIGNALS_FS9,
+    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_MEASURE_SIGNALS_SIGNALS_FS9),
     .command = 0x2050,
     .name = "measure_signals",
 };
@@ -164,26 +165,26 @@ static const struct sgp_profile SGP_PROFILE_SET_ABSOLUTE_HUMIDITY = {
     .name = "set_absolute_humidity",
 };
 
-static const struct sgp_profile *sgp_profiles9[] = {
-    &SGP_PROFILE_IAQ_INIT,         &SGP_PROFILE_IAQ_MEASURE9,
+static const struct sgp_profile *sgp_profiles_fs9[] = {
+    &SGP_PROFILE_IAQ_INIT,         &SGP_PROFILE_IAQ_MEASURE_FS9,
     &SGP_PROFILE_IAQ_GET_BASELINE, &SGP_PROFILE_IAQ_SET_BASELINE,
-    &SGP_PROFILE_MEASURE_SIGNALS9,
+    &SGP_PROFILE_MEASURE_SIGNALS_FS9,
 };
 
-static const struct sgp_profile *sgp_profiles32[] = {
-    &SGP_PROFILE_IAQ_INIT,          &SGP_PROFILE_IAQ_MEASURE9,
-    &SGP_PROFILE_IAQ_GET_BASELINE,  &SGP_PROFILE_IAQ_SET_BASELINE,
-    &SGP_PROFILE_MEASURE_SIGNALS32, &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
+static const struct sgp_profile *sgp_profiles_fs32[] = {
+    &SGP_PROFILE_IAQ_INIT,             &SGP_PROFILE_IAQ_MEASURE_FS9,
+    &SGP_PROFILE_IAQ_GET_BASELINE,     &SGP_PROFILE_IAQ_SET_BASELINE,
+    &SGP_PROFILE_MEASURE_SIGNALS_FS32, &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
 };
 
-static const struct sgp_profile *sgp_profiles33[] = {
+static const struct sgp_profile *sgp_profiles_fs33[] = {
     &SGP_PROFILE_IAQ_INIT,
-    &SGP_PROFILE_IAQ_MEASURE9,
+    &SGP_PROFILE_IAQ_MEASURE_FS9,
     &SGP_PROFILE_IAQ_GET_BASELINE,
     &SGP_PROFILE_IAQ_SET_BASELINE,
     &SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE,
     &SGP_PROFILE_IAQ_SET_TVOC_BASELINE,
-    &SGP_PROFILE_MEASURE_SIGNALS32,
+    &SGP_PROFILE_MEASURE_SIGNALS_FS32,
     &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
 };
 
@@ -198,24 +199,24 @@ static const uint16_t supported_featureset_versions_fs32[] = {0x20};
 static const uint16_t supported_featureset_versions_fs33[] = {0x21};
 
 static const struct sgp_otp_featureset sgp_featureset9 = {
-    .profiles = sgp_profiles9,
-    .number_of_profiles = ARRAY_SIZE(sgp_profiles9),
+    .profiles = sgp_profiles_fs9,
+    .number_of_profiles = ARRAY_SIZE(sgp_profiles_fs9),
     .supported_featureset_versions =
         (uint16_t *)supported_featureset_versions_fs9,
     .number_of_supported_featureset_versions =
         ARRAY_SIZE(supported_featureset_versions_fs9)};
 
 static const struct sgp_otp_featureset sgp_featureset32 = {
-    .profiles = sgp_profiles32,
-    .number_of_profiles = ARRAY_SIZE(sgp_profiles32),
+    .profiles = sgp_profiles_fs32,
+    .number_of_profiles = ARRAY_SIZE(sgp_profiles_fs32),
     .supported_featureset_versions =
         (uint16_t *)supported_featureset_versions_fs32,
     .number_of_supported_featureset_versions =
         ARRAY_SIZE(supported_featureset_versions_fs32)};
 
 static const struct sgp_otp_featureset sgp_featureset33 = {
-    .profiles = sgp_profiles33,
-    .number_of_profiles = ARRAY_SIZE(sgp_profiles33),
+    .profiles = sgp_profiles_fs33,
+    .number_of_profiles = ARRAY_SIZE(sgp_profiles_fs33),
     .supported_featureset_versions =
         (uint16_t *)supported_featureset_versions_fs33,
     .number_of_supported_featureset_versions =
