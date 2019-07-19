@@ -187,7 +187,13 @@ static const struct sgp_profile *sgp_profiles33[] = {
     &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
 };
 
+/* Only the oldest supported release must be listed explicitly for each feature
+ * set group, since minor versions are forward compatible when the major version
+ * matches.
+ * E.g. FS1.2 (34) is guaranteed to work with the driver for FS1.1 (33) */
+/* Feature sets 0.x */
 static const uint16_t supported_featureset_versions_fs9[] = {9};
+/* Feature sets 1.x */
 static const uint16_t supported_featureset_versions_fs32[] = {0x20};
 static const uint16_t supported_featureset_versions_fs33[] = {0x21};
 
