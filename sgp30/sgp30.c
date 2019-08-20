@@ -93,7 +93,7 @@ static struct sgp30_data {
  */
 static void unpack_signals(const struct sgp_profile *profile) {
     int16_t i, j;
-    uint16_t data_words = profile->number_of_signals;
+    uint16_t data_words = profile->num_words;
     uint16_t word_buf[data_words];
 
     /* copy buffer */
@@ -101,7 +101,7 @@ static void unpack_signals(const struct sgp_profile *profile) {
         word_buf[i] = client_data.buffer.words[i];
 
     /* signals are in reverse order in the data buffer */
-    for (i = profile->number_of_signals - 1, j = 0; i >= 0; i -= 1, j += 1)
+    for (i = profile->num_words - 1, j = 0; i >= 0; i -= 1, j += 1)
         client_data.buffer.words[j] = word_buf[i];
 }
 
@@ -118,7 +118,7 @@ static int16_t read_measurement(const struct sgp_profile *profile) {
         case MEASURING_PROFILE_STATE:
             ret = sensirion_i2c_read_words(SGP_I2C_ADDRESS,
                                            client_data.buffer.words,
-                                           profile->number_of_signals);
+                                           profile->num_words);
 
             if (ret)
                 /* Measurement in progress */
@@ -178,7 +178,7 @@ static int16_t sgp30_run_profile_by_number(uint16_t number) {
 
     sensirion_sleep_usec(profile->duration_us);
 
-    if (profile->number_of_signals > 0) {
+    if (profile->num_words > 0) {
         client_data.current_state = MEASURING_PROFILE_STATE;
         return read_measurement(profile);
     }

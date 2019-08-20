@@ -79,7 +79,7 @@ extern const uint8_t PROFILE_NUMBER_SET_POWER_MODE;
 struct sgp_profile {
     /* expected duration of measurement, i.e., when to return for data */
     const uint32_t duration_us;
-    const uint16_t number_of_signals;
+    const uint16_t num_words;
     const uint16_t command;
     const uint8_t number;
 };
