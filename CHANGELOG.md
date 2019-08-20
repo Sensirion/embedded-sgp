@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`changed`] Move the i2c init call out of `probe()` and into the examples
 * [`changed`] Faster `sgp30_measure_raw_blocking_read` for FS1.0+. Now 25ms
               instead of 200ms.
+* [`changed`] CFLAGS: Enable strict aliasing warnings by default, add `-Os` to
+              SGPC3.
 
 ## [5.0.0] - 2019-05-17
 
