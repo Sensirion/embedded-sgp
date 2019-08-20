@@ -136,30 +136,6 @@ static int16_t read_measurement(const struct sgp_profile *profile) {
 }
 
 /**
- * sgpc3_run_profile() - run a profile and read write its return to client_data
- * @profile     A pointer to the profile
- *
- * Return:      STATUS_OK on success, an error code otherwise
- */
-static int16_t sgpc3_run_profile(const struct sgp_profile *profile) {
-    uint32_t duration_us = profile->duration_us + 5;
-    int16_t ret;
-
-    ret = sensirion_i2c_write_cmd(SGP_I2C_ADDRESS, profile->command);
-    if (ret != STATUS_OK)
-        return ret;
-
-    sensirion_sleep_usec(duration_us);
-
-    if (profile->number_of_signals > 0) {
-        client_data.current_state = MEASURING_PROFILE_STATE;
-        return read_measurement(profile);
-    }
-
-    return STATUS_OK;
-}
-
-/**
  * sgpc3_get_profile_by_number() - get a profile by its identifier number
  * @number      The number that identifies the profile
  *
@@ -190,12 +166,24 @@ static const struct sgp_profile *sgpc3_get_profile_by_number(uint16_t number) {
  */
 static int16_t sgpc3_run_profile_by_number(uint16_t number) {
     const struct sgp_profile *profile;
+    int16_t ret;
 
     profile = sgpc3_get_profile_by_number(number);
     if (profile == NULL)
         return STATUS_FAIL;
 
-    return sgpc3_run_profile(profile);
+    ret = sensirion_i2c_write_cmd(SGP_I2C_ADDRESS, profile->command);
+    if (ret != STATUS_OK)
+        return ret;
+
+    sensirion_sleep_usec(profile->duration_us);
+
+    if (profile->number_of_signals > 0) {
+        client_data.current_state = MEASURING_PROFILE_STATE;
+        return read_measurement(profile);
+    }
+
+    return STATUS_OK;
 }
 
 /**
