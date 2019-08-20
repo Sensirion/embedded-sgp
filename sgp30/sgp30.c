@@ -93,25 +93,16 @@ static struct sgp30_data {
  */
 static void unpack_signals(const struct sgp_profile *profile) {
     int16_t i, j;
-    const struct sgp_signal *signal;
     uint16_t data_words = profile->number_of_signals;
     uint16_t word_buf[data_words];
-    uint16_t value;
 
     /* copy buffer */
     for (i = 0; i < data_words; i++)
         word_buf[i] = client_data.buffer.words[i];
 
     /* signals are in reverse order in the data buffer */
-    for (i = profile->number_of_signals - 1, j = 0; i >= 0; i -= 1, j += 1) {
-        signal = profile->signals[profile->number_of_signals - i - 1];
-        value = word_buf[i];
-
-        if (signal->conversion_function != NULL)
-            client_data.buffer.words[j] = signal->conversion_function(value);
-        else
-            client_data.buffer.words[j] = value;
-    }
+    for (i = profile->number_of_signals - 1, j = 0; i >= 0; i -= 1, j += 1)
+        client_data.buffer.words[j] = word_buf[i];
 }
 
 /**
