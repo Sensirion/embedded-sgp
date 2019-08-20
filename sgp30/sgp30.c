@@ -36,33 +36,28 @@
 #include "sgp_featureset.h"
 #include "sgp_git_version.h"
 
-#define SGP_RAM_WORDS 4
-#define SGP_BUFFER_SIZE ((SGP_RAM_WORDS + 2) * (SGP_WORD_LEN + CRC8_LEN))
-#define SGP_BUFFER_WORDS (SGP_BUFFER_SIZE / SGP_WORD_LEN)
-#define SGP_MAX_PROFILE_RET_LEN 4 * (SGP_WORD_LEN + CRC8_LEN)
-#define SGP_VALID_IAQ_BASELINE(b) ((b) != 0)
+#define SGP30_BUFFER_SIZE (6 * (SGP_WORD_LEN + CRC8_LEN))
+#define SGP30_BUFFER_WORDS (SGP30_BUFFER_SIZE / SGP_WORD_LEN)
+#define SGP30_MAX_PROFILE_RET_LEN 4 * (SGP_WORD_LEN + CRC8_LEN)
+#define SGP30_VALID_IAQ_BASELINE(b) ((b) != 0)
 
-#ifdef SGP_ADDRESS
-static const uint8_t SGP_I2C_ADDRESS = SGP_ADDRESS;
-#else
-static const uint8_t SGP_I2C_ADDRESS = 0x58;
-#endif
+static const uint8_t SGP30_I2C_ADDRESS = 0x58;
 
 /* command and constants for reading the serial ID */
-#define SGP_CMD_GET_SERIAL_ID_DURATION_US 500
-#define SGP_CMD_GET_SERIAL_ID_WORDS 3
-static const uint16_t sgp30_cmd_get_serial_id = 0x3682;
+#define SGP30_CMD_GET_SERIAL_ID_DURATION_US 500
+#define SGP30_CMD_GET_SERIAL_ID_WORDS 3
+#define SGP30_CMD_GET_SERIAL_ID 0x3682
 
 /* command and constants for reading the featureset version */
-#define SGP_CMD_GET_FEATURESET_DURATION_US 1000
-#define SGP_CMD_GET_FEATURESET_WORDS 1
-static const uint16_t sgp30_cmd_get_featureset = 0x202f;
+#define SGP30_CMD_GET_FEATURESET_DURATION_US 1000
+#define SGP30_CMD_GET_FEATURESET_WORDS 1
+#define SGP30_CMD_GET_FEATURESET 0x202f
 
 /* command and constants for on-chip self-test */
-#define SGP_CMD_MEASURE_TEST_DURATION_US 220000
-#define SGP_CMD_MEASURE_TEST_WORDS 1
-#define SGP_CMD_MEASURE_TEST_OK 0xd400
-static const uint16_t sgp30_cmd_measure_test = 0x2032;
+#define SGP30_CMD_MEASURE_TEST_DURATION_US 220000
+#define SGP30_CMD_MEASURE_TEST_WORDS 1
+#define SGP30_CMD_MEASURE_TEST_OK 0xd400
+#define SGP30_CMD_MEASURE_TEST 0x2032
 
 static const struct sgp_otp_featureset sgp30_features_unknown = {
     .profiles = NULL,
@@ -81,7 +76,7 @@ static struct sgp30_data {
     struct sgp30_info info;
     const struct sgp_otp_featureset *otp_features;
     union {
-        uint16_t words[SGP_BUFFER_WORDS];
+        uint16_t words[SGP30_BUFFER_WORDS];
         uint64_t u64_value;
     } buffer;
 } client_data;
@@ -116,7 +111,7 @@ static int16_t read_measurement(const struct sgp_profile *profile) {
     switch (client_data.current_state) {
 
         case MEASURING_PROFILE_STATE:
-            ret = sensirion_i2c_read_words(SGP_I2C_ADDRESS,
+            ret = sensirion_i2c_read_words(SGP30_I2C_ADDRESS,
                                            client_data.buffer.words,
                                            profile->num_words);
 
@@ -172,7 +167,7 @@ static int16_t sgp30_run_profile_by_number(uint16_t number) {
     if (profile == NULL)
         return STATUS_FAIL;
 
-    ret = sensirion_i2c_write_cmd(SGP_I2C_ADDRESS, profile->command);
+    ret = sensirion_i2c_write_cmd(SGP30_I2C_ADDRESS, profile->command);
     if (ret != STATUS_OK)
         return ret;
 
@@ -225,26 +220,26 @@ static int16_t sgp30_detect_featureset_version(uint16_t *featureset) {
  * measurement (~220ms)
  *
  * @test_result:    Allocated buffer to store the chip's error code.
- *                  test_result is SGP_CMD_MEASURE_TEST_OK on success or set to
- *                  zero (0) in the case of a communication error.
+ *                  test_result is SGP30_CMD_MEASURE_TEST_OK on success or set
+ *                  to zero (0) in the case of a communication error.
  *
  * Return: STATUS_OK on a successful self-test, an error code otherwise
  */
 int16_t sgp30_measure_test(uint16_t *test_result) {
-    uint16_t measure_test_word_buf[SGP_CMD_MEASURE_TEST_WORDS];
+    uint16_t measure_test_word_buf[SGP30_CMD_MEASURE_TEST_WORDS];
     int16_t ret;
 
     *test_result = 0;
 
     ret = sensirion_i2c_delayed_read_cmd(
-        SGP_I2C_ADDRESS, sgp30_cmd_measure_test,
-        SGP_CMD_MEASURE_TEST_DURATION_US, measure_test_word_buf,
+        SGP30_I2C_ADDRESS, SGP30_CMD_MEASURE_TEST,
+        SGP30_CMD_MEASURE_TEST_DURATION_US, measure_test_word_buf,
         SENSIRION_NUM_WORDS(measure_test_word_buf));
     if (ret != STATUS_OK)
         return ret;
 
     *test_result = *measure_test_word_buf;
-    if (*test_result == SGP_CMD_MEASURE_TEST_OK)
+    if (*test_result == SGP30_CMD_MEASURE_TEST_OK)
         return STATUS_OK;
 
     return STATUS_FAIL;
@@ -265,7 +260,7 @@ int16_t sgp30_measure_iaq() {
     if (profile == NULL)
         return STATUS_FAIL;
 
-    ret = sensirion_i2c_write_cmd(SGP_I2C_ADDRESS, profile->command);
+    ret = sensirion_i2c_write_cmd(SGP30_I2C_ADDRESS, profile->command);
     if (ret != STATUS_OK)
         return ret;
 
@@ -444,7 +439,7 @@ int16_t sgp30_measure_raw() {
     if (profile == NULL)
         return STATUS_FAIL;
 
-    ret = sensirion_i2c_write_cmd(SGP_I2C_ADDRESS, profile->command);
+    ret = sensirion_i2c_write_cmd(SGP30_I2C_ADDRESS, profile->command);
     if (ret != STATUS_OK)
         return ret;
 
@@ -506,7 +501,7 @@ int16_t sgp30_get_iaq_baseline(uint32_t *baseline) {
     *baseline = (((uint32_t)client_data.buffer.words[0]) << 16) |
                 (uint32_t)client_data.buffer.words[1];
 
-    if (!SGP_VALID_IAQ_BASELINE(*baseline))
+    if (!SGP30_VALID_IAQ_BASELINE(*baseline))
         return STATUS_FAIL;
 
     return STATUS_OK;
@@ -528,14 +523,14 @@ int16_t sgp30_set_iaq_baseline(uint32_t baseline) {
         (uint16_t)((baseline & 0xffff0000) >> 16),
         (uint16_t)(baseline & 0x0000ffff)};
 
-    if (!SGP_VALID_IAQ_BASELINE(baseline))
+    if (!SGP30_VALID_IAQ_BASELINE(baseline))
         return STATUS_FAIL;
 
     profile = sgp30_get_profile_by_number(PROFILE_NUMBER_IAQ_SET_BASELINE);
     if (profile == NULL)
         return STATUS_FAIL;
 
-    return sensirion_i2c_write_cmd_with_args(SGP_I2C_ADDRESS, profile->command,
+    return sensirion_i2c_write_cmd_with_args(SGP30_I2C_ADDRESS, profile->command,
                                              words, SENSIRION_NUM_WORDS(words));
 }
 
@@ -579,7 +574,7 @@ int16_t sgp30_get_tvoc_inceptive_baseline(uint16_t *tvoc_inceptive_baseline) {
 int16_t sgp30_set_tvoc_baseline(uint16_t tvoc_baseline) {
     const struct sgp_profile *profile;
 
-    if (!SGP_VALID_IAQ_BASELINE(tvoc_baseline))
+    if (!SGP30_VALID_IAQ_BASELINE(tvoc_baseline))
         return STATUS_FAIL;
 
     profile = sgp30_get_profile_by_number(PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE);
@@ -587,7 +582,7 @@ int16_t sgp30_set_tvoc_baseline(uint16_t tvoc_baseline) {
         return STATUS_FAIL;
 
     return sensirion_i2c_write_cmd_with_args(
-        SGP_I2C_ADDRESS, profile->command, &tvoc_baseline,
+        SGP30_I2C_ADDRESS, profile->command, &tvoc_baseline,
         SENSIRION_NUM_WORDS(tvoc_baseline));
 }
 
@@ -619,7 +614,7 @@ int16_t sgp30_set_absolute_humidity(uint32_t absolute_humidity) {
     /* ah_scaled = (absolute_humidity / 1000) * 256 */
     ah_scaled = (uint16_t)((absolute_humidity * 16777) >> 16);
 
-    return sensirion_i2c_write_cmd_with_args(SGP_I2C_ADDRESS, profile->command,
+    return sensirion_i2c_write_cmd_with_args(SGP30_I2C_ADDRESS, profile->command,
                                              &ah_scaled,
                                              SENSIRION_NUM_WORDS(ah_scaled));
 }
@@ -638,7 +633,7 @@ const char *sgp30_get_driver_version() {
  * Return:      uint8_t I2C address
  */
 uint8_t sgp30_get_configured_address() {
-    return SGP_I2C_ADDRESS;
+    return SGP30_I2C_ADDRESS;
 }
 
 /**
@@ -698,21 +693,21 @@ int16_t sgp30_probe() {
 
     /* try to read the serial ID */
     err = sensirion_i2c_delayed_read_cmd(
-        SGP_I2C_ADDRESS, sgp30_cmd_get_serial_id,
-        SGP_CMD_GET_SERIAL_ID_DURATION_US, client_data.buffer.words,
-        SGP_CMD_GET_SERIAL_ID_WORDS);
+        SGP30_I2C_ADDRESS, SGP30_CMD_GET_SERIAL_ID,
+        SGP30_CMD_GET_SERIAL_ID_DURATION_US, client_data.buffer.words,
+        SGP30_CMD_GET_SERIAL_ID_WORDS);
     if (err != STATUS_OK)
         return err;
 
     SENSIRION_WORDS_TO_BYTES(client_data.buffer.words,
-                             SGP_CMD_GET_SERIAL_ID_WORDS);
+                             SGP30_CMD_GET_SERIAL_ID_WORDS);
     client_data.info.serial_id = be64_to_cpu(*serial_buf) >> 16;
 
     /* read the featureset version */
     err = sensirion_i2c_delayed_read_cmd(
-        SGP_I2C_ADDRESS, sgp30_cmd_get_featureset,
-        SGP_CMD_GET_FEATURESET_DURATION_US, client_data.buffer.words,
-        SGP_CMD_GET_FEATURESET_WORDS);
+        SGP30_I2C_ADDRESS, SGP30_CMD_GET_FEATURESET,
+        SGP30_CMD_GET_FEATURESET_DURATION_US, client_data.buffer.words,
+        SGP30_CMD_GET_FEATURESET_WORDS);
     if (err != STATUS_OK)
         return err;
 
