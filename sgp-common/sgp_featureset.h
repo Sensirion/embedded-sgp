@@ -40,9 +40,6 @@ extern "C" {
 #define SGP_WORD_LEN 2
 #define SGP_COMMAND_LEN SGP_WORD_LEN
 
-/* maximal size of signal and profile names */
-#define NAME_SIZE 32
-
 #define PROFILE_NUMBER_IAQ_INIT 0
 #define PROFILE_NUMBER_IAQ_MEASURE 1
 #define PROFILE_NUMBER_IAQ_GET_BASELINE 2
@@ -79,20 +76,12 @@ extern const uint8_t PROFILE_NUMBER_SET_POWER_MODE;
       ((((chip_fs)&0x00E0) >> 5) == (major)) &&                                \
       (((chip_fs)&0x001F) >= (minor))))
 
-struct sgp_signal {
-    uint16_t (*conversion_function)(uint16_t);
-    char name[NAME_SIZE];
-};
-
 struct sgp_profile {
     /* expected duration of measurement, i.e., when to return for data */
     const uint32_t duration_us;
-    /* signals */
-    const struct sgp_signal **signals;
     const uint16_t number_of_signals;
     const uint16_t command;
     const uint8_t number;
-    const char name[NAME_SIZE];
 };
 
 struct sgp_otp_featureset {

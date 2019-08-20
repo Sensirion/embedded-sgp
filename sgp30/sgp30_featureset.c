@@ -40,129 +40,68 @@ const uint8_t PROFILE_NUMBER_IAQ_SET_TVOC_BASELINE =
 const uint8_t PROFILE_NUMBER_MEASURE_RAW_SIGNALS = PROFILE_NUMBER_RAW_SIGNALS;
 const uint8_t PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY = PROFILE_NUMBER_SET_AH;
 
-static const struct sgp_signal ETHANOL_SIGNAL_FS9 = {
-    .conversion_function = NULL,
-    .name = "ethanol_signal",
-};
-
-static const struct sgp_signal H2_SIGNAL_FS9 = {
-    .conversion_function = NULL,
-    .name = "h2_signal",
-};
-
-static const struct sgp_signal TVOC_PPB_FS9 = {
-    .conversion_function = NULL,
-    .name = "tVOC",
-};
-
-static const struct sgp_signal CO2_EQ_PPM = {
-    .conversion_function = NULL,
-    .name = "co2_eq",
-};
-
-static const struct sgp_signal BASELINE_WORD1 = {
-    .conversion_function = NULL,
-    .name = "baseline1",
-};
-
-static const struct sgp_signal BASELINE_WORD2 = {
-    .conversion_function = NULL,
-    .name = "baseline2",
-};
-
-static const struct sgp_signal *SGP_PROFILE_IAQ_MEASURE_SIGNALS_FS9[] = {
-    &TVOC_PPB_FS9, &CO2_EQ_PPM};
-
-static const struct sgp_signal
-    *SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE_SIGNALS[] = {&BASELINE_WORD1};
-
-static const struct sgp_signal *SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS[] = {
-    &BASELINE_WORD1, &BASELINE_WORD2};
-
-static const struct sgp_signal *SGP_PROFILE_MEASURE_SIGNALS_SIGNALS_FS9[] = {
-    &ETHANOL_SIGNAL_FS9, &H2_SIGNAL_FS9};
-
 static const struct sgp_profile SGP_PROFILE_IAQ_INIT = {
     .number = PROFILE_NUMBER_IAQ_INIT,
     .duration_us = 10000,
-    .signals = NULL,
     .number_of_signals = 0,
     .command = 0x2003,
-    .name = "iaq_init",
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE_FS9 = {
     .number = PROFILE_NUMBER_IAQ_MEASURE,
     .duration_us = 50000,
-    .signals = SGP_PROFILE_IAQ_MEASURE_SIGNALS_FS9,
-    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_MEASURE_SIGNALS_FS9),
+    .number_of_signals = 2,
     .command = 0x2008,
-    .name = "iaq_measure",
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE = {
     .number = PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE,
     .duration_us = 10000,
-    .signals = SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE_SIGNALS,
-    .number_of_signals =
-        ARRAY_SIZE(SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE_SIGNALS),
+    .number_of_signals = 1,
     .command = 0x20b3,
-    .name = "iaq_get_tvoc_inceptive_baseline",
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_SET_TVOC_BASELINE = {
     .number = PROFILE_IAQ_SET_TVOC_BASELINE,
     .duration_us = 10000,
-    .signals = NULL,
     .number_of_signals = 0,
     .command = 0x2077,
-    .name = "iaq_set_tvoc_baseline",
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_GET_BASELINE = {
     .number = PROFILE_NUMBER_IAQ_GET_BASELINE,
     .duration_us = 10000,
-    .signals = SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS,
-    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_IAQ_GET_BASELINE_SIGNALS),
+    .number_of_signals = 2,
     .command = 0x2015,
-    .name = "iaq_get_baseline",
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_SET_BASELINE = {
     .number = PROFILE_NUMBER_IAQ_SET_BASELINE,
     .duration_us = 10000,
-    .signals = NULL,
     .number_of_signals = 0,
     .command = 0x201e,
-    .name = "iaq_set_baseline",
 };
 
 static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS_FS9 = {
     .number = PROFILE_NUMBER_RAW_SIGNALS,
     .duration_us = 200000,
-    .signals = SGP_PROFILE_MEASURE_SIGNALS_SIGNALS_FS9,
-    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_MEASURE_SIGNALS_SIGNALS_FS9),
+    .number_of_signals = 2,
     .command = 0x2050,
-    .name = "measure_signals",
 };
 
 static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS_FS32 = {
+    /* same signals as FS0.9 */
     .number = PROFILE_NUMBER_RAW_SIGNALS,
     .duration_us = 25000, /* more agressive timing since FS1.0 (32) */
-    /* same signals as FS0.9 */
-    .signals = SGP_PROFILE_MEASURE_SIGNALS_SIGNALS_FS9,
-    .number_of_signals = ARRAY_SIZE(SGP_PROFILE_MEASURE_SIGNALS_SIGNALS_FS9),
+    .number_of_signals = 2,
     .command = 0x2050,
-    .name = "measure_signals",
 };
 
 static const struct sgp_profile SGP_PROFILE_SET_ABSOLUTE_HUMIDITY = {
     .number = PROFILE_NUMBER_SET_AH,
     .duration_us = 10000,
-    .signals = NULL,
     .number_of_signals = 0,
     .command = 0x2061,
-    .name = "set_absolute_humidity",
 };
 
 static const struct sgp_profile *sgp_profiles_fs9[] = {
