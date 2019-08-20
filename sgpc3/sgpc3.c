@@ -36,10 +36,7 @@
 #include "sgp_featureset.h"
 #include "sgp_git_version.h"
 
-#define SGPC3_RAM_WORDS 4
-#define SGPC3_BUFFER_SIZE ((SGPC3_RAM_WORDS + 2) * (SGP_WORD_LEN + CRC8_LEN))
-#define SGPC3_BUFFER_WORDS (SGPC3_BUFFER_SIZE / SGP_WORD_LEN)
-#define SGPC3_MAX_PROFILE_RET_LEN 4 * (SGP_WORD_LEN + CRC8_LEN)
+#define SGPC3_MAX_BUFFER_WORDS 3
 #define SGPC3_VALID_TVOC_BASELINE(b) ((b) != 0)
 
 static const uint8_t SGPC3_I2C_ADDRESS = 0x58;
@@ -77,7 +74,7 @@ static struct sgpc3_data {
     struct sgpc3_info info;
     const struct sgp_otp_featureset *otp_features;
     union {
-        uint16_t words[SGPC3_BUFFER_WORDS];
+        uint16_t words[SGPC3_MAX_BUFFER_WORDS];
         uint64_t u64_value;
     } buffer;
 } client_data;
@@ -90,7 +87,7 @@ static struct sgpc3_data {
 static void unpack_signals(const struct sgp_profile *profile) {
     int16_t i, j;
     uint16_t data_words = profile->num_words;
-    uint16_t word_buf[data_words];
+    uint16_t word_buf[SGPC3_MAX_BUFFER_WORDS];
 
     /* copy buffer */
     for (i = 0; i < data_words; i++)

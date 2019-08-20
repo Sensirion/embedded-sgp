@@ -36,9 +36,7 @@
 #include "sgp_featureset.h"
 #include "sgp_git_version.h"
 
-#define SGP30_BUFFER_SIZE (6 * (SGP_WORD_LEN + CRC8_LEN))
-#define SGP30_BUFFER_WORDS (SGP30_BUFFER_SIZE / SGP_WORD_LEN)
-#define SGP30_MAX_PROFILE_RET_LEN 4 * (SGP_WORD_LEN + CRC8_LEN)
+#define SGP30_MAX_BUFFER_WORDS 3
 #define SGP30_VALID_IAQ_BASELINE(b) ((b) != 0)
 
 static const uint8_t SGP30_I2C_ADDRESS = 0x58;
@@ -76,7 +74,7 @@ static struct sgp30_data {
     struct sgp30_info info;
     const struct sgp_otp_featureset *otp_features;
     union {
-        uint16_t words[SGP30_BUFFER_WORDS];
+        uint16_t words[SGP30_MAX_BUFFER_WORDS];
         uint64_t u64_value;
     } buffer;
 } client_data;
@@ -89,7 +87,7 @@ static struct sgp30_data {
 static void unpack_signals(const struct sgp_profile *profile) {
     int16_t i, j;
     uint16_t data_words = profile->num_words;
-    uint16_t word_buf[data_words];
+    uint16_t word_buf[SGP30_MAX_BUFFER_WORDS];
 
     /* copy buffer */
     for (i = 0; i < data_words; i++)
