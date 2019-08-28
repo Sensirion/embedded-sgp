@@ -18,7 +18,8 @@ sensirion_common_sources := ${sensirion_common_dir}/sensirion_arch_config.h \
 sw_i2c_dir := ${sensirion_common_dir}/sw_i2c
 hw_i2c_dir := ${sensirion_common_dir}/hw_i2c
 
-CFLAGS := -Os -Wall -Wstrict-aliasing=1 -I. -I${sensirion_common_dir} -I${sgp_source_dir} \
+CFLAGS := -Os -Wall -fstrict-aliasing -Wstrict-aliasing=1 \
+          -I. -I${sensirion_common_dir} -I${sgp_source_dir} \
           -I${sgp_common_dir} -I${sht_source_dir} -I${sht_common_dir}
 
 svm30_binaries := svm30_example_usage_hw_i2c svm30_example_usage_sw_i2c
