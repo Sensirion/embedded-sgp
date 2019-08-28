@@ -588,7 +588,6 @@ int16_t sgpc3_get_tvoc_inceptive_baseline(uint16_t *tvoc_inceptive_baseline) {
  * Return:      STATUS_OK on success, an error code otherwise
  */
 int16_t sgpc3_set_absolute_humidity(uint32_t absolute_humidity) {
-    uint64_t ah = absolute_humidity;
     const struct sgp_profile *profile;
     uint16_t ah_scaled;
 
@@ -602,8 +601,8 @@ int16_t sgpc3_set_absolute_humidity(uint32_t absolute_humidity) {
     if (absolute_humidity > 256000)
         return STATUS_FAIL;
 
-    /* ah_scaled = (ah / 1000) * 256 */
-    ah_scaled = (uint16_t)((ah * 256 * 16777) >> 24);
+    /* ah_scaled = (absolute_humidity / 1000) * 256 */
+    ah_scaled = (uint16_t)((absolute_humidity * 16777) >> 16);
 
     return sensirion_i2c_write_cmd_with_args(SGP_I2C_ADDRESS, profile->command,
                                              &ah_scaled,
