@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
               instead of 200ms.
 * [`changed`] CFLAGS: Enable strict aliasing warnings by default, add `-Os` to
               SGPC3.
+* [`changed`] Avoid the use of a 64b temporary when converting absolute humidity
 
 ## [5.0.0] - 2019-05-17
 
