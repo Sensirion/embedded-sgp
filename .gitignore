@@ -1,9 +1,9 @@
 *.o
 /release
-/sgp30/sgp30_example_usage_hw_i2c
-/sgp30/sgp30_example_usage_sw_i2c
-/sgpc3/sgpc3_example_usage_hw_i2c
-/sgpc3/sgpc3_example_usage_sw_i2c
-/svm30/svm30_example_usage_hw_i2c
-/svm30/svm30_example_usage_sw_i2c
+/sgp30/sgp30_example_usage
+/sgp30/user_config.inc
+/sgpc3/sgpc3_example_usage
+/sgpc3/user_config.inc
+/svm30/svm30_example_usage
+/svm30/user_config.inc
 /sgp-common/sgp_git_version.c

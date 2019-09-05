@@ -20,9 +20,76 @@ jobs:
           command: git submodule update --init
       - run: apt update
       - run: apt install -y zip
+      - run: make prepare
+      - run: make
+      - run: make clean
+      - run: make release
       - run:
-          name: build drivers
-          command: make && make clean
+          name: build stub release drivers
+          command: |
+              cd release/sgp30
+              make CONFIG_I2C_TYPE=hw_i2c
+              make CONFIG_I2C_TYPE=sw_i2c
+              make clean
+              cd -
+              cd release/sgpc3
+              make CONFIG_I2C_TYPE=hw_i2c
+              make CONFIG_I2C_TYPE=sw_i2c
+              make clean
+              cd -
+              cd release/svm30
+              make CONFIG_I2C_TYPE=hw_i2c
+              make CONFIG_I2C_TYPE=sw_i2c
+              make clean
+              cd -
       - run:
-          name: create and build release
-          command: make release
+          name: build Linux release drivers
+          command: |
+              cd release/sgp30
+              make CONFIG_I2C_TYPE=hw_i2c hw_i2c_impl_src=hw_i2c/sample-implementations/linux_user_space/sensirion_hw_i2c_implementation.c
+              make CONFIG_I2C_TYPE=sw_i2c sw_i2c_impl_src=sw_i2c/sample-implementations/linux_user_space/sensirion_sw_i2c_implementation.c
+              make clean
+              cd -
+              cd release/sgpc3
+              make CONFIG_I2C_TYPE=hw_i2c hw_i2c_impl_src=hw_i2c/sample-implementations/linux_user_space/sensirion_hw_i2c_implementation.c
+              make CONFIG_I2C_TYPE=sw_i2c sw_i2c_impl_src=sw_i2c/sample-implementations/linux_user_space/sensirion_sw_i2c_implementation.c
+              make clean
+              cd -
+              cd release/svm30
+              make CONFIG_I2C_TYPE=hw_i2c hw_i2c_impl_src=hw_i2c/sample-implementations/linux_user_space/sensirion_hw_i2c_implementation.c
+              make CONFIG_I2C_TYPE=sw_i2c sw_i2c_impl_src=sw_i2c/sample-implementations/linux_user_space/sensirion_sw_i2c_implementation.c
+              make clean
+              cd -
+
+  deploy:
+    docker:
+      - image: gcc:5.5
+    steps:
+      - checkout
+      - run:
+          name: update common repo
+          command: git submodule update --init
+      - run: apt update
+      - run: apt install -y zip
+      - run: make release
+      - run:
+          name: Move zip files to artifact directory
+          command: |
+            mkdir -p /releases
+            mv release/*.zip /releases/
+      - store-artifacts:
+          path: /releases
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /^\d+\.\d+\.\d+$/

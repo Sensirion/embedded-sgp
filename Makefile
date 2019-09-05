@@ -4,9 +4,11 @@ release_drivers=$(foreach d, $(drivers), release/$(d))
 
 .PHONY: FORCE all $(release_drivers) $(clean_drivers) style-check style-fix
 
-all: $(drivers)
+all: prepare $(drivers)
 
-$(drivers): sgp-common/sgp_git_version.c FORCE
+prepare: sgp-common/sgp_git_version.c
+
+$(drivers): prepare
 	cd $@ && $(MAKE) $(MFLAGS)
 
 sgp-common/sgp_git_version.c: FORCE
@@ -27,8 +29,11 @@ $(release_drivers): sgp-common/sgp_git_version.c
 	cp -r embedded-common/* "$${pkgdir}" && \
 	cp -r sgp-common/* "$${pkgdir}" && \
 	cp -r $${driver}/* "$${pkgdir}" && \
-	perl -pi -e 's/^sensirion_common_dir :=.*$$/sensirion_common_dir := ./' "$${pkgdir}/Makefile" && \
-	perl -pi -e 's/^sgp_common_dir :=.*$$/sgp_common_dir := ./' "$${pkgdir}/Makefile" && \
+	echo 'sensirion_common_dir = .' >> $${pkgdir}/user_config.inc && \
+	echo 'sgp_common_dir = .' >> $${pkgdir}/user_config.inc && \
+	echo 'sgp30_dir = .' >> $${pkgdir}/user_config.inc && \
+	echo 'sgpc3_dir = .' >> $${pkgdir}/user_config.inc && \
+	echo 'svm30_dir = .' >> $${pkgdir}/user_config.inc && \
 	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
@@ -44,8 +49,9 @@ release/svm30: release/sgp30
 	cp -r ../embedded-sht/shtc1/* $${pkgdir} && \
 	cp svm30/Makefile $${pkgdir} && \
 	cp svm30/*.[ch] $${pkgdir} && \
-	for i in sht_source_dir sht_common_dir sgp_source_dir sgp_common_dir sensirion_common_dir; \
-		do perl -pi -e "s/^$$i :=.*$$/$$i := ./" "$${pkgdir}/Makefile"; \
+	cp svm30/default_config.inc $${pkgdir} && \
+	for i in sensirion_common_dir sgp_common_dir sht_common_dir sgp30_dir shtc1_dir svm30_dir; \
+		do echo "$$i = ." >> $${pkgdir}/user_config.inc; \
 	done && \
 	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
