@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`changed`] CFLAGS: Enable strict aliasing warnings by default, add `-Os` to
               SGPC3.
 * [`changed`] Avoid the use of a 64b temporary when converting absolute humidity
+* [`changed`] Split out `default_config.inc` from Makefile to configure paths
+              and CFLAGS for SGP30, SGPC3 and SVM30 drivers
+* [`changed`] Only one example with either `hw_i2c` or `sw_i2c` is built,
+              depending on `CONFIG_I2C_TYPE`. Defaults to `hw_i2c`.
 
 ## [5.0.0] - 2019-05-17
 
