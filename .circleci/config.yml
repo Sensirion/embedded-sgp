@@ -14,7 +14,7 @@ jobs:
           name: checkout embedded-sht
           command: |
               git clone git@github.com:Sensirion/embedded-sht.git ../embedded-sht
-              cd ../embedded-sht && make sht-common/sht_git_version.c && cd -
+              (cd ../embedded-sht && make prepare)
       - run:
           name: update common repo
           command: git submodule update --init
@@ -27,45 +27,44 @@ jobs:
       - run:
           name: build stub release drivers
           command: |
-              cd release/sgp30
-              make CONFIG_I2C_TYPE=hw_i2c
-              make CONFIG_I2C_TYPE=sw_i2c
-              make clean
-              cd -
-              cd release/sgpc3
-              make CONFIG_I2C_TYPE=hw_i2c
-              make CONFIG_I2C_TYPE=sw_i2c
-              make clean
-              cd -
-              cd release/svm30
-              make CONFIG_I2C_TYPE=hw_i2c
-              make CONFIG_I2C_TYPE=sw_i2c
-              make clean
-              cd -
+              (cd release/sgp30
+               make CONFIG_I2C_TYPE=hw_i2c
+               make CONFIG_I2C_TYPE=sw_i2c
+               make clean)
+              (cd release/sgpc3
+               make CONFIG_I2C_TYPE=hw_i2c
+               make CONFIG_I2C_TYPE=sw_i2c
+               make clean)
+              (cd release/svm30
+               make CONFIG_I2C_TYPE=hw_i2c
+               make CONFIG_I2C_TYPE=sw_i2c
+               make clean)
       - run:
           name: build Linux release drivers
           command: |
-              cd release/sgp30
-              make CONFIG_I2C_TYPE=hw_i2c hw_i2c_impl_src=hw_i2c/sample-implementations/linux_user_space/sensirion_hw_i2c_implementation.c
-              make CONFIG_I2C_TYPE=sw_i2c sw_i2c_impl_src=sw_i2c/sample-implementations/linux_user_space/sensirion_sw_i2c_implementation.c
-              make clean
-              cd -
-              cd release/sgpc3
-              make CONFIG_I2C_TYPE=hw_i2c hw_i2c_impl_src=hw_i2c/sample-implementations/linux_user_space/sensirion_hw_i2c_implementation.c
-              make CONFIG_I2C_TYPE=sw_i2c sw_i2c_impl_src=sw_i2c/sample-implementations/linux_user_space/sensirion_sw_i2c_implementation.c
-              make clean
-              cd -
-              cd release/svm30
-              make CONFIG_I2C_TYPE=hw_i2c hw_i2c_impl_src=hw_i2c/sample-implementations/linux_user_space/sensirion_hw_i2c_implementation.c
-              make CONFIG_I2C_TYPE=sw_i2c sw_i2c_impl_src=sw_i2c/sample-implementations/linux_user_space/sensirion_sw_i2c_implementation.c
-              make clean
-              cd -
+              (cd release/sgp30
+               make CONFIG_I2C_TYPE=hw_i2c hw_i2c_impl_src=hw_i2c/sample-implementations/linux_user_space/sensirion_hw_i2c_implementation.c
+               make CONFIG_I2C_TYPE=sw_i2c sw_i2c_impl_src=sw_i2c/sample-implementations/linux_user_space/sensirion_sw_i2c_implementation.c
+               make clean)
+              (cd release/sgpc3
+               make CONFIG_I2C_TYPE=hw_i2c hw_i2c_impl_src=hw_i2c/sample-implementations/linux_user_space/sensirion_hw_i2c_implementation.c
+               make CONFIG_I2C_TYPE=sw_i2c sw_i2c_impl_src=sw_i2c/sample-implementations/linux_user_space/sensirion_sw_i2c_implementation.c
+               make clean)
+              (cd release/svm30
+               make CONFIG_I2C_TYPE=hw_i2c hw_i2c_impl_src=hw_i2c/sample-implementations/linux_user_space/sensirion_hw_i2c_implementation.c
+               make CONFIG_I2C_TYPE=sw_i2c sw_i2c_impl_src=sw_i2c/sample-implementations/linux_user_space/sensirion_sw_i2c_implementation.c 
+               make clean)
 
   deploy:
     docker:
       - image: gcc:5.5
     steps:
       - checkout
+      - run:
+          name: checkout embedded-sht
+          command: |
+              git clone git@github.com:Sensirion/embedded-sht.git ../embedded-sht
+              (cd ../embedded-sht && make prepare)
       - run:
           name: update common repo
           command: git submodule update --init
