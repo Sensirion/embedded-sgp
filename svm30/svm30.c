@@ -54,11 +54,16 @@ static uint32_t sensirion_calc_absolute_humidity(const int32_t *temperature,
                                                  const int32_t *humidity) {
     uint32_t t, i, rem, norm_humi, ret;
 
-    if (*humidity == 0)
+    if (*humidity <= 0)
         return 0;
 
     norm_humi = ((uint32_t)*humidity * 82) >> 13;
-    t = *temperature - T_LO;
+
+    if (*temperature < T_LO)
+        t = 0;
+    else
+        t = (uint32_t)(*temperature - T_LO);
+
     i = t / T_STEP;
     rem = t % T_STEP;
 
