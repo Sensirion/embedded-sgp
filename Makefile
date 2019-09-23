@@ -31,9 +31,7 @@ $(release_drivers): sgp-common/sgp_git_version.c
 	cp -r $${driver}/* "$${pkgdir}" && \
 	echo 'sensirion_common_dir = .' >> $${pkgdir}/user_config.inc && \
 	echo 'sgp_common_dir = .' >> $${pkgdir}/user_config.inc && \
-	echo 'sgp30_dir = .' >> $${pkgdir}/user_config.inc && \
-	echo 'sgpc3_dir = .' >> $${pkgdir}/user_config.inc && \
-	echo 'svm30_dir = .' >> $${pkgdir}/user_config.inc && \
+	echo "$${driver}_dir = ." >> $${pkgdir}/user_config.inc && \
 	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
