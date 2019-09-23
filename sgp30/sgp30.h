@@ -35,6 +35,8 @@
 #include "sensirion_common.h"
 #include "sensirion_i2c.h"
 
+#define SGP30_ERR_UNKNOWN_FEATURE_SET (-10)
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -227,7 +227,7 @@ static int16_t sgp30_detect_featureset_version(uint16_t *featureset) {
             }
         }
     }
-    return STATUS_FAIL;
+    return SGP30_ERR_UNKNOWN_FEATURE_SET;
 }
 
 /**
@@ -696,7 +696,10 @@ int16_t sgp30_iaq_init() {
  *
  * This call aleady initializes the IAQ baselines (sgp30_iaq_init())
  *
- * Return:  STATUS_OK on success, an error code otherwise
+ * Return:  STATUS_OK on success,
+ *          SGP30_ERR_UNKNOWN_FEATURE_SET if the sensor's feature set
+ *                                        is unknown or outdated,
+ *          An error code otherwise
  */
 int16_t sgp30_probe() {
     int16_t err;
