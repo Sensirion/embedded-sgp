@@ -13,18 +13,19 @@ CFLAGS += -I${sensirion_common_dir} -I${sgp_common_dir} -I${sgp30_dir} \
 
 sensirion_common_sources = ${sensirion_common_dir}/sensirion_arch_config.h \
                            ${sensirion_common_dir}/sensirion_i2c.h \
-			   ${sensirion_common_dir}/sensirion_common.h \
-			   ${sensirion_common_dir}/sensirion_common.c
+                           ${sensirion_common_dir}/sensirion_common.h \
+                           ${sensirion_common_dir}/sensirion_common.c
 
 sgp_common_sources = ${sgp_common_dir}/sgp_git_version.h \
                      ${sgp_common_dir}/sgp_git_version.c \
-		     ${sgp_common_dir}/sgp_featureset.h
+                     ${sgp_common_dir}/sgp_featureset.h
 
-sgp30_sources = ${sensirion_common_sources} ${sgp_common_sources} \
-		${sgp30_dir}/sgp30_featureset.c \
-		${sgp30_dir}/sgp30.h ${sgp30_dir}/sgp30.c
+sgp30_sources = ${sensirion_common_sources} \
+                ${sgp_common_sources} \
+                ${sgp30_dir}/sgp30_featureset.c \
+                ${sgp30_dir}/sgp30.h ${sgp30_dir}/sgp30.c
 
 hw_i2c_sources = ${hw_i2c_impl_src}
 sw_i2c_sources = ${sensirion_common_dir}/sw_i2c/sensirion_sw_i2c_gpio.h \
-		 ${sensirion_common_dir}/sw_i2c/sensirion_sw_i2c.c \
-		 ${sw_i2c_impl_src}
+                 ${sensirion_common_dir}/sw_i2c/sensirion_sw_i2c.c \
+                 ${sw_i2c_impl_src}
