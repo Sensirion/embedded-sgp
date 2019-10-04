@@ -97,6 +97,8 @@ int16_t svm_measure_iaq_blocking_read(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm,
 
     sgp30_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
     absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
+    if (absolute_humidity == 0)
+        absolute_humidity = 1; /* avoid disabling humidity compensation */
     sgp30_set_absolute_humidity(absolute_humidity);
 
     svm_compensate_rht(temperature, humidity);

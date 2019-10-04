@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
               temperatures (< -20°C / -4°F). The conversion now bounds the
               result to the lowest result from the look-up table.
               Also become tolerant towards accepting negative %RH values.
+* [`fixed`]   SVM30: Fix disabling of humidity compensation at values < 0.08%RH
 
 ## [5.0.0] - 2019-05-17
 
