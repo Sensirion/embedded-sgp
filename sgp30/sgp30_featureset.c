@@ -47,7 +47,7 @@ static const struct sgp_profile SGP_PROFILE_IAQ_INIT = {
     .number = PROFILE_NUMBER_IAQ_INIT,
 };
 
-static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE_FS9 = {
+static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE = {
     .duration_us = 50000,
     .number_of_signals = 2,
     .command = 0x2008,
@@ -82,16 +82,8 @@ static const struct sgp_profile SGP_PROFILE_IAQ_SET_BASELINE = {
     .number = PROFILE_NUMBER_IAQ_SET_BASELINE,
 };
 
-static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS_FS9 = {
-    .duration_us = 200000,
-    .number_of_signals = 2,
-    .command = 0x2050,
-    .number = PROFILE_NUMBER_RAW_SIGNALS,
-};
-
-static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS_FS32 = {
-    /* same signals as FS0.9 */
-    .duration_us = 25000, /* more agressive timing since FS1.0 (32) */
+static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS = {
+    .duration_us = 25000,
     .number_of_signals = 2,
     .command = 0x2050,
     .number = PROFILE_NUMBER_RAW_SIGNALS,
@@ -104,31 +96,20 @@ static const struct sgp_profile SGP_PROFILE_SET_ABSOLUTE_HUMIDITY = {
     .number = PROFILE_NUMBER_SET_AH,
 };
 
-static const struct sgp_profile *sgp_profiles_fs9[] = {
-    &SGP_PROFILE_IAQ_INIT,
-    &SGP_PROFILE_IAQ_MEASURE_FS9,
-    &SGP_PROFILE_IAQ_GET_BASELINE,
-    &SGP_PROFILE_IAQ_SET_BASELINE,
-    &SGP_PROFILE_MEASURE_SIGNALS_FS9,
-};
-
 static const struct sgp_profile *sgp_profiles_fs32[] = {
-    &SGP_PROFILE_IAQ_INIT,
-    &SGP_PROFILE_IAQ_MEASURE_FS9,
-    &SGP_PROFILE_IAQ_GET_BASELINE,
-    &SGP_PROFILE_IAQ_SET_BASELINE,
-    &SGP_PROFILE_MEASURE_SIGNALS_FS32,
-    &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
+    &SGP_PROFILE_IAQ_INIT,         &SGP_PROFILE_IAQ_MEASURE,
+    &SGP_PROFILE_IAQ_GET_BASELINE, &SGP_PROFILE_IAQ_SET_BASELINE,
+    &SGP_PROFILE_MEASURE_SIGNALS,  &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
 };
 
 static const struct sgp_profile *sgp_profiles_fs33[] = {
     &SGP_PROFILE_IAQ_INIT,
-    &SGP_PROFILE_IAQ_MEASURE_FS9,
+    &SGP_PROFILE_IAQ_MEASURE,
     &SGP_PROFILE_IAQ_GET_BASELINE,
     &SGP_PROFILE_IAQ_SET_BASELINE,
     &SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE,
     &SGP_PROFILE_IAQ_SET_TVOC_BASELINE,
-    &SGP_PROFILE_MEASURE_SIGNALS_FS32,
+    &SGP_PROFILE_MEASURE_SIGNALS,
     &SGP_PROFILE_SET_ABSOLUTE_HUMIDITY,
 };
 
@@ -136,20 +117,9 @@ static const struct sgp_profile *sgp_profiles_fs33[] = {
  * set group, since minor versions are forward compatible when the major version
  * matches.
  * E.g. FS1.2 (34) is guaranteed to work with the driver for FS1.1 (33) */
-/* Feature sets 0.x */
-static const uint16_t supported_featureset_versions_fs9[] = {9};
 /* Feature sets 1.x */
 static const uint16_t supported_featureset_versions_fs32[] = {0x20};
 static const uint16_t supported_featureset_versions_fs33[] = {0x21};
-
-static const struct sgp_otp_featureset sgp_featureset9 = {
-    .profiles = sgp_profiles_fs9,
-    .number_of_profiles = ARRAY_SIZE(sgp_profiles_fs9),
-    .supported_featureset_versions =
-        (uint16_t *)supported_featureset_versions_fs9,
-    .number_of_supported_featureset_versions =
-        ARRAY_SIZE(supported_featureset_versions_fs9),
-};
 
 static const struct sgp_otp_featureset sgp_featureset32 = {
     .profiles = sgp_profiles_fs32,
@@ -178,7 +148,6 @@ static const struct sgp_otp_featureset sgp_featureset33 = {
 static const struct sgp_otp_featureset *featuresets[] = {
     &sgp_featureset33,
     &sgp_featureset32,
-    &sgp_featureset9,
 };
 
 const struct sgp_otp_supported_featuresets sgp_supported_featuresets = {

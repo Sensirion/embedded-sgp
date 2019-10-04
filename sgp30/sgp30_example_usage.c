@@ -61,10 +61,21 @@ int main(void) {
 
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
-    while (sgp30_probe() != STATUS_OK) {
+    int16_t probe;
+    while (1) {
+        probe = sgp30_probe();
+
+        if (probe == STATUS_OK)
+            break;
+
+        if (probe == SGP30_ERR_UNKNOWN_FEATURE_SET)
+            printf(
+                "Your sensor needs at least feature set version 1.0 (0x20)\n");
+
         printf("SGP sensor probing failed\n");
-        sleep(1);
+        sensirion_sleep_usec(1000000);
     }
+
     printf("SGP sensor probing successful\n");
 
     uint16_t feature_set_version;

@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
               and CFLAGS for SGP30, SGPC3 and SVM30 drivers
 * [`changed`] Only one example with either `hw_i2c` or `sw_i2c` is built,
               depending on `CONFIG_I2C_TYPE`. Defaults to `hw_i2c`.
+* [`removed`] No longer support SGP30 with feature set < 1.0
+* [`changed`] Update submodule to increase timeout while clock stretching in
+              software I2C mode
 
 ## [5.0.0] - 2019-05-17
 
