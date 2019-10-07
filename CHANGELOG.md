@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`fixed`]   Copy correct `CHANGELOG.md` and `LICENSE` files to target
               locations when running the `release` target of the driver's root
               Makefile.
+* [`fixed`]   Fix `cpp` build of SVM30 due to missing header file
 
 ## [5.0.0] - 2019-05-17
 

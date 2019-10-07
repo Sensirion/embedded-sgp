@@ -29,6 +29,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "svm30.h"
 #include "sensirion_common.h"
 #include "sgp30.h"
 #include "sgp_featureset.h"
