@@ -42,6 +42,7 @@ release/svm30: release/sgp30
 	export tag="$$(git describe --always --dirty)" && \
 	export pkgname="$${driver}-$${tag}" && \
 	export pkgdir="release/$${pkgname}" && \
+	(cd ../embedded-sht && make prepare) && \
 	cp -r release/sgp30/ $${pkgdir} && \
 	cp -r ../embedded-sht/sht-common/* $${pkgdir} && \
 	cp -r ../embedded-sht/shtc1/* $${pkgdir} && \

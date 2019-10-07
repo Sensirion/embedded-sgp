@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`removed`] No longer support SGP30 with feature set < 1.0
 * [`changed`] Update submodule to increase timeout while clock stretching in
               software I2C mode
+* [`fixed`]   Run `make prepare` in the `embedded-sht` directory when makeing
+              the `release` target in order for the `release/svm30` target to
+              succeed.
 
 ## [5.0.0] - 2019-05-17
 
