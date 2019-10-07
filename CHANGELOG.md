@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`fixed`]   Run `make prepare` in the `embedded-sht` directory when makeing
               the `release` target in order for the `release/svm30` target to
               succeed.
+* [`removed`] Remove the `AUTHORS` file from the driver and the
+              `embedded-common` submodule, as it adds more noise than benefit.
+              The contributors can be found in the git log.
 
 ## [5.0.0] - 2019-05-17
 
