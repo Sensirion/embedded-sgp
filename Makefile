@@ -29,6 +29,7 @@ $(release_drivers): sgp-common/sgp_git_version.c
 	cp -r embedded-common/* "$${pkgdir}" && \
 	cp -r sgp-common/* "$${pkgdir}" && \
 	cp -r $${driver}/* "$${pkgdir}" && \
+	cp CHANGELOG.md LICENSE "$${pkgdir}" && \
 	echo 'sensirion_common_dir = .' >> $${pkgdir}/user_config.inc && \
 	echo 'sgp_common_dir = .' >> $${pkgdir}/user_config.inc && \
 	echo "$${driver}_dir = ." >> $${pkgdir}/user_config.inc && \
