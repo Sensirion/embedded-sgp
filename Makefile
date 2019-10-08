@@ -29,6 +29,7 @@ $(release_drivers): sgp-common/sgp_git_version.c
 	cp -r embedded-common/* "$${pkgdir}" && \
 	cp -r sgp-common/* "$${pkgdir}" && \
 	cp -r $${driver}/* "$${pkgdir}" && \
+	cp CHANGELOG.md LICENSE "$${pkgdir}" && \
 	echo 'sensirion_common_dir = .' >> $${pkgdir}/user_config.inc && \
 	echo 'sgp_common_dir = .' >> $${pkgdir}/user_config.inc && \
 	echo "$${driver}_dir = ." >> $${pkgdir}/user_config.inc && \
@@ -42,6 +43,7 @@ release/svm30: release/sgp30
 	export tag="$$(git describe --always --dirty)" && \
 	export pkgname="$${driver}-$${tag}" && \
 	export pkgdir="release/$${pkgname}" && \
+	(cd ../embedded-sht && make prepare) && \
 	cp -r release/sgp30/ $${pkgdir} && \
 	cp -r ../embedded-sht/sht-common/* $${pkgdir} && \
 	cp -r ../embedded-sht/shtc1/* $${pkgdir} && \
