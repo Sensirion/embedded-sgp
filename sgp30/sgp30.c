@@ -528,8 +528,8 @@ int16_t sgp30_set_iaq_baseline(uint32_t baseline) {
     if (profile == NULL)
         return STATUS_FAIL;
 
-    return sensirion_i2c_write_cmd_with_args(SGP30_I2C_ADDRESS, profile->command,
-                                             words, SENSIRION_NUM_WORDS(words));
+    return sensirion_i2c_write_cmd_with_args(
+        SGP30_I2C_ADDRESS, profile->command, words, SENSIRION_NUM_WORDS(words));
 }
 
 /**
@@ -612,8 +612,8 @@ int16_t sgp30_set_absolute_humidity(uint32_t absolute_humidity) {
     /* ah_scaled = (absolute_humidity / 1000) * 256 */
     ah_scaled = (uint16_t)((absolute_humidity * 16777) >> 16);
 
-    return sensirion_i2c_write_cmd_with_args(SGP30_I2C_ADDRESS, profile->command,
-                                             &ah_scaled,
+    return sensirion_i2c_write_cmd_with_args(SGP30_I2C_ADDRESS,
+                                             profile->command, &ah_scaled,
                                              SENSIRION_NUM_WORDS(ah_scaled));
 }
 

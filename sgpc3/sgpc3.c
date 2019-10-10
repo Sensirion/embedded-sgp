@@ -513,8 +513,8 @@ int16_t sgpc3_set_tvoc_baseline(uint16_t baseline) {
     if (profile == NULL)
         return STATUS_FAIL;
 
-    return sensirion_i2c_write_cmd_with_args(SGPC3_I2C_ADDRESS, profile->command,
-                                             &baseline,
+    return sensirion_i2c_write_cmd_with_args(SGPC3_I2C_ADDRESS,
+                                             profile->command, &baseline,
                                              SENSIRION_NUM_WORDS(baseline));
 }
 
@@ -576,8 +576,8 @@ int16_t sgpc3_set_absolute_humidity(uint32_t absolute_humidity) {
     /* ah_scaled = (absolute_humidity / 1000) * 256 */
     ah_scaled = (uint16_t)((absolute_humidity * 16777) >> 16);
 
-    return sensirion_i2c_write_cmd_with_args(SGPC3_I2C_ADDRESS, profile->command,
-                                             &ah_scaled,
+    return sensirion_i2c_write_cmd_with_args(SGPC3_I2C_ADDRESS,
+                                             profile->command, &ah_scaled,
                                              SENSIRION_NUM_WORDS(ah_scaled));
 }
 
@@ -607,8 +607,8 @@ int16_t sgpc3_set_power_mode(uint16_t power_mode) {
     if (profile == NULL)
         return STATUS_FAIL;
 
-    return sensirion_i2c_write_cmd_with_args(SGPC3_I2C_ADDRESS, profile->command,
-                                             &power_mode,
+    return sensirion_i2c_write_cmd_with_args(SGPC3_I2C_ADDRESS,
+                                             profile->command, &power_mode,
                                              SENSIRION_NUM_WORDS(power_mode));
 }
 
