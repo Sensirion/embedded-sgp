@@ -56,91 +56,91 @@ const uint8_t PROFILE_NUMBER_SET_POWER_MODE = PROFILE_SET_POWER_MODE;
 
 static const struct sgp_profile SGP_PROFILE_IAQ_INIT64 = {
     .duration_us = 10000,
-    .number_of_signals = 0,
+    .num_words = 0,
     .command = 0x2003,
     .number = PROFILE_IAQ_INIT64,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_INIT0 = {
     .duration_us = 10000,
-    .number_of_signals = 0,
+    .num_words = 0,
     .command = 0x2089,
     .number = PROFILE_IAQ_INIT0,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_INIT16 = {
     .duration_us = 10000,
-    .number_of_signals = 0,
+    .num_words = 0,
     .command = 0x2024,
     .number = PROFILE_IAQ_INIT16,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_INIT184 = {
     .duration_us = 10000,
-    .number_of_signals = 0,
+    .num_words = 0,
     .command = 0x206a,
     .number = PROFILE_IAQ_INIT184,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_INIT_CONTINUOUS = {
     .duration_us = 10000,
-    .number_of_signals = 0,
+    .num_words = 0,
     .command = 0x20ae,
     .number = PROFILE_IAQ_INIT_CONTINUOUS,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE = {
     .duration_us = 50000,
-    .number_of_signals = 1,
+    .num_words = 1,
     .command = 0x2008,
     .number = PROFILE_NUMBER_IAQ_MEASURE,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_GET_BASELINE = {
     .duration_us = 10000,
-    .number_of_signals = 1,
+    .num_words = 1,
     .command = 0x2015,
     .number = PROFILE_NUMBER_IAQ_GET_BASELINE,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_SET_BASELINE = {
     .duration_us = 10000,
-    .number_of_signals = 0,
+    .num_words = 0,
     .command = 0x201e,
     .number = PROFILE_NUMBER_IAQ_SET_BASELINE,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE = {
     .duration_us = 10000,
-    .number_of_signals = 1,
+    .num_words = 1,
     .command = 0x20b3,
     .number = PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE,
 };
 
 static const struct sgp_profile SGP_PROFILE_MEASURE_ETOH_SIGNAL = {
     .duration_us = 50000,
-    .number_of_signals = 1,
+    .num_words = 1,
     .command = 0x204d,
     .number = PROFILE_NUMBER_RAW_SIGNALS,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE_RAW = {
     .duration_us = 50000,
-    .number_of_signals = 2,
+    .num_words = 2,
     .command = 0x2046,
     .number = PROFILE_IAQ_MEASURE_RAW,
 };
 
 static const struct sgp_profile SGP_PROFILE_SET_ABSOLUTE_HUMIDITY = {
     .duration_us = 10000,
-    .number_of_signals = 0,
+    .num_words = 0,
     .command = 0x2061,
     .number = PROFILE_SET_ABSOLUTE_HUMIDITY,
 };
 
 static const struct sgp_profile SGP_PROFILE_SET_POWER_MODE = {
     .duration_us = 10000,
-    .number_of_signals = 0,
+    .num_words = 0,
     .command = 0x209f,
     .number = PROFILE_SET_POWER_MODE,
 };

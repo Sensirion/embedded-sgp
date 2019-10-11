@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
               locations when running the `release` target of the driver's root
               Makefile.
 * [`fixed`]   Fix `cpp` build of SVM30 due to missing header file
+* [`changed`] Don't use variable-length arrays (improves portability)
 
 ## [5.0.0] - 2019-05-17
 

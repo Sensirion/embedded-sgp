@@ -42,56 +42,56 @@ const uint8_t PROFILE_NUMBER_SET_ABSOLUTE_HUMIDITY = PROFILE_NUMBER_SET_AH;
 
 static const struct sgp_profile SGP_PROFILE_IAQ_INIT = {
     .duration_us = 10000,
-    .number_of_signals = 0,
+    .num_words = 0,
     .command = 0x2003,
     .number = PROFILE_NUMBER_IAQ_INIT,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_MEASURE = {
     .duration_us = 50000,
-    .number_of_signals = 2,
+    .num_words = 2,
     .command = 0x2008,
     .number = PROFILE_NUMBER_IAQ_MEASURE,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_GET_TVOC_INCEPTIVE_BASELINE = {
     .duration_us = 10000,
-    .number_of_signals = 1,
+    .num_words = 1,
     .command = 0x20b3,
     .number = PROFILE_NUMBER_IAQ_GET_TVOC_INCEPTIVE_BASELINE,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_SET_TVOC_BASELINE = {
     .duration_us = 10000,
-    .number_of_signals = 0,
+    .num_words = 0,
     .command = 0x2077,
     .number = PROFILE_IAQ_SET_TVOC_BASELINE,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_GET_BASELINE = {
     .duration_us = 10000,
-    .number_of_signals = 2,
+    .num_words = 2,
     .command = 0x2015,
     .number = PROFILE_NUMBER_IAQ_GET_BASELINE,
 };
 
 static const struct sgp_profile SGP_PROFILE_IAQ_SET_BASELINE = {
     .duration_us = 10000,
-    .number_of_signals = 0,
+    .num_words = 0,
     .command = 0x201e,
     .number = PROFILE_NUMBER_IAQ_SET_BASELINE,
 };
 
 static const struct sgp_profile SGP_PROFILE_MEASURE_SIGNALS = {
     .duration_us = 25000,
-    .number_of_signals = 2,
+    .num_words = 2,
     .command = 0x2050,
     .number = PROFILE_NUMBER_RAW_SIGNALS,
 };
 
 static const struct sgp_profile SGP_PROFILE_SET_ABSOLUTE_HUMIDITY = {
     .duration_us = 10000,
-    .number_of_signals = 0,
+    .num_words = 0,
     .command = 0x2061,
     .number = PROFILE_NUMBER_SET_AH,
 };
