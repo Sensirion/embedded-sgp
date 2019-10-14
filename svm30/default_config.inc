@@ -23,10 +23,8 @@ sensirion_common_sources = ${sensirion_common_dir}/sensirion_arch_config.h \
 
 sgp_common_sources = ${sgp_common_dir}/sgp_git_version.h \
                      ${sgp_common_dir}/sgp_git_version.c \
-                     ${sgp_common_dir}/sgp_featureset.h
 
-sgp30_sources = ${sgp30_dir}/sgp30_featureset.c \
-                ${sgp30_dir}/sgp30.h ${sgp30_dir}/sgp30.c
+sgp30_sources = ${sgp30_dir}/sgp30.h ${sgp30_dir}/sgp30.c
 
 sht_common_sources = ${sht_common_dir}/sht_git_version.h \
                      ${sht_common_dir}/sht_git_version.c
