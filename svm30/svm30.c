@@ -32,7 +32,6 @@
 #include "svm30.h"
 #include "sensirion_common.h"
 #include "sgp30.h"
-#include "sgp_featureset.h"
 #include "sgp_git_version.h"
 #include "shtc1.h"
 
@@ -106,11 +105,8 @@ int16_t svm_measure_iaq_blocking_read(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm,
         return err;
 
     sgp30_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
-    if (SGP_REQUIRE_FS(sgp_feature_set, 1, 0)) {
-        absolute_humidity =
-            sensirion_calc_absolute_humidity(temperature, humidity);
-        sgp30_set_absolute_humidity(absolute_humidity);
-    }
+    absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
+    sgp30_set_absolute_humidity(absolute_humidity);
 
     svm_compensate_rht(temperature, humidity);
 
@@ -147,11 +143,8 @@ int16_t svm_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
         return err;
 
     sgp30_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
-    if (SGP_REQUIRE_FS(sgp_feature_set, 1, 0)) {
-        absolute_humidity =
-            sensirion_calc_absolute_humidity(temperature, humidity);
-        sgp30_set_absolute_humidity(absolute_humidity);
-    }
+    absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
+    sgp30_set_absolute_humidity(absolute_humidity);
 
     err = sgp30_measure_raw_blocking_read(ethanol_raw_signal, h2_raw_signal);
     if (err != STATUS_OK)
