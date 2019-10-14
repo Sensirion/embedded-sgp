@@ -68,7 +68,7 @@ int main(void) {
         if (probe == STATUS_OK)
             break;
 
-        if (probe == SGP30_ERR_UNKNOWN_FEATURE_SET)
+        if (probe == SGP30_ERR_UNSUPPORTED_FEATURE_SET)
             printf(
                 "Your sensor needs at least feature set version 1.0 (0x20)\n");
 
