@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`changed`] Change the SGP30 error code `SGP30_ERR_UNKNOWN_FEATURE_SET` to
               `SGP30_ERR_INSUFFICIENT_FEATURE_SET`
 * [`added`]   Add `SGPC3_ERR_INSUFFICIENT_FEATURE_SET` as error code for SGPC3
+* [`changed`] Move the code documentation from the source files to the headers
 
 ## [5.0.0] - 2019-05-17
 

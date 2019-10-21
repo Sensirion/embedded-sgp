@@ -40,13 +40,47 @@
 extern "C" {
 #endif
 
+/**
+ * svm_get_driver_version() - Return the driver version
+ * Return:  Driver version string
+ */
 const char *svm_get_driver_version();
 
+/**
+ * svm_probe() - check if an SVM30 module is available and initialize it
+ *
+ * This call aleady initializes the IAQ baselines (sgp30_iaq_init())
+ *
+ * Return:  STATUS_OK on success.
+ */
 int16_t svm_probe(void);
 
+/**
+ * svm_measure_iaq_blocking_read() - Measure IAQ concentrations tVOC, CO2-Eq.
+ *
+ * @tvoc_ppb:   The tVOC ppb value will be written to this location
+ * @co2_eq_ppm: The CO2-Equivalent ppm value will be written to this location
+ *
+ * The profile is executed synchronously.
+ *
+ * Return:      STATUS_OK on success, else STATUS_FAIL
+ */
 int16_t svm_measure_iaq_blocking_read(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm,
                                       int32_t *temperature, int32_t *humidity);
 
+/**
+ * svm_measure_raw_blocking_read() - Measure raw signals
+ *
+ * The output values are written to the memory locations passed as parameters:
+ * @ethanol_raw_signal: The ethanol signal
+ * @h2_raw_signal:      The h2 signal
+ * @temperature:        Temperature in [degree Celsius] multiplied by 1000
+ * @humidity:           Relative humidity in [%RH (0..100)] multiplied by 1000
+ *
+ * The profile is executed synchronously.
+ *
+ * Return:      STATUS_OK on success, else STATUS_FAIL
+ */
 int16_t svm_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
                                       uint16_t *h2_raw_signal,
                                       int32_t *temperature, int32_t *humidity);
