@@ -36,6 +36,7 @@
 #include "sensirion_i2c.h"
 
 #define SGP30_ERR_UNSUPPORTED_FEATURE_SET (-10)
+#define SGP30_ERR_INVALID_PRODUCT_TYPE (-12)
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,6 +48,7 @@ extern "C" {
  * This call aleady initializes the IAQ baselines (sgp30_iaq_init())
  *
  * Return:  STATUS_OK on success,
+ *          SGP30_ERR_INVALID_PRODUCT_TYPE if the sensor is not an SGP30,
  *          SGP30_ERR_UNSUPPORTED_FEATURE_SET if the sensor's feature set
  *                                            is unknown or outdated,
  *          An error code otherwise

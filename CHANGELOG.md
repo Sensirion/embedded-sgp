@@ -38,6 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
               started when reading a measurement, in order to remove all global
               static variables
 * [`changed`] Move the code documentation from the source files to the headers
+* [`added`]   Add error codes `SGP30_ERR_INVALID_PRODUCT_TYPE` and
+              `SGPC3_ERR_INVALID_PRODUCT_TYPE` to SGP30 and SGPC3 drivers,
+              respectively.
 
 ## [5.0.0] - 2019-05-17
 

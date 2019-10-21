@@ -35,6 +35,7 @@
 #include "sensirion_i2c.h"
 #include "sgp_git_version.h"
 
+#define SGPC3_PRODUCT_TYPE 1
 static const uint8_t SGPC3_I2C_ADDRESS = 0x58;
 
 /* command and constants for reading the serial ID */
@@ -108,8 +109,9 @@ static const uint8_t SGPC3_I2C_ADDRESS = 0x58;
  * @needed_fs: The featureset that is required
  *
  * Return: STATUS_OK if the sensor has the required FS,
+ *         SGPC3_ERR_INVALID_PRODUCT_TYPE if the sensor is not an SGPC3,
  *         SGPC3_ERR_UNSUPPORTED_FEATURE_SET if the sensor does not
- *                                            have the required FS,
+ *                                           have the required FS,
  *         an error code otherwise
  */
 static int16_t sgpc3_check_featureset(uint16_t needed_fs) {
@@ -120,6 +122,9 @@ static int16_t sgpc3_check_featureset(uint16_t needed_fs) {
     ret = sgpc3_get_feature_set_version(&fs_version, &product_type);
     if (ret != STATUS_OK)
         return ret;
+
+    if (product_type != SGPC3_PRODUCT_TYPE)
+        return SGPC3_ERR_INVALID_PRODUCT_TYPE;
 
     if (fs_version < needed_fs)
         return SGPC3_ERR_UNSUPPORTED_FEATURE_SET;

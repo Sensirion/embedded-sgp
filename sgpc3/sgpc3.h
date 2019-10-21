@@ -36,6 +36,7 @@
 #include "sensirion_i2c.h"
 
 #define SGPC3_ERR_UNSUPPORTED_FEATURE_SET (-11)
+#define SGPC3_ERR_INVALID_PRODUCT_TYPE (-13)
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,6 +49,7 @@ extern "C" {
  * (sgpc3_tvoc_init_no_preheat())
  *
  * Return:  STATUS_OK on success,
+ *          SGPC3_ERR_INVALID_PRODUT_TYPE if the sensor is not an SGPC3,
  *          SGPC3_ERR_UNSUPPORTED_FEATURE_SET if the sensor's feature set
  *                                            is unknown or outdated,
  *          An error code otherwise
