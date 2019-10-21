@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`removed`] The SGP30 and SGPC3 drivers no longer checks if a measurement was
               started when reading a measurement, in order to remove all global
               static variables
+* [`changed`] Move the code documentation from the source files to the headers
 
 ## [5.0.0] - 2019-05-17
 
