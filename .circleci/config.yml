@@ -76,19 +76,43 @@ jobs:
           command: |
             mkdir -p /releases
             mv release/*.zip /releases/
+      - persist_to_workspace:
+          root: /releases
+          paths: .
       - store-artifacts:
           path: /releases
+
+  github-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: /releases
+      - run:
+          name: "Publish Release on GitHub"
+          command: ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -n "Embedded-SGP ${CIRCLE_TAG}" -delete ${CIRCLE_TAG} /releases/
 
 workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only: /.*/
       - deploy:
           requires:
             - build
           filters:
             branches:
               only: master
+            tags:
+              only: /^\d+\.\d+\.\d+$/
+      - github-release:
+          requires:
+            - deploy
+          filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /^\d+\.\d+\.\d+$/
