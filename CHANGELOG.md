@@ -30,9 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`fixed`]   Fix `cpp` build of SVM30 due to missing header file
 * [`changed`] Don't use variable-length arrays (improves portability)
 * [`changed`] Change the quite complicated feature set handling code to easy to
-              understand constants for SGP30
+              understand constants for SGP30 and SGPC3
 * [`changed`] Change the SGP30 error code `SGP30_ERR_UNKNOWN_FEATURE_SET` to
               `SGP30_ERR_INSUFFICIENT_FEATURE_SET`
+* [`added`]   Add `SGPC3_ERR_INSUFFICIENT_FEATURE_SET` as error code for SGPC3
 
 ## [5.0.0] - 2019-05-17
 
