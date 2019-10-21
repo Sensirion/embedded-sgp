@@ -35,6 +35,8 @@
 #include "sensirion_common.h"
 #include "sensirion_i2c.h"
 
+#define SGPC3_ERR_UNSUPPORTED_FEATURE_SET (-11)
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -30,12 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`fixed`]   Fix `cpp` build of SVM30 due to missing header file
 * [`changed`] Don't use variable-length arrays (improves portability)
 * [`changed`] Change the quite complicated feature set handling code to easy to
-              understand constants for SGP30
+              understand constants for SGP30 and SGPC3
 * [`changed`] Change the SGP30 error code `SGP30_ERR_UNKNOWN_FEATURE_SET` to
               `SGP30_ERR_UNSUPPORTED_FEATURE_SET`
-* [`removed`] The SGP30 driver no longer checks if a measurement was started
-              when reading a measurement, in order to remove all global static
-              variables
+* [`added`]   Add `SGPC3_ERR_UNSUPPORTED_FEATURE_SET` as error code for SGPC3
+* [`removed`] The SGP30 and SGPC3 drivers no longer checks if a measurement was
+              started when reading a measurement, in order to remove all global
+              static variables
 
 ## [5.0.0] - 2019-05-17
 

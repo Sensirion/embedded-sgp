@@ -125,9 +125,11 @@ int main(void) {
 
     /* Run periodic tVOC measurements at defined intervals */
     while (1) {
-        err = sgpc3_measure_tvoc_blocking_read(&tvoc_ppb);
+        err = sgpc3_measure_tvoc_and_raw_blocking_read(&tvoc_ppb,
+                                                       &ethanol_raw_signal);
         if (err == STATUS_OK) {
             printf("tVOC  Concentration: %dppb\n", tvoc_ppb);
+            printf("ethanol: %d\n", ethanol_raw_signal);
         } else {
             printf("error reading tVOC value\n");
         }
