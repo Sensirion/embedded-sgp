@@ -88,26 +88,33 @@ static uint32_t sensirion_calc_absolute_humidity(const int32_t *temperature,
     return ((ret >> 3) * (uint32_t)(*humidity)) / 12500;
 }
 
+static int16_t svm_set_humidity(const int32_t *temperature,
+                                const int32_t *humidity) {
+    uint32_t absolute_humidity;
+
+    absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
+
+    if (absolute_humidity == 0)
+        absolute_humidity = 1; /* avoid disabling humidity compensation */
+
+    return sgp30_set_absolute_humidity(absolute_humidity);
+}
+
 const char *svm_get_driver_version() {
     return SGP_DRV_VERSION_STR;
 }
 
 int16_t svm_measure_iaq_blocking_read(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm,
                                       int32_t *temperature, int32_t *humidity) {
-    uint32_t absolute_humidity;
-    uint16_t sgp_feature_set;
-    uint8_t sgp_product_type;
     int16_t err;
 
     err = shtc1_measure_blocking_read(temperature, humidity);
     if (err != STATUS_OK)
         return err;
 
-    sgp30_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
-    absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
-    if (absolute_humidity == 0)
-        absolute_humidity = 1; /* avoid disabling humidity compensation */
-    sgp30_set_absolute_humidity(absolute_humidity);
+    err = svm_set_humidity(temperature, humidity);
+    if (err != STATUS_OK)
+        return err;
 
     svm_compensate_rht(temperature, humidity);
 
@@ -121,18 +128,15 @@ int16_t svm_measure_iaq_blocking_read(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm,
 int16_t svm_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
                                       uint16_t *h2_raw_signal,
                                       int32_t *temperature, int32_t *humidity) {
-    uint32_t absolute_humidity;
-    uint16_t sgp_feature_set;
-    uint8_t sgp_product_type;
     int16_t err;
 
     err = shtc1_measure_blocking_read(temperature, humidity);
     if (err != STATUS_OK)
         return err;
 
-    sgp30_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
-    absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
-    sgp30_set_absolute_humidity(absolute_humidity);
+    err = svm_set_humidity(temperature, humidity);
+    if (err != STATUS_OK)
+        return err;
 
     err = sgp30_measure_raw_blocking_read(ethanol_raw_signal, h2_raw_signal);
     if (err != STATUS_OK)
