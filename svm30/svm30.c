@@ -52,12 +52,10 @@ static void svm_compensate_rht(int32_t *temperature, int32_t *humidity) {
  */
 static uint32_t sensirion_calc_absolute_humidity(const int32_t *temperature,
                                                  const int32_t *humidity) {
-    uint32_t t, i, rem, norm_humi, ret;
+    uint32_t t, i, rem, ret;
 
     if (*humidity <= 0)
         return 0;
-
-    norm_humi = ((uint32_t)*humidity * 82) >> 13;
 
     if (*temperature < T_LO)
         t = 0;
@@ -77,7 +75,17 @@ static uint32_t sensirion_calc_absolute_humidity(const int32_t *temperature,
         ret = (AH_LUT_100RH[i] +
                ((AH_LUT_100RH[i + 1] - AH_LUT_100RH[i]) * rem / T_STEP));
     }
-    return ret * norm_humi / 1000;
+
+    // Code is mathematically (but not numerically) equivalent to
+    //    return (ret * (*humidity)) / 100000;
+    // Maximum ret = 198277 (Or last entry from AH_LUT_100RH)
+    // Maximum *humidity = 119000 (theoretical maximum)
+    // Multiplication might overflow with a maximum of 3 digits
+    // Trick: ((ret >> 3) * (uint32_t)(*humidity)) does never overflow
+    // Now we only need to divide by 12500, as the tripple righ shift
+    // divides by 8
+
+    return ((ret >> 3) * (uint32_t)(*humidity)) / 12500;
 }
 
 const char *svm_get_driver_version() {
