@@ -50,7 +50,7 @@ release/svm30: release/sgp30
 	cp svm30/Makefile $${pkgdir} && \
 	cp svm30/*.[ch] $${pkgdir} && \
 	cp svm30/default_config.inc $${pkgdir} && \
-	for i in sensirion_common_dir sgp_common_dir sht_common_dir sgp30_dir shtc1_dir svm30_dir; \
+	for i in $${driver}_dir sgp_driver_dir sht_driver_dir sensirion_common_dir sgp_common_dir sht_common_dir sgp30_dir shtc1_dir; \
 		do echo "$$i = ." >> $${pkgdir}/user_config.inc; \
 	done && \
 	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
