@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * [`fixed`]   SVM30: Fix disabling of humidity compensation at values < 0.08%RH
 * [`changed`] SVM30: Better approximation error when calculating absolute
               humidity from relative humidity and temperature
+* [`fixed`]   SGP30: Adjust timings according to datasheet
 
 ## [5.0.0] - 2019-05-17
 

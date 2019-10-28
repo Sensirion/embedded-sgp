@@ -45,7 +45,7 @@ static const uint8_t SGP30_I2C_ADDRESS = 0x58;
 
 /* command and constants for reading the featureset version */
 #define SGP30_CMD_GET_FEATURESET 0x202f
-#define SGP30_CMD_GET_FEATURESET_DURATION_US 1000
+#define SGP30_CMD_GET_FEATURESET_DURATION_US 10000
 #define SGP30_CMD_GET_FEATURESET_WORDS 1
 
 /* command and constants for on-chip self-test */
@@ -60,7 +60,7 @@ static const uint8_t SGP30_I2C_ADDRESS = 0x58;
 
 /* command and constants for IAQ measure */
 #define SGP30_CMD_IAQ_MEASURE 0x2008
-#define SGP30_CMD_IAQ_MEASURE_DURATION_US 50000
+#define SGP30_CMD_IAQ_MEASURE_DURATION_US 12000
 #define SGP30_CMD_IAQ_MEASURE_WORDS 2
 
 /* command and constants for getting IAQ baseline */
