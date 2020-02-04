@@ -30,57 +30,10 @@
  */
 
 #include "sensirion_common.h"
+#include "sensirion_humidity_conversion.h"
 #include "sgp_git_version.h"
 #include "sgpc3.h"
 #include "shtc1.h"
-
-#define T_LO (-20000)
-#define T_HI 70000
-static const uint32_t AH_LUT_100RH[] = {1078,  2364,  4849,  9383,   17243,
-                                        30264, 50983, 82785, 130048, 198277};
-static const uint32_t T_STEP = (T_HI - T_LO) / (ARRAY_SIZE(AH_LUT_100RH) - 1);
-
-/**
- * Convert relative humidity [%RH*1000] and temperature [mC] to
- * absolute humidity [mg/m^3]
- */
-static uint32_t sensirion_calc_absolute_humidity(const int32_t *temperature,
-                                                 const int32_t *humidity) {
-    uint32_t t, i, rem, ret;
-
-    if (*humidity == 0)
-        return 0;
-
-    if (*temperature < T_LO)
-        t = 0;
-    else
-        t = (uint32_t)(*temperature - T_LO);
-
-    i = t / T_STEP;
-    rem = t % T_STEP;
-
-    if (i >= ARRAY_SIZE(AH_LUT_100RH) - 1) {
-        ret = AH_LUT_100RH[ARRAY_SIZE(AH_LUT_100RH) - 1];
-
-    } else if (rem == 0) {
-        ret = AH_LUT_100RH[i];
-
-    } else {
-        ret = (AH_LUT_100RH[i] +
-               ((AH_LUT_100RH[i + 1] - AH_LUT_100RH[i]) * rem / T_STEP));
-    }
-
-    // Code is mathematically (but not numerically) equivalent to
-    //    return (ret * (*humidity)) / 100000;
-    // Maximum ret = 198277 (Or last entry from AH_LUT_100RH)
-    // Maximum *humidity = 119000 (theoretical maximum)
-    // Multiplication might overflow with a maximum of 3 digits
-    // Trick: ((ret >> 3) * (uint32_t)(*humidity)) does never overflow
-    // Now we only need to divide by 12500, as the tripple righ shift
-    // divides by 8
-
-    return ((ret >> 3) * (uint32_t)(*humidity)) / 12500;
-}
 
 const char *sgpc3_with_shtc1_get_driver_version() {
     return SGP_DRV_VERSION_STR;
@@ -99,7 +52,8 @@ int16_t sgpc3_with_shtc1_measure_iaq_blocking_read(uint16_t *tvoc_ppb,
         return err;
 
     sgpc3_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
-    absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
+    absolute_humidity =
+        sensirion_calc_absolute_humidity(*temperature, *humidity);
     sgpc3_set_absolute_humidity(absolute_humidity);
 
     err = sgpc3_measure_tvoc_blocking_read(tvoc_ppb);
@@ -122,7 +76,8 @@ int16_t sgpc3_with_shtc1_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
         return err;
 
     sgpc3_get_feature_set_version(&sgp_feature_set, &sgp_product_type);
-    absolute_humidity = sensirion_calc_absolute_humidity(temperature, humidity);
+    absolute_humidity =
+        sensirion_calc_absolute_humidity(*temperature, *humidity);
     sgpc3_set_absolute_humidity(absolute_humidity);
 
     err = sgpc3_measure_raw_blocking_read(ethanol_raw_signal);

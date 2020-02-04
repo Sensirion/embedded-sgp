@@ -23,6 +23,7 @@
 # sgp_common_dir = ${sgp_driver_dir}/sgp-common
 # svm30_dir = ${sgp_driver_dir}/svm30
 # sht_common_dir = ${sht_driver_dir}/sht-common
+# sht_utils_dir = ${sht_driver_dir}/utils
 # shtc1_dir = ${sht_driver_dir}/shtc1
 
 ## If you need different CFLAGS, those can be customized as well
