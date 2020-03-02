@@ -46,11 +46,13 @@ release/svm30: release/sgp30
 	(cd ../embedded-sht && make prepare) && \
 	cp -r release/sgp30/ $${pkgdir} && \
 	cp -r ../embedded-sht/sht-common/* $${pkgdir} && \
+	cp -r ../embedded-sht/utils/* $${pkgdir} && \
 	cp -r ../embedded-sht/shtc1/* $${pkgdir} && \
 	cp $${driver}/Makefile $${pkgdir} && \
 	cp $${driver}/*.[ch] $${pkgdir} && \
 	cp $${driver}/default_config.inc $${pkgdir} && \
-	for i in $${driver}_dir sgp_driver_dir sht_driver_dir sensirion_common_dir sgp_common_dir sht_common_dir sgp30_dir shtc1_dir; \
+	for i in $${driver}_dir sgp_driver_dir sht_driver_dir sensirion_common_dir \
+	         sgp_common_dir sht_common_dir sht_utils_dir sgp30_dir shtc1_dir; \
 		do echo "$$i = ." >> $${pkgdir}/user_config.inc; \
 	done && \
 	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
@@ -66,11 +68,13 @@ release/sgpc3_with_shtc1: release/sgpc3
 	(cd ../embedded-sht && make prepare) && \
 	cp -r release/sgpc3/ $${pkgdir} && \
 	cp -r ../embedded-sht/sht-common/* $${pkgdir} && \
+	cp -r ../embedded-sht/utils/* $${pkgdir} && \
 	cp -r ../embedded-sht/shtc1/* $${pkgdir} && \
 	cp $${driver}/Makefile $${pkgdir} && \
 	cp $${driver}/*.[ch] $${pkgdir} && \
 	cp $${driver}/default_config.inc $${pkgdir} && \
-	for i in $${driver}_dir sgp_driver_dir sht_driver_dir sensirion_common_dir sgp_common_dir sht_common_dir sgpc3_dir shtc1_dir; \
+	for i in $${driver}_dir sgp_driver_dir sht_driver_dir sensirion_common_dir \
+	         sgp_common_dir sht_common_dir sht_utils_dir sgpc3_dir shtc1_dir; \
 		do echo "$$i = ." >> $${pkgdir}/user_config.inc; \
 	done && \
 	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
