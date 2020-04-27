@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.0.0] - 2020-04-27
+
 * [`changed`] Move the i2c init call out of `probe()` and into the examples
 * [`changed`] Faster `sgp30_measure_raw_blocking_read` for FS1.0+. Now 25ms
               instead of 200ms.
@@ -97,7 +99,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
  * First public release
 
-[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/5.0.0...master
+[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/6.0.0...master
+[6.0.0]: https://github.com/Sensirion/embedded-sgp/compare/5.0.0...6.0.0
 [5.0.0]: https://github.com/Sensirion/embedded-sgp/compare/4.0.0...5.0.0
 [4.0.0]: https://github.com/Sensirion/embedded-sgp/compare/3.1.4...4.0.0
 [3.1.4]: https://github.com/Sensirion/embedded-sgp/compare/3.1.3...3.1.4
