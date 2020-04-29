@@ -1,5 +1,5 @@
 sgp_driver_dir ?= ..
-sht_driver_dir ?= ${sgp_driver_dir}/../embedded-sht
+sht_driver_dir ?= ${sgp_driver_dir}/embedded-sht
 sensirion_common_dir ?= ${sgp_driver_dir}/embedded-common
 sgp_common_dir ?= ${sgp_driver_dir}/sgp-common
 sgp30_dir ?= ${sgp_driver_dir}/sgp30

@@ -43,11 +43,11 @@ release/svm30: release/sgp30
 	export tag="$$(git describe --always --dirty)" && \
 	export pkgname="$${driver}-$${tag}" && \
 	export pkgdir="release/$${pkgname}" && \
-	(cd ../embedded-sht && make prepare) && \
+	(cd embedded-sht && make prepare) && \
 	cp -r release/sgp30/ $${pkgdir} && \
-	cp -r ../embedded-sht/sht-common/* $${pkgdir} && \
-	cp -r ../embedded-sht/utils/* $${pkgdir} && \
-	cp -r ../embedded-sht/shtc1/* $${pkgdir} && \
+	cp -r embedded-sht/sht-common/* $${pkgdir} && \
+	cp -r embedded-sht/utils/* $${pkgdir} && \
+	cp -r embedded-sht/shtc1/* $${pkgdir} && \
 	cp $${driver}/Makefile $${pkgdir} && \
 	cp $${driver}/*.[ch] $${pkgdir} && \
 	cp $${driver}/default_config.inc $${pkgdir} && \
@@ -65,11 +65,11 @@ release/sgpc3_with_shtc1: release/sgpc3
 	export tag="$$(git describe --always --dirty)" && \
 	export pkgname="$${driver}-$${tag}" && \
 	export pkgdir="release/$${pkgname}" && \
-	(cd ../embedded-sht && make prepare) && \
+	(cd embedded-sht && make prepare) && \
 	cp -r release/sgpc3/ $${pkgdir} && \
-	cp -r ../embedded-sht/sht-common/* $${pkgdir} && \
-	cp -r ../embedded-sht/utils/* $${pkgdir} && \
-	cp -r ../embedded-sht/shtc1/* $${pkgdir} && \
+	cp -r embedded-sht/sht-common/* $${pkgdir} && \
+	cp -r embedded-sht/utils/* $${pkgdir} && \
+	cp -r embedded-sht/shtc1/* $${pkgdir} && \
 	cp $${driver}/Makefile $${pkgdir} && \
 	cp $${driver}/*.[ch] $${pkgdir} && \
 	cp $${driver}/default_config.inc $${pkgdir} && \
