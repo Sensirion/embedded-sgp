@@ -2,14 +2,17 @@ drivers=sgp30 sgpc3 svm30 sgpc3_with_shtc1
 clean_drivers=$(foreach d, $(drivers), clean_$(d))
 release_drivers=$(foreach d, $(drivers), release/$(d))
 
-.PHONY: FORCE all $(release_drivers) $(clean_drivers) style-check style-fix
+.PHONY: FORCE all $(release_drivers) $(clean_drivers) style-check style-fix prepare-embedded-sht
 
 all: prepare $(drivers)
 
-prepare: sgp-common/sgp_git_version.c
+prepare: sgp-common/sgp_git_version.c prepare-embedded-sht
 
 $(drivers): prepare
 	cd $@ && $(MAKE) $(MFLAGS)
+
+prepare-embedded-sht:
+	cd embedded-sht && make prepare
 
 sgp-common/sgp_git_version.c: FORCE
 	git describe --always --dirty | \
