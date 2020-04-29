@@ -40,13 +40,12 @@ $(release_drivers): sgp-common/sgp_git_version.c
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
 
-release/svm30: release/sgp30
+release/svm30: release/sgp30 prepare-embedded-sht
 	export rel=$@ && \
 	export driver=$${rel#release/} && \
 	export tag="$$(git describe --always --dirty)" && \
 	export pkgname="$${driver}-$${tag}" && \
 	export pkgdir="release/$${pkgname}" && \
-	(cd embedded-sht && make prepare) && \
 	cp -r release/sgp30/ $${pkgdir} && \
 	cp -r embedded-sht/sht-common/* $${pkgdir} && \
 	cp -r embedded-sht/utils/* $${pkgdir} && \
@@ -62,13 +61,12 @@ release/svm30: release/sgp30
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
 
-release/sgpc3_with_shtc1: release/sgpc3
+release/sgpc3_with_shtc1: release/sgpc3 prepare-embedded-sht
 	export rel=$@ && \
 	export driver=$${rel#release/} && \
 	export tag="$$(git describe --always --dirty)" && \
 	export pkgname="$${driver}-$${tag}" && \
 	export pkgdir="release/$${pkgname}" && \
-	(cd embedded-sht && make prepare) && \
 	cp -r release/sgpc3/ $${pkgdir} && \
 	cp -r embedded-sht/sht-common/* $${pkgdir} && \
 	cp -r embedded-sht/utils/* $${pkgdir} && \
