@@ -2,14 +2,17 @@ drivers=sgp30 sgpc3 svm30 sgpc3_with_shtc1
 clean_drivers=$(foreach d, $(drivers), clean_$(d))
 release_drivers=$(foreach d, $(drivers), release/$(d))
 
-.PHONY: FORCE all $(release_drivers) $(clean_drivers) style-check style-fix
+.PHONY: FORCE all $(release_drivers) $(clean_drivers) style-check style-fix prepare-embedded-sht
 
 all: prepare $(drivers)
 
-prepare: sgp-common/sgp_git_version.c
+prepare: sgp-common/sgp_git_version.c prepare-embedded-sht
 
 $(drivers): prepare
 	cd $@ && $(MAKE) $(MFLAGS)
+
+prepare-embedded-sht:
+	cd embedded-sht && make prepare
 
 sgp-common/sgp_git_version.c: FORCE
 	git describe --always --dirty | \
@@ -37,17 +40,16 @@ $(release_drivers): sgp-common/sgp_git_version.c
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
 
-release/svm30: release/sgp30
+release/svm30: release/sgp30 prepare-embedded-sht
 	export rel=$@ && \
 	export driver=$${rel#release/} && \
 	export tag="$$(git describe --always --dirty)" && \
 	export pkgname="$${driver}-$${tag}" && \
 	export pkgdir="release/$${pkgname}" && \
-	(cd ../embedded-sht && make prepare) && \
 	cp -r release/sgp30/ $${pkgdir} && \
-	cp -r ../embedded-sht/sht-common/* $${pkgdir} && \
-	cp -r ../embedded-sht/utils/* $${pkgdir} && \
-	cp -r ../embedded-sht/shtc1/* $${pkgdir} && \
+	cp -r embedded-sht/sht-common/* $${pkgdir} && \
+	cp -r embedded-sht/utils/* $${pkgdir} && \
+	cp -r embedded-sht/shtc1/* $${pkgdir} && \
 	cp $${driver}/Makefile $${pkgdir} && \
 	cp $${driver}/*.[ch] $${pkgdir} && \
 	cp $${driver}/default_config.inc $${pkgdir} && \
@@ -59,17 +61,16 @@ release/svm30: release/sgp30
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
 
-release/sgpc3_with_shtc1: release/sgpc3
+release/sgpc3_with_shtc1: release/sgpc3 prepare-embedded-sht
 	export rel=$@ && \
 	export driver=$${rel#release/} && \
 	export tag="$$(git describe --always --dirty)" && \
 	export pkgname="$${driver}-$${tag}" && \
 	export pkgdir="release/$${pkgname}" && \
-	(cd ../embedded-sht && make prepare) && \
 	cp -r release/sgpc3/ $${pkgdir} && \
-	cp -r ../embedded-sht/sht-common/* $${pkgdir} && \
-	cp -r ../embedded-sht/utils/* $${pkgdir} && \
-	cp -r ../embedded-sht/shtc1/* $${pkgdir} && \
+	cp -r embedded-sht/sht-common/* $${pkgdir} && \
+	cp -r embedded-sht/utils/* $${pkgdir} && \
+	cp -r embedded-sht/shtc1/* $${pkgdir} && \
 	cp $${driver}/Makefile $${pkgdir} && \
 	cp $${driver}/*.[ch] $${pkgdir} && \
 	cp $${driver}/default_config.inc $${pkgdir} && \

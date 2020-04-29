@@ -1,3 +1,6 @@
 [submodule "embedded-common"]
 	path = embedded-common
 	url = https://github.com/Sensirion/embedded-common
+[submodule "embedded-sht"]
+	path = embedded-sht
+	url = https://github.com/Sensirion/embedded-sht
