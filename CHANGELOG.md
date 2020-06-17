@@ -5,6 +5,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [`fixed`]   Use correct command for `sgpc3_tvoc_init_no_preheat()`
+              The wrong command caused a preheating of 16s.
+
 ## [6.0.0] - 2020-04-27
 
 * [`changed`] Move the i2c init call out of `probe()` and into the examples

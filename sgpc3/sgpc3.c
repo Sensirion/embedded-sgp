@@ -55,7 +55,7 @@ static const uint8_t SGPC3_I2C_ADDRESS = 0x58;
 #define SGPC3_CMD_MEASURE_TEST_OK 0xd400
 
 /* command and constants for IAQ init 0 */
-#define SGPC3_CMD_IAQ_INIT_0 0x2024
+#define SGPC3_CMD_IAQ_INIT_0 0x2089
 #define SGPC3_CMD_IAQ_INIT_0_DURATION_US 10000
 
 /* command and constants for IAQ init 64 */
