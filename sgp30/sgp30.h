@@ -66,7 +66,7 @@ int16_t sgp30_iaq_init(void);
  * sgp30_get_driver_version() - Return the driver version
  * Return:  Driver version string
  */
-const char *sgp30_get_driver_version(void);
+const char* sgp30_get_driver_version(void);
 
 /**
  * sgp30_get_configured_address() - returns the configured I2C address
@@ -84,8 +84,8 @@ uint8_t sgp30_get_configured_address(void);
  *
  * Return:  STATUS_OK on success
  */
-int16_t sgp30_get_feature_set_version(uint16_t *feature_set_version,
-                                      uint8_t *product_type);
+int16_t sgp30_get_feature_set_version(uint16_t* feature_set_version,
+                                      uint8_t* product_type);
 
 /**
  * sgp30_get_serial_id() - Retrieve the sensor's serial id
@@ -94,7 +94,7 @@ int16_t sgp30_get_feature_set_version(uint16_t *feature_set_version,
  *
  * Return:  STATUS_OK on success
  */
-int16_t sgp30_get_serial_id(uint64_t *serial_id);
+int16_t sgp30_get_serial_id(uint64_t* serial_id);
 
 /**
  * sgp30_get_iaq_baseline() - read out the baseline from the chip
@@ -113,7 +113,7 @@ int16_t sgp30_get_serial_id(uint64_t *serial_id);
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-int16_t sgp30_get_iaq_baseline(uint32_t *baseline);
+int16_t sgp30_get_iaq_baseline(uint32_t* baseline);
 
 /**
  * sgp30_set_iaq_baseline() - set the on-chip baseline
@@ -142,7 +142,7 @@ int16_t sgp30_set_iaq_baseline(uint32_t baseline);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgp30_get_tvoc_inceptive_baseline(uint16_t *tvoc_inceptive_baseline);
+int16_t sgp30_get_tvoc_inceptive_baseline(uint16_t* tvoc_inceptive_baseline);
 
 /**
  * sgp30_set_tvoc_baseline() - set the on-chip tVOC baseline
@@ -165,8 +165,8 @@ int16_t sgp30_set_tvoc_baseline(uint16_t tvoc_baseline);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgp30_measure_iaq_blocking_read(uint16_t *tvoc_ppb,
-                                        uint16_t *co2_eq_ppm);
+int16_t sgp30_measure_iaq_blocking_read(uint16_t* tvoc_ppb,
+                                        uint16_t* co2_eq_ppm);
 /**
  * sgp30_measure_iaq() - Measure IAQ values async
  *
@@ -187,7 +187,7 @@ int16_t sgp30_measure_iaq(void);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgp30_read_iaq(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm);
+int16_t sgp30_read_iaq(uint16_t* tvoc_ppb, uint16_t* co2_eq_ppm);
 
 /**
  * sgp30_measure_tvoc_blocking_read() - Measure tVOC concentration
@@ -196,7 +196,7 @@ int16_t sgp30_read_iaq(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm);
  *
  * Return:  tVOC concentration in ppb. Negative if it fails.
  */
-int16_t sgp30_measure_tvoc_blocking_read(uint16_t *tvoc_ppb);
+int16_t sgp30_measure_tvoc_blocking_read(uint16_t* tvoc_ppb);
 
 /**
  * sgp30_measure_tvoc() - Measure tVOC concentration async
@@ -218,7 +218,7 @@ int16_t sgp30_measure_tvoc(void);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgp30_read_tvoc(uint16_t *tvoc_ppb);
+int16_t sgp30_read_tvoc(uint16_t* tvoc_ppb);
 
 /**
  * sgp30_measure_co2_eq_blocking_read() - Measure CO2-Equivalent concentration
@@ -227,7 +227,7 @@ int16_t sgp30_read_tvoc(uint16_t *tvoc_ppb);
  *
  * Return:  CO2-Equivalent concentration in ppm. Negative if it fails.
  */
-int16_t sgp30_measure_co2_eq_blocking_read(uint16_t *co2_eq_ppm);
+int16_t sgp30_measure_co2_eq_blocking_read(uint16_t* co2_eq_ppm);
 
 /**
  * sgp30_measure_co2_eq() - Measure tVOC concentration async
@@ -249,7 +249,7 @@ int16_t sgp30_measure_co2_eq(void);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgp30_read_co2_eq(uint16_t *co2_eq_ppm);
+int16_t sgp30_read_co2_eq(uint16_t* co2_eq_ppm);
 
 /**
  * sgp30_measure_raw_blocking_read() - Measure raw signals
@@ -260,8 +260,8 @@ int16_t sgp30_read_co2_eq(uint16_t *co2_eq_ppm);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgp30_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
-                                        uint16_t *h2_raw_signal);
+int16_t sgp30_measure_raw_blocking_read(uint16_t* ethanol_raw_signal,
+                                        uint16_t* h2_raw_signal);
 
 /**
  * sgp30_measure_raw() - Measure raw signals async
@@ -283,7 +283,7 @@ int16_t sgp30_measure_raw(void);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgp30_read_raw(uint16_t *ethanol_raw_signal, uint16_t *h2_raw_signal);
+int16_t sgp30_read_raw(uint16_t* ethanol_raw_signal, uint16_t* h2_raw_signal);
 
 /**
  * sgp30_measure_test() - Run the on-chip self-test
@@ -297,7 +297,7 @@ int16_t sgp30_read_raw(uint16_t *ethanol_raw_signal, uint16_t *h2_raw_signal);
  *
  * Return: STATUS_OK on a successful self-test, an error code otherwise
  */
-int16_t sgp30_measure_test(uint16_t *test_result);
+int16_t sgp30_measure_test(uint16_t* test_result);
 
 /**
  * sgp30_set_absolute_humidity() - set the absolute humidity for compensation

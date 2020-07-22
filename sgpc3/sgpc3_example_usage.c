@@ -48,7 +48,7 @@ int main(void) {
     uint16_t tvoc_baseline;
     uint16_t ethanol_raw_signal;
 
-    const char *driver_version = sgpc3_get_driver_version();
+    const char* driver_version = sgpc3_get_driver_version();
     if (driver_version) {
         printf("SGPC3 driver version %s\n", driver_version);
     } else {

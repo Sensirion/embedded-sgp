@@ -89,7 +89,7 @@ int16_t sgpc3_tvoc_init_64s_fs5(void);
  * sgpc3_get_driver_version() - Return the driver version
  * Return:  Driver version string
  */
-const char *sgpc3_get_driver_version(void);
+const char* sgpc3_get_driver_version(void);
 
 /**
  * sgpc3_get_configured_address() - returns the configured I2C address
@@ -107,8 +107,8 @@ uint8_t sgpc3_get_configured_address(void);
  *
  * Return:  STATUS_OK on success
  */
-int16_t sgpc3_get_feature_set_version(uint16_t *feature_set_version,
-                                      uint8_t *product_type);
+int16_t sgpc3_get_feature_set_version(uint16_t* feature_set_version,
+                                      uint8_t* product_type);
 
 /**
  * sgpc3_get_serial_id() - Retrieve the sensor's serial id
@@ -117,7 +117,7 @@ int16_t sgpc3_get_feature_set_version(uint16_t *feature_set_version,
  *
  * Return:  STATUS_OK on success
  */
-int16_t sgpc3_get_serial_id(uint64_t *serial_id);
+int16_t sgpc3_get_serial_id(uint64_t* serial_id);
 
 /**
  * sgpc3_get_tvoc_baseline() - read out the baseline from the chip
@@ -136,7 +136,7 @@ int16_t sgpc3_get_serial_id(uint64_t *serial_id);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgpc3_get_tvoc_baseline(uint16_t *baseline);
+int16_t sgpc3_get_tvoc_baseline(uint16_t* baseline);
 
 /**
  * sgpc3_set_tvoc_baseline() - set the on-chip baseline
@@ -167,7 +167,7 @@ int16_t sgpc3_set_tvoc_baseline(uint16_t baseline);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgpc3_get_tvoc_inceptive_baseline(uint16_t *tvoc_inceptive_baseline);
+int16_t sgpc3_get_tvoc_inceptive_baseline(uint16_t* tvoc_inceptive_baseline);
 
 /**
  * sgpc3_measure_tvoc_blocking_read() - Measure tVOC concentration
@@ -178,7 +178,7 @@ int16_t sgpc3_get_tvoc_inceptive_baseline(uint16_t *tvoc_inceptive_baseline);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgpc3_measure_tvoc_blocking_read(uint16_t *tvoc_ppb);
+int16_t sgpc3_measure_tvoc_blocking_read(uint16_t* tvoc_ppb);
 
 /**
  * sgpc3_measure_tvoc() - Measure tVOC values async
@@ -200,7 +200,7 @@ int16_t sgpc3_measure_tvoc(void);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgpc3_read_tvoc(uint16_t *tvoc_ppb);
+int16_t sgpc3_read_tvoc(uint16_t* tvoc_ppb);
 
 /**
  * sgpc3_measure_raw_blocking_read() - Measure raw signals
@@ -210,7 +210,7 @@ int16_t sgpc3_read_tvoc(uint16_t *tvoc_ppb);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgpc3_measure_raw_blocking_read(uint16_t *ethanol_raw_signal);
+int16_t sgpc3_measure_raw_blocking_read(uint16_t* ethanol_raw_signal);
 
 /**
  * sgpc3_measure_raw() - Measure raw signals async
@@ -231,7 +231,7 @@ int16_t sgpc3_measure_raw(void);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgpc3_read_raw(uint16_t *ethanol_raw_signal);
+int16_t sgpc3_read_raw(uint16_t* ethanol_raw_signal);
 
 /**
  * sgpc3_measure_tvoc_and_raw_blocking_read() - Measure tvoc and raw signals
@@ -242,8 +242,8 @@ int16_t sgpc3_read_raw(uint16_t *ethanol_raw_signal);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgpc3_measure_tvoc_and_raw_blocking_read(uint16_t *tvoc_ppb,
-                                                 uint16_t *ethanol_raw_signal);
+int16_t sgpc3_measure_tvoc_and_raw_blocking_read(uint16_t* tvoc_ppb,
+                                                 uint16_t* ethanol_raw_signal);
 
 /**
  * sgpc3_measure_tvoc_and_raw() - Measure raw async
@@ -265,8 +265,8 @@ int16_t sgpc3_measure_tvoc_and_raw(void);
  *
  * Return:      STATUS_OK on success, an error code otherwise
  */
-int16_t sgpc3_read_tvoc_and_raw(uint16_t *tvoc_ppb,
-                                uint16_t *ethanol_raw_signal);
+int16_t sgpc3_read_tvoc_and_raw(uint16_t* tvoc_ppb,
+                                uint16_t* ethanol_raw_signal);
 
 /**
  * sgpc3_set_power_mode() - set the power mode
@@ -311,7 +311,7 @@ int16_t sgpc3_set_absolute_humidity(uint32_t absolute_humidity);
  *
  * Return: STATUS_OK on a successful self-test, an error code otherwise
  */
-int16_t sgpc3_measure_test(uint16_t *test_result);
+int16_t sgpc3_measure_test(uint16_t* test_result);
 
 #ifdef __cplusplus
 }
