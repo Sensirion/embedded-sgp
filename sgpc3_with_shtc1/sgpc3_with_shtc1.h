@@ -44,7 +44,7 @@ extern "C" {
  * sgpc3_with_shtc1_get_driver_version() - Return the driver version
  * Return:  Driver version string
  */
-const char *sgpc3_with_shtc1_get_driver_version();
+const char* sgpc3_with_shtc1_get_driver_version();
 
 /**
  * sgpc3_with_shtc1_probe() - check if an sgpc3 and shtc1 are available and
@@ -65,9 +65,9 @@ int16_t sgpc3_with_shtc1_probe(void);
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-int16_t sgpc3_with_shtc1_measure_iaq_blocking_read(uint16_t *tvoc_ppb,
-                                                   int32_t *temperature,
-                                                   int32_t *humidity);
+int16_t sgpc3_with_shtc1_measure_iaq_blocking_read(uint16_t* tvoc_ppb,
+                                                   int32_t* temperature,
+                                                   int32_t* humidity);
 
 /**
  * sgpc3_with_shtc1_measure_raw_blocking_read() - Measure raw signal
@@ -81,9 +81,9 @@ int16_t sgpc3_with_shtc1_measure_iaq_blocking_read(uint16_t *tvoc_ppb,
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-int16_t sgpc3_with_shtc1_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
-                                                   int32_t *temperature,
-                                                   int32_t *humidity);
+int16_t sgpc3_with_shtc1_measure_raw_blocking_read(uint16_t* ethanol_raw_signal,
+                                                   int32_t* temperature,
+                                                   int32_t* humidity);
 
 #ifdef __cplusplus
 }

@@ -48,7 +48,7 @@ int main(void) {
     uint32_t iaq_baseline;
     uint16_t ethanol_raw_signal, h2_raw_signal;
 
-    const char *driver_version = sgp30_get_driver_version();
+    const char* driver_version = sgp30_get_driver_version();
     if (driver_version) {
         printf("SGP30 driver version %s\n", driver_version);
     } else {

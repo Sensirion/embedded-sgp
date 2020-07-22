@@ -132,7 +132,7 @@ static int16_t sgpc3_check_featureset(uint16_t needed_fs) {
     return STATUS_OK;
 }
 
-int16_t sgpc3_measure_test(uint16_t *test_result) {
+int16_t sgpc3_measure_test(uint16_t* test_result) {
     uint16_t measure_test_word_buf[SGPC3_CMD_MEASURE_TEST_WORDS];
     int16_t ret;
 
@@ -156,7 +156,7 @@ int16_t sgpc3_measure_tvoc() {
     return sensirion_i2c_write_cmd(SGPC3_I2C_ADDRESS, SGPC3_CMD_IAQ_MEASURE);
 }
 
-int16_t sgpc3_read_tvoc(uint16_t *tvoc_ppb) {
+int16_t sgpc3_read_tvoc(uint16_t* tvoc_ppb) {
     int16_t ret;
     uint16_t words[SGPC3_CMD_IAQ_MEASURE_WORDS];
 
@@ -168,7 +168,7 @@ int16_t sgpc3_read_tvoc(uint16_t *tvoc_ppb) {
     return ret;
 }
 
-int16_t sgpc3_measure_tvoc_blocking_read(uint16_t *tvoc_ppb) {
+int16_t sgpc3_measure_tvoc_blocking_read(uint16_t* tvoc_ppb) {
     int16_t ret;
 
     ret = sgpc3_measure_tvoc();
@@ -180,7 +180,7 @@ int16_t sgpc3_measure_tvoc_blocking_read(uint16_t *tvoc_ppb) {
     return sgpc3_read_tvoc(tvoc_ppb);
 }
 
-int16_t sgpc3_measure_raw_blocking_read(uint16_t *ethanol_raw_signal) {
+int16_t sgpc3_measure_raw_blocking_read(uint16_t* ethanol_raw_signal) {
     int16_t ret;
 
     ret = sgpc3_measure_raw();
@@ -196,7 +196,7 @@ int16_t sgpc3_measure_raw(void) {
     return sensirion_i2c_write_cmd(SGPC3_I2C_ADDRESS, SGPC3_CMD_RAW_MEASURE);
 }
 
-int16_t sgpc3_read_raw(uint16_t *ethanol_raw_signal) {
+int16_t sgpc3_read_raw(uint16_t* ethanol_raw_signal) {
     int16_t ret;
     uint16_t words[SGPC3_CMD_RAW_MEASURE_WORDS];
 
@@ -208,8 +208,8 @@ int16_t sgpc3_read_raw(uint16_t *ethanol_raw_signal) {
     return ret;
 }
 
-int16_t sgpc3_measure_tvoc_and_raw_blocking_read(uint16_t *tvoc_ppb,
-                                                 uint16_t *ethanol_raw_signal) {
+int16_t sgpc3_measure_tvoc_and_raw_blocking_read(uint16_t* tvoc_ppb,
+                                                 uint16_t* ethanol_raw_signal) {
     int16_t ret;
 
     ret = sgpc3_measure_tvoc_and_raw();
@@ -226,8 +226,8 @@ int16_t sgpc3_measure_tvoc_and_raw() {
                                    SGPC3_CMD_IAQ_RAW_MEASURE);
 }
 
-int16_t sgpc3_read_tvoc_and_raw(uint16_t *tvoc_ppb,
-                                uint16_t *ethanol_raw_signal) {
+int16_t sgpc3_read_tvoc_and_raw(uint16_t* tvoc_ppb,
+                                uint16_t* ethanol_raw_signal) {
     int16_t ret;
     uint16_t words[SGPC3_CMD_IAQ_RAW_MEASURE_WORDS];
 
@@ -240,7 +240,7 @@ int16_t sgpc3_read_tvoc_and_raw(uint16_t *tvoc_ppb,
     return ret;
 }
 
-int16_t sgpc3_get_tvoc_baseline(uint16_t *baseline) {
+int16_t sgpc3_get_tvoc_baseline(uint16_t* baseline) {
     int16_t ret;
     uint16_t words[SGPC3_CMD_GET_IAQ_BASELINE_WORDS];
 
@@ -274,7 +274,7 @@ int16_t sgpc3_set_tvoc_baseline(uint16_t baseline) {
     return ret;
 }
 
-int16_t sgpc3_get_tvoc_inceptive_baseline(uint16_t *tvoc_inceptive_baseline) {
+int16_t sgpc3_get_tvoc_inceptive_baseline(uint16_t* tvoc_inceptive_baseline) {
     int16_t ret;
 
     ret = sgpc3_check_featureset(5);
@@ -329,7 +329,7 @@ int16_t sgpc3_set_power_mode(uint16_t power_mode) {
     return ret;
 }
 
-const char *sgpc3_get_driver_version() {
+const char* sgpc3_get_driver_version() {
     return SGP_DRV_VERSION_STR;
 }
 
@@ -337,8 +337,8 @@ uint8_t sgpc3_get_configured_address() {
     return SGPC3_I2C_ADDRESS;
 }
 
-int16_t sgpc3_get_feature_set_version(uint16_t *feature_set_version,
-                                      uint8_t *product_type) {
+int16_t sgpc3_get_feature_set_version(uint16_t* feature_set_version,
+                                      uint8_t* product_type) {
     int16_t ret;
     uint16_t words[SGPC3_CMD_GET_FEATURESET_WORDS];
 
@@ -356,7 +356,7 @@ int16_t sgpc3_get_feature_set_version(uint16_t *feature_set_version,
     return STATUS_OK;
 }
 
-int16_t sgpc3_get_serial_id(uint64_t *serial_id) {
+int16_t sgpc3_get_serial_id(uint64_t* serial_id) {
     int16_t ret;
     uint16_t words[SGPC3_CMD_GET_SERIAL_ID_WORDS];
 

@@ -35,13 +35,13 @@
 #include "sgpc3.h"
 #include "shtc1.h"
 
-const char *sgpc3_with_shtc1_get_driver_version() {
+const char* sgpc3_with_shtc1_get_driver_version() {
     return SGP_DRV_VERSION_STR;
 }
 
-int16_t sgpc3_with_shtc1_measure_iaq_blocking_read(uint16_t *tvoc_ppb,
-                                                   int32_t *temperature,
-                                                   int32_t *humidity) {
+int16_t sgpc3_with_shtc1_measure_iaq_blocking_read(uint16_t* tvoc_ppb,
+                                                   int32_t* temperature,
+                                                   int32_t* humidity) {
     uint32_t absolute_humidity;
     uint16_t sgp_feature_set;
     uint8_t sgp_product_type;
@@ -63,9 +63,9 @@ int16_t sgpc3_with_shtc1_measure_iaq_blocking_read(uint16_t *tvoc_ppb,
     return STATUS_OK;
 }
 
-int16_t sgpc3_with_shtc1_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
-                                                   int32_t *temperature,
-                                                   int32_t *humidity) {
+int16_t sgpc3_with_shtc1_measure_raw_blocking_read(uint16_t* ethanol_raw_signal,
+                                                   int32_t* temperature,
+                                                   int32_t* humidity) {
     uint32_t absolute_humidity;
     uint16_t sgp_feature_set;
     uint8_t sgp_product_type;

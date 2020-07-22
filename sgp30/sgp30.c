@@ -119,7 +119,7 @@ static int16_t sgp30_check_featureset(uint16_t needed_fs) {
     return STATUS_OK;
 }
 
-int16_t sgp30_measure_test(uint16_t *test_result) {
+int16_t sgp30_measure_test(uint16_t* test_result) {
     uint16_t measure_test_word_buf[SGP30_CMD_MEASURE_TEST_WORDS];
     int16_t ret;
 
@@ -143,7 +143,7 @@ int16_t sgp30_measure_iaq() {
     return sensirion_i2c_write_cmd(SGP30_I2C_ADDRESS, SGP30_CMD_IAQ_MEASURE);
 }
 
-int16_t sgp30_read_iaq(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm) {
+int16_t sgp30_read_iaq(uint16_t* tvoc_ppb, uint16_t* co2_eq_ppm) {
     int16_t ret;
     uint16_t words[SGP30_CMD_IAQ_MEASURE_WORDS];
 
@@ -156,8 +156,8 @@ int16_t sgp30_read_iaq(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm) {
     return ret;
 }
 
-int16_t sgp30_measure_iaq_blocking_read(uint16_t *tvoc_ppb,
-                                        uint16_t *co2_eq_ppm) {
+int16_t sgp30_measure_iaq_blocking_read(uint16_t* tvoc_ppb,
+                                        uint16_t* co2_eq_ppm) {
     int16_t ret;
 
     ret = sgp30_measure_iaq();
@@ -173,12 +173,12 @@ int16_t sgp30_measure_tvoc() {
     return sgp30_measure_iaq();
 }
 
-int16_t sgp30_read_tvoc(uint16_t *tvoc_ppb) {
+int16_t sgp30_read_tvoc(uint16_t* tvoc_ppb) {
     uint16_t co2_eq_ppm;
     return sgp30_read_iaq(tvoc_ppb, &co2_eq_ppm);
 }
 
-int16_t sgp30_measure_tvoc_blocking_read(uint16_t *tvoc_ppb) {
+int16_t sgp30_measure_tvoc_blocking_read(uint16_t* tvoc_ppb) {
     uint16_t co2_eq_ppm;
     return sgp30_measure_iaq_blocking_read(tvoc_ppb, &co2_eq_ppm);
 }
@@ -187,18 +187,18 @@ int16_t sgp30_measure_co2_eq() {
     return sgp30_measure_iaq();
 }
 
-int16_t sgp30_read_co2_eq(uint16_t *co2_eq_ppm) {
+int16_t sgp30_read_co2_eq(uint16_t* co2_eq_ppm) {
     uint16_t tvoc_ppb;
     return sgp30_read_iaq(&tvoc_ppb, co2_eq_ppm);
 }
 
-int16_t sgp30_measure_co2_eq_blocking_read(uint16_t *co2_eq_ppm) {
+int16_t sgp30_measure_co2_eq_blocking_read(uint16_t* co2_eq_ppm) {
     uint16_t tvoc_ppb;
     return sgp30_measure_iaq_blocking_read(&tvoc_ppb, co2_eq_ppm);
 }
 
-int16_t sgp30_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
-                                        uint16_t *h2_raw_signal) {
+int16_t sgp30_measure_raw_blocking_read(uint16_t* ethanol_raw_signal,
+                                        uint16_t* h2_raw_signal) {
     int16_t ret;
 
     ret = sgp30_measure_raw();
@@ -214,7 +214,7 @@ int16_t sgp30_measure_raw() {
     return sensirion_i2c_write_cmd(SGP30_I2C_ADDRESS, SGP30_CMD_RAW_MEASURE);
 }
 
-int16_t sgp30_read_raw(uint16_t *ethanol_raw_signal, uint16_t *h2_raw_signal) {
+int16_t sgp30_read_raw(uint16_t* ethanol_raw_signal, uint16_t* h2_raw_signal) {
     int16_t ret;
     uint16_t words[SGP30_CMD_RAW_MEASURE_WORDS];
 
@@ -227,7 +227,7 @@ int16_t sgp30_read_raw(uint16_t *ethanol_raw_signal, uint16_t *h2_raw_signal) {
     return ret;
 }
 
-int16_t sgp30_get_iaq_baseline(uint32_t *baseline) {
+int16_t sgp30_get_iaq_baseline(uint32_t* baseline) {
     int16_t ret;
     uint16_t words[SGP30_CMD_GET_IAQ_BASELINE_WORDS];
 
@@ -269,7 +269,7 @@ int16_t sgp30_set_iaq_baseline(uint32_t baseline) {
     return ret;
 }
 
-int16_t sgp30_get_tvoc_inceptive_baseline(uint16_t *tvoc_inceptive_baseline) {
+int16_t sgp30_get_tvoc_inceptive_baseline(uint16_t* tvoc_inceptive_baseline) {
     int16_t ret;
 
     ret = sgp30_check_featureset(0x21);
@@ -329,7 +329,7 @@ int16_t sgp30_set_absolute_humidity(uint32_t absolute_humidity) {
     return ret;
 }
 
-const char *sgp30_get_driver_version() {
+const char* sgp30_get_driver_version() {
     return SGP_DRV_VERSION_STR;
 }
 
@@ -337,8 +337,8 @@ uint8_t sgp30_get_configured_address() {
     return SGP30_I2C_ADDRESS;
 }
 
-int16_t sgp30_get_feature_set_version(uint16_t *feature_set_version,
-                                      uint8_t *product_type) {
+int16_t sgp30_get_feature_set_version(uint16_t* feature_set_version,
+                                      uint8_t* product_type) {
     int16_t ret;
     uint16_t words[SGP30_CMD_GET_FEATURESET_WORDS];
 
@@ -356,7 +356,7 @@ int16_t sgp30_get_feature_set_version(uint16_t *feature_set_version,
     return STATUS_OK;
 }
 
-int16_t sgp30_get_serial_id(uint64_t *serial_id) {
+int16_t sgp30_get_serial_id(uint64_t* serial_id) {
     int16_t ret;
     uint16_t words[SGP30_CMD_GET_SERIAL_ID_WORDS];
 

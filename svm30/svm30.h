@@ -44,7 +44,7 @@ extern "C" {
  * svm_get_driver_version() - Return the driver version
  * Return:  Driver version string
  */
-const char *svm_get_driver_version();
+const char* svm_get_driver_version();
 
 /**
  * svm_probe() - check if an SVM30 module is available and initialize it
@@ -65,8 +65,8 @@ int16_t svm_probe(void);
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-int16_t svm_measure_iaq_blocking_read(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm,
-                                      int32_t *temperature, int32_t *humidity);
+int16_t svm_measure_iaq_blocking_read(uint16_t* tvoc_ppb, uint16_t* co2_eq_ppm,
+                                      int32_t* temperature, int32_t* humidity);
 
 /**
  * svm_measure_raw_blocking_read() - Measure raw signals
@@ -81,9 +81,9 @@ int16_t svm_measure_iaq_blocking_read(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm,
  *
  * Return:      STATUS_OK on success, else STATUS_FAIL
  */
-int16_t svm_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
-                                      uint16_t *h2_raw_signal,
-                                      int32_t *temperature, int32_t *humidity);
+int16_t svm_measure_raw_blocking_read(uint16_t* ethanol_raw_signal,
+                                      uint16_t* h2_raw_signal,
+                                      int32_t* temperature, int32_t* humidity);
 
 #ifdef __cplusplus
 }

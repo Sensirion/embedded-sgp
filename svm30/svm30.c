@@ -36,13 +36,13 @@
 #include "sgp_git_version.h"
 #include "shtc1.h"
 
-static void svm_compensate_rht(int32_t *temperature, int32_t *humidity) {
+static void svm_compensate_rht(int32_t* temperature, int32_t* humidity) {
     *temperature = ((*temperature * 8225) >> 13) - 500;
     *humidity = (*humidity * 8397) >> 13;
 }
 
-static int16_t svm_set_humidity(const int32_t *temperature,
-                                const int32_t *humidity) {
+static int16_t svm_set_humidity(const int32_t* temperature,
+                                const int32_t* humidity) {
     uint32_t absolute_humidity;
 
     absolute_humidity =
@@ -54,12 +54,12 @@ static int16_t svm_set_humidity(const int32_t *temperature,
     return sgp30_set_absolute_humidity(absolute_humidity);
 }
 
-const char *svm_get_driver_version() {
+const char* svm_get_driver_version() {
     return SGP_DRV_VERSION_STR;
 }
 
-int16_t svm_measure_iaq_blocking_read(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm,
-                                      int32_t *temperature, int32_t *humidity) {
+int16_t svm_measure_iaq_blocking_read(uint16_t* tvoc_ppb, uint16_t* co2_eq_ppm,
+                                      int32_t* temperature, int32_t* humidity) {
     int16_t err;
 
     err = shtc1_measure_blocking_read(temperature, humidity);
@@ -79,9 +79,9 @@ int16_t svm_measure_iaq_blocking_read(uint16_t *tvoc_ppb, uint16_t *co2_eq_ppm,
     return STATUS_OK;
 }
 
-int16_t svm_measure_raw_blocking_read(uint16_t *ethanol_raw_signal,
-                                      uint16_t *h2_raw_signal,
-                                      int32_t *temperature, int32_t *humidity) {
+int16_t svm_measure_raw_blocking_read(uint16_t* ethanol_raw_signal,
+                                      uint16_t* h2_raw_signal,
+                                      int32_t* temperature, int32_t* humidity) {
     int16_t err;
 
     err = shtc1_measure_blocking_read(temperature, humidity);
