@@ -1,4 +1,4 @@
-drivers=sgp30 sgpc3 svm30 sgpc3_with_shtc1
+drivers=sgp30 sgpc3 svm30 sgpc3_with_shtc1 sgp40
 clean_drivers=$(foreach d, $(drivers), clean_$(d))
 release_drivers=$(foreach d, $(drivers), release/$(d))
 
