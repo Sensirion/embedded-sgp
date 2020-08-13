@@ -31,7 +31,7 @@
 
 #include "sgp40.h"
 
-#include <stdio.h>     // printf
+#include <stdio.h>  // printf
 
 /* TO USE CONSOLE OUTPUT (printf) YOU MAY NEED TO ADAPT THE
  * INCLUDES ABOVE OR DEFINE THEM ACCORDING TO YOUR PLATFORM.
