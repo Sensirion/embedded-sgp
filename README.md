@@ -9,6 +9,7 @@ git clone --recursive https://github.com/Sensirion/embedded-sgp.git
 
 ## Repository content
 * embedded-common (submodule repository for common embedded driver stuff)
+* sgp40 (SPG40 driver related)
 * sgp30 (SGP30 driver related)
 * sgpc3 (SGPC3 driver related)
 * sgp-common (SGPxx related)
