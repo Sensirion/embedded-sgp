@@ -5,6 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [`added`]   Initial driver for SGP40
 * [`fixed`]   Use correct command for `sgpc3_tvoc_init_no_preheat()`
               The wrong command caused a preheating of 16s.
 * [`changed`] Update bundled embedded-sht driver to 5.1.0
