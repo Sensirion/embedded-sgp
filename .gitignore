@@ -1,3 +1,4 @@
+*.swp
 *.o
 /release
 /sgp30/sgp30_example_usage
