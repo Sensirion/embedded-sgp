@@ -8,11 +8,15 @@ git clone --recursive https://github.com/Sensirion/embedded-sgp.git
 ```
 
 ## Repository content
-* embedded-common (submodule repository for common embedded driver stuff)
-* sgp40 (SPG40 driver related)
-* sgp30 (SGP30 driver related)
-* sgpc3 (SGPC3 driver related)
-* sgp-common (SGPxx related)
+
+* embedded-common - Submodule repository for common embedded driver stuff
+* embedded-sht - Submodule repository for SHT drivers
+* sgp40 - SPG40 driver
+* sgp30 - SGP30 driver
+* sgpc3 - SGPC3 driver
+* svm30 - Driver for the SVM30 module consisting of a SPG30 and an SHTC3 sensor.
+* sgpc3\_with\_shtc1 - Driver for a SGPC3 and SHTC1 sensor combo.
+* sgp-common - Common code for all SGP drivers.
 
 ## Collecting resources
 ```
@@ -45,11 +49,9 @@ communication via GPIOs)
 3. Implement necessary functions in one of the `*_implementation.c` files
 4. make
 
-
 ---
 
 Please check the [embedded-common](https://github.com/Sensirion/embedded-common)
 repository for further information and sample implementations.
 
 ---
-
