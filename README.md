@@ -12,6 +12,7 @@ git clone --recursive https://github.com/Sensirion/embedded-sgp.git
 * embedded-common - Submodule repository for common embedded driver stuff
 * embedded-sht - Submodule repository for SHT drivers
 * sgp40 - SPG40 driver
+* sgp40\_voc\_index - Driver for a SGP40 and SHTC3 combo with a VOC algorithm.
 * sgp30 - SGP30 driver
 * sgpc3 - SGPC3 driver
 * svm30 - Driver for the SVM30 module consisting of a SPG30 and an SHTC3 sensor.
