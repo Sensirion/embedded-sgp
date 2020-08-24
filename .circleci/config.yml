@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: sensirion/embedded-ci:2.1.0
+      - image: sensirion/embedded-ci:2.2.0
     steps:
       - checkout
       - run:
@@ -13,6 +13,7 @@ jobs:
       - run: make
       - run: make clean
       - run: make style-check
+      - run: (cd docs && pip3 install -r requirements.txt && make latexpdf)
       - run: make release
       - run:
           name: build stub release drivers
@@ -47,12 +48,13 @@ jobs:
 
   deploy:
     docker:
-      - image: sensirion/embedded-ci:2.1.0
+      - image: sensirion/embedded-ci:2.2.0
     steps:
       - checkout
       - run:
           name: update common repo
           command: git submodule update --init
+      - run: (cd docs && pip3 install -r requirements.txt && make latexpdf)
       - run: make release
       - run:
           name: Move zip files to artifact directory
