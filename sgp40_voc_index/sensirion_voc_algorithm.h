@@ -34,6 +34,10 @@
 
 #include "sensirion_arch_config.h"
 
+/* The fixed point arithmetic parts of this code were originally created by
+ * https://github.com/PetteriAimonen/libfixmath
+ */
+
 typedef int32_t fix16_t;
 
 #define F16(x) \

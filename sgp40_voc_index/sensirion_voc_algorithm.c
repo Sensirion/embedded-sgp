@@ -34,6 +34,10 @@
 
 #include "sensirion_voc_algorithm.h"
 
+/* The fixed point arithmetic parts of this code were originally created by
+ * https://github.com/PetteriAimonen/libfixmath
+ */
+
 /*!< the maximum value of fix16_t */
 #define FIX16_MAXIMUM 0x7FFFFFFF
 /*!< the minimum value of fix16_t */
