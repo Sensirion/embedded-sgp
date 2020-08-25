@@ -56,8 +56,8 @@ latex_engine = 'pdflatex'
 latex_documents = [
     (
         'sgp40/index',
-        'Application_Note_SGP40_Driver_(HW_i2c).tex',
-        'SGP40 Driver Integration (for Dedicated I2C Hardware)',
+        'Application_Note_SGP40_VOC_Index_Driver.tex',
+        'SGP40 VOC Index Driver Integration',
         'Sensirion AG',
         'howto',
         True
