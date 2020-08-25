@@ -1,4 +1,4 @@
-drivers=sgp30 sgpc3 svm30 sgpc3_with_shtc1 sgp40
+drivers=sgp30 sgpc3 svm30 sgpc3_with_shtc1 sgp40 sgp40_voc_index
 clean_drivers=$(foreach d, $(drivers), clean_$(d))
 release_drivers=$(foreach d, $(drivers), release/$(d))
 
@@ -36,6 +36,33 @@ $(release_drivers): sgp-common/sgp_git_version.c
 	echo 'sensirion_common_dir = .' >> $${pkgdir}/user_config.inc && \
 	echo 'sgp_common_dir = .' >> $${pkgdir}/user_config.inc && \
 	echo "$${driver}_dir = ." >> $${pkgdir}/user_config.inc && \
+	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
+	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
+	ln -sf $${pkgname} $@
+
+release/sgp40_voc_index: release/sgp40 prepare-embedded-sht
+	$(RM) $@
+	export rel=$@ && \
+	export driver=$${rel#release/} && \
+	export tag="$$(git describe --always --dirty)" && \
+	export pkgname="$${driver}-$${tag}" && \
+	export pkgdir="release/$${pkgname}" && \
+	rm -rf "$${pkgdir}" && mkdir -p "$${pkgdir}" && \
+	cp embedded-common/*.[ch] $${pkgdir} &&  \
+	cp -r embedded-common/hw_i2c $${pkgdir} &&  \
+	cp -r embedded-common/sw_i2c $${pkgdir} &&  \
+	cp sgp40/sgp40.[ch] $${pkgdir} && \
+	cp sgp-common/*.[ch] $${pkgdir} && \
+	cp embedded-sht/sht-common/*.[ch] $${pkgdir} && \
+	cp embedded-sht/shtc1/shtc1.[ch] $${pkgdir} && \
+	cp $${driver}/Makefile $${pkgdir} && \
+	cp $${driver}/*.[ch] $${pkgdir} && \
+	cp $${driver}/default_config.inc $${pkgdir} && \
+	for i in $${driver}_dir sgp_driver_dir sht_driver_dir sensirion_common_dir \
+	         sgp_common_dir sht_common_dir sgp40_dir shtc1_dir; \
+		do echo "$$i = ." >> $${pkgdir}/user_config.inc; \
+	done && \
+	cp docs/*.pdf $${pkgdir} && \
 	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
