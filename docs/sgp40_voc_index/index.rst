@@ -5,4 +5,4 @@ SGP40
    :maxdepth: 2
    :caption: Contents
 
-   sgp40
+   sgp40_voc_index
