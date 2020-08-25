@@ -19,6 +19,24 @@ datasheet. Remember to add pull-up resistors for SCL and SDA (10kOhm).
     :align: center
     :width: 50%
 
+Software Overview
+=================
+
+The software is split into the following modules:
+
+ * *common*: Contains abstractions for I2C, the MCU architecture and some
+   common helpers
+ * *shtc1* The driver for the SHTC3 sensor (also compatible with SHTC1, SHTW1
+   and SHTW2)
+ * *sgp40* The driver for the SGP40 sensor
+ * *voc_algorithm* The VOC algorithm to process the raw sensor signal and
+   calculate the VOC index.
+ * *sgp40_voc_index* Combines the two drivers and the VOC algorithm to provide
+   a simple API.
+
+.. image:: ./images/software-structure.png
+    :align: center
+    :width: 50%
 
 Getting Started
 ===============
