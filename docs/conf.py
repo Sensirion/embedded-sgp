@@ -54,14 +54,6 @@ latex_engine = 'pdflatex'
 # latex_documents = [(startdocname, targetname, title, author, documentclass, toctree_only), ...].
 # See sphinx docs for more information.
 latex_documents = [
-    # (
-    #     'sgp30/index',
-    #     'Application_Note_SGP30_Driver_(HW_i2c).tex',
-    #     'SGP30 Driver Integration (for Dedicated I2C Hardware)',
-    #     'Sensirion AG',
-    #     'howto',
-    #     True
-    # ),
     (
         'sgp40/index',
         'Application_Note_SGP40_Driver_(HW_i2c).tex',
