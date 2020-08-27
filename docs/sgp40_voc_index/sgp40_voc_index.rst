@@ -63,13 +63,13 @@ support C99 and thus does not provide `stdint.h` and `stdlib.h`.
 
 Implement *sensirion_hw_i2c_implementation.c*
 ---------------------------------------------
-To use your I2C hardware the file
-*common/hw_i2c/sensirion_hw_i2c_implementation.c* needs to be completed. In it
-you find the following functions where all parts marked with “// IMPLEMENT”
-have to be replaced with code performing the necessary setup described here.
+To use your I2C hardware the file *hw_i2c/sensirion_hw_i2c_implementation.c*
+needs to be completed. In it you find the following functions where all parts
+marked with “// IMPLEMENT” have to be replaced with code performing the
+necessary setup described here.
 
 Alternatively you can use a sample implementation from
-*common/hw_i2c/sample-implementations* and override it.
+*hw_i2c/sample-implementations/* and override it.
 
 I2C functions to implement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
