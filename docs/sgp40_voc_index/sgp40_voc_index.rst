@@ -1,5 +1,12 @@
-This application note will provide you with an introduction into the SGP40
-driver.
+This application note will provide you with an introduction to the SGP40 VOC
+Index driver bundle.
+
+Overview
+========
+
+This bundle combines Sensirion's SGP40 and SHTC3 sensors to provide a humidity
+compensated sensor signal. It further embeds a VOC algorithm that
+post-processes the raw sensor output into the resulting VOC Index.
 
 Hardware setup
 ==============
