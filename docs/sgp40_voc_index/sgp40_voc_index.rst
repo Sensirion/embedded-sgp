@@ -11,8 +11,9 @@ post-processes the raw sensor output into the resulting VOC Index.
 Hardware setup
 ==============
 
-Connect the sensors according to the datasheet. Remember to add pull-up
-resistors for SCL and SDA (10kOhm).
+The hardware setup uses a single I2C bus where both sensors are connected to
+the micro controller unit (MCU). Connect the sensors according to the
+datasheet. Remember to add pull-up resistors for SCL and SDA (10kOhm).
 
 .. image:: ./images/hardware-setup.png
     :align: center
