@@ -88,7 +88,7 @@ Measure IAQ (VOC index) and signal values
 The example *sgp40_voc_index_example_usage.c* gives a starting point on how to
 use the sensors.
 
-The SGP40 driver provides the following functions:
+The SGP40 VOC Index driver provides the following functions:
 
 .. doxygenfunction:: sensirion_init_sensors
 .. doxygenfunction:: sensirion_measure_voc_index
