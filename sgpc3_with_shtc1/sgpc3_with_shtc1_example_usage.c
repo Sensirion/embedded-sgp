@@ -31,11 +31,11 @@
 
 #include "sgpc3_with_shtc1.h"
 
-/* TO USE CONSOLE OUTPUT (printf) AND WAIT (sleep) PLEASE ADAPT THEM TO YOUR
- * PLATFORM.
- *
- * #include <stdio.h> // printf
- * #include <unistd.h> // sleep
+#include <stdio.h>  // printf
+
+/* TO USE CONSOLE OUTPUT (printf) YOU MAY NEED TO ADAPT THE
+ * INCLUDE ABOVE OR DEFINE IT ACCORDING TO YOUR PLATFORM.
+ * #define printf(...)
  */
 
 int main(void) {
@@ -51,10 +51,10 @@ int main(void) {
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
     while (sgpc3_with_shtc1_probe() != STATUS_OK) {
-        /* printf("Failed to detect SGPC3 and/or SHTC1\n"); */
+        printf("Failed to detect SGPC3 and/or SHTC1\n");
         sensirion_sleep_usec(1000000);  // wait 1s before trying again
     }
-    /* printf("SGPC3 and SHTC1 sensors detected\n"); */
+    printf("SGPC3 and SHTC1 sensors detected\n");
 
     /* Consider the two cases (A) and (B):
      * (A) If no baseline is available or the most recent baseline is more than
@@ -73,12 +73,12 @@ int main(void) {
         err = sgpc3_with_shtc1_measure_iaq_blocking_read(
             &tvoc_ppb, &temperature, &humidity);
         if (err == STATUS_OK) {
-            /* printf("tVOC  Concentration: %dppb\n", tvoc_ppb);
-             * printf("Temperature: %0.3fC\n", temperature / 1000.0f);
-             * printf("Humidity: %0.3f%%RH\n", humidity / 1000.0f);
-             */
+            printf("tVOC  Concentration: %dppb\n", tvoc_ppb);
+            printf("Temperature: %0.3fC\n", temperature / 1000.0f);
+            printf("Humidity: %0.3f%%RH\n", humidity / 1000.0f);
+
         } else {
-            /* printf("error reading sensor\n"); */
+            printf("error reading sensor\n");
         }
 
         /* Persist the current baseline every hour */

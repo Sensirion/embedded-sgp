@@ -31,11 +31,11 @@
 
 #include "svm30.h"
 
-/* TO USE CONSOLE OUTPUT (printf) AND WAIT (sleep) PLEASE ADAPT THEM TO YOUR
- * PLATFORM.
- *
- * #include <stdio.h> // printf
- * #include <unistd.h> // sleep
+#include <stdio.h>  // printf
+
+/* TO USE CONSOLE OUTPUT (printf) YOU MAY NEED TO ADAPT THE
+ * INCLUDE ABOVE OR DEFINE IT ACCORDING TO YOUR PLATFORM.
+ * #define printf(...)
  */
 
 int main(void) {
@@ -51,9 +51,9 @@ int main(void) {
     /* Busy loop for initialization. The main loop does not work without
      * a sensor. */
     while (svm_probe() != STATUS_OK) {
-        /* printf("SVM30 module probing failed\n"); */
+        printf("SVM30 module probing failed\n");
     }
-    /* printf("SVM30 module probing successful\n"); */
+    printf("SVM30 module probing successful\n");
 
     /* Consider the two cases (A) and (B):
      * (A) If no baseline is available or the most recent baseline is more than
@@ -71,13 +71,13 @@ int main(void) {
         err = svm_measure_iaq_blocking_read(&tvoc_ppb, &co2_eq_ppm,
                                             &temperature, &humidity);
         if (err == STATUS_OK) {
-            /* printf("tVOC  Concentration: %dppb\n", tvoc_ppb);
-             * printf("CO2eq Concentration: %dppm\n", co2_eq_ppm);
-             * printf("Temperature: %0.3fC\n", temperature / 1000.0f);
-             * printf("Humidity: %0.3f%%RH\n", humidity / 1000.0f);
-             */
+            printf("tVOC  Concentration: %dppb\n", tvoc_ppb);
+            printf("CO2eq Concentration: %dppm\n", co2_eq_ppm);
+            printf("Temperature: %0.3fC\n", temperature / 1000.0f);
+            printf("Humidity: %0.3f%%RH\n", humidity / 1000.0f);
+
         } else {
-            /* printf("error reading sensor\n"); */
+            printf("error reading sensor\n");
         }
 
         /* Persist the current baseline every hour */
@@ -91,7 +91,7 @@ int main(void) {
         /* The IAQ measurement must be triggered exactly once per second (SGP30)
          * to get accurate values.
          */
-        /* sleep(1); // SVM30 / SGP30 */
+        sensirion_sleep_usec(1000000);  // SVM30 / SGP30
     }
     return 0;
 }
