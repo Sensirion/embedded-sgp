@@ -16,7 +16,7 @@ Use the following pins to connect your SGP40:
 | SDA            | Pin 3           |
 | SCL            | Pin 5           |
 
-![RaspberryPi Pinout](https://www.raspberrypi.org/documentation/usage/gpio/images/GPIO-Pinout-Diagram-2.png)
+![RaspberryPi Pinout](./images/GPIO-Pinout-Diagram-2.png)
 
 ###  Raspberry Pi
 
