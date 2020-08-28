@@ -40,6 +40,25 @@ $(release_drivers): sgp-common/sgp_git_version.c
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
 
+release/sgp40: sgp-common/sgp_git_version.c
+	export rel=$@ && \
+	export driver=$${rel#release/} && \
+	export tag="$$(git describe --always --dirty)" && \
+	export pkgname="$${driver}-$${tag}" && \
+	export pkgdir="release/$${pkgname}" && \
+	rm -rf "$${pkgdir}" && mkdir -p "$${pkgdir}" && \
+	cp -r embedded-common/* "$${pkgdir}" && \
+	cp -r sgp-common/* "$${pkgdir}" && \
+	cp -r $${driver}/* "$${pkgdir}" && \
+	cp docs/Application_Note_SGP40.pdf $${pkgdir} && \
+	cp CHANGELOG.md LICENSE "$${pkgdir}" && \
+	echo 'sensirion_common_dir = .' >> $${pkgdir}/user_config.inc && \
+	echo 'sgp_common_dir = .' >> $${pkgdir}/user_config.inc && \
+	echo "$${driver}_dir = ." >> $${pkgdir}/user_config.inc && \
+	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
+	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
+	ln -sf $${pkgname} $@
+
 release/sgp40_voc_index: release/sgp40 prepare-embedded-sht
 	$(RM) $@
 	export rel=$@ && \
