@@ -62,7 +62,7 @@ release/sgp40_voc_index: release/sgp40 prepare-embedded-sht
 	         sgp_common_dir sht_common_dir sgp40_dir shtc1_dir; \
 		do echo "$$i = ." >> $${pkgdir}/user_config.inc; \
 	done && \
-	cp docs/*.pdf $${pkgdir} && \
+	cp docs/Application_Note_SGP40_VOC_Index_Driver.pdf $${pkgdir} && \
 	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
