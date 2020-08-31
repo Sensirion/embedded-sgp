@@ -25,7 +25,7 @@ sgp-common/sgp_git_version.c: FORCE
 docs:
 	cd docs && make latexpdf
 
-$(release_drivers): sgp-common/sgp_git_version.c
+$(release_drivers): prepare
 	export rel=$@ && \
 	export driver=$${rel#release/} && \
 	export tag="$$(git describe --always --dirty)" && \
@@ -43,7 +43,7 @@ $(release_drivers): sgp-common/sgp_git_version.c
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
 
-release/sgp40: sgp-common/sgp_git_version.c docs
+release/sgp40: prepare docs
 	export rel=$@ && \
 	export driver=$${rel#release/} && \
 	export tag="$$(git describe --always --dirty)" && \
@@ -62,7 +62,7 @@ release/sgp40: sgp-common/sgp_git_version.c docs
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
 
-release/sgp40_voc_index: release/sgp40 prepare-embedded-sht docs
+release/sgp40_voc_index: prepare docs
 	$(RM) $@
 	export rel=$@ && \
 	export driver=$${rel#release/} && \
