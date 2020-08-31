@@ -1,41 +1,35 @@
 SGP40 Voc Index on Raspberry Pi
 ===============================
 
-This document explains how to set the SGP40 up to run with a Raspberry
-Pi. This became very easy with the new SGP40 since it can run with a
-logic level of 3.3v which matches the one the Raspberry Pi has.
+This document explains how to set up the SGP40 to run with a Raspberry Pi. Since the SGP40 runs at 3.3V, which matches the Raspberry Pi's logic level, no level shifting is required on the i2c bus.
 
-Getting started
----------------
+Setup Guide
+-----------
 
 Connecting the Sensor
 ~~~~~~~~~~~~~~~~~~~~~
 
-| Your Sensor should have four different connectors: VCC, GND, SDA, SCL.
-Please refere to other documentation of the Sensor to find out which
-connector is which on your specific modelle.
-| Use the following pins to connect your SGP40:
+Your sensor has the four different connectors: VCC, GND, SDA, SCL.
+Use the following pins to connect your SGP40:
 
-+-----------+------------------+
-| *SGP40*   | *Raspberry Pi*   |
-+===========+==================+
-| VCC       | Pin 1            |
-+-----------+------------------+
-| GND       | Pin 6            |
-+-----------+------------------+
-| SDA       | Pin 3            |
-+-----------+------------------+
-| SCL       | Pin 5            |
-+-----------+------------------+
++-----------+---------------------+
+| *SGP40*   | *Raspberry Pi*      |
++===========+=====================+
+| VCC       | Pin 1 (3.3V source) |
++-----------+---------------------+
+| GND       | Pin 6               |
++-----------+---------------------+
+| SDA       | Pin 3               |
++-----------+---------------------+
+| SCL       | Pin 5               |
++-----------+---------------------+
 
 |RaspberryPi Pinout|
 
 Raspberry Pi
 ~~~~~~~~~~~~
 
--  **Install the newest Raspberry Pi OS on to your Raspberry Pi. If you
-   don't know how to do that, there is a guide on the Raspberry Pi
-   website**
+-  **Install the Raspberry Pi OS on to your Raspberry Pi. For help with this, kindly refer to the Raspberry Pi website**
    (https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up).
 -  Enable the I2C interface in the Raspberry Pi config.
     -  Open a terminal.
@@ -45,10 +39,10 @@ Raspberry Pi
     -  Select "Yes" when questioned "Would you like the ARM I2C interface to be enabled?".
     -  The Raspberry Pi should respond with "The ARM I2C interface is enabled". Confirm with "Ok"
 -  Download driver.
-    -  Go to the Sensirion SGP Driver Release page (https://github.com/Sensirion/embedded-sgp/releases) and download the ``sgp40-voc-index-VERSION.zip`` file.
+    -  Go to the Sensirion SGP Driver Release page (https://github.com/Sensirion/embedded-sgp/releases) and download the latest ``sgp40-VERSION.zip`` file, whereas ``VERSION`` represents the latest version.
     -  Unzip the file into the directory where you want to install the driver (Run: ``unzip sgp40-voc-index-VERSION.zip`` ).
 -  Adapt the driver to work with Raspberry Pi.
-    -  We use the linux\_user\_space implementation of the hw\_i2c to run the driver on the Raspberry Pi. To use the in the project provided sample implementation navigate to the ``./hw_i2c/sample-implementations/linux_user_space`` direcory.
+    -  We use the ``linux_user_space`` implementation from ``hw_i2c`` (The Linux kernel provides an I2C controller, thus "hardware" i2c) to run the driver on the Raspberry Pi. To use the in the project provided sample implementation navigate to the ``./hw_i2c/sample-implementations/linux_user_space`` directory. 
     -  Copy the file ``sensirion_hw_i2c_implementation.c`` from there and replace the file named the same directly in ``./hw_i2c`` or just run this command in the root directory of your project: ``cp ./hw_i2c/sample-implementations/linux_user_space/sensirion_hw_i2c_implementation.c ./hw_i2c/``.
 -  Compile the driver.
     -  Run ``make`` in the root directory of your project.
@@ -94,10 +88,11 @@ Troubleshooting
 Initialization failed
 ~~~~~~~~~~~~~~~~~~~~~
 
--  Check if you connected the sensor correctly, so all cables are fully
+-  Ensure that you connected the sensor correctly: all cables are fully so all cables are fully
    pluged in and connected to the correct header.
--  Check if you have enabled I2C on the Raspberry Pi. For this redo the
+-  Ensure that I2C is enabled on the Raspberry Pi. For this redo the
    steps on "Enable the I2C interface in the Raspberry Pi config" in the
    guide above.
+-  Ensure that your user account has read and write access to the i2c device. If it only works with user root (``sudo ./sgp40_example_usage``), it's typically due to wrong permission settings.
 
 .. |RaspberryPi Pinout| image:: ./images/GPIO-Pinout-Diagram-2.png
