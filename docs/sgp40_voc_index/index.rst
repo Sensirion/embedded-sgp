@@ -1,5 +1,5 @@
-SGP40
-=====
+SGP40 VOC Index
+===============
 
 .. toctree::
    :maxdepth: 2
