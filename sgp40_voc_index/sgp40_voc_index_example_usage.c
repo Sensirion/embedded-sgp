@@ -54,7 +54,7 @@ int main(void) {
     /* Run one measurement per second, persist state every hour */
     while (1) {
         err = sensirion_measure_voc_index_with_rh_t(
-            &voc_index, &relative_humidity_percent, &temperature);
+            &voc_index, &relative_humidity_percent, &temperature_celsius);
         if (err == STATUS_OK) {
             printf("VOC Index: %i\n", voc_index);
             printf("Temperature: %0.3fdegC\n", temperature_celsius * 0.001f);
