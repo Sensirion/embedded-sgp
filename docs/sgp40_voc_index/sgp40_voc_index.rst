@@ -38,8 +38,8 @@ The software is split into the following modules:
     :align: center
     :width: 50%
 
-Measure IAQ (VOC index) and signal values
------------------------------------------
+API
+---
 
 The example *sgp40_voc_index_example_usage.c* gives a starting point on how to
 use the sensors.
