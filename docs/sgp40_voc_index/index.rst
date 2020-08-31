@@ -7,3 +7,4 @@ SGP40 VOC Index
 
    sgp40_voc_index
    raspisetup
+   genericsetup

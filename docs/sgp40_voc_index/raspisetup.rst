@@ -1,4 +1,4 @@
-SGP40 Voc Index on Raspberry Pi
+Getting Started on Raspberry Pi
 ===============================
 
 This document explains how to set up the SGP40 to run with a Raspberry Pi. Since the SGP40 runs at 3.3V, which matches the Raspberry Pi's logic level, no level shifting is required on the i2c bus.
