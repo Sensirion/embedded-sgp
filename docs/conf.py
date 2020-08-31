@@ -55,6 +55,14 @@ latex_engine = 'pdflatex'
 # See sphinx docs for more information.
 latex_documents = [
     (
+        'sgp40/index',
+        'Application_Note_SGP40.tex',
+        'SGP40 Driver Integration',
+        'Sensirion AG',
+        'howto',
+        True
+    ),
+    (
         'sgp40_voc_index/index',
         'Application_Note_SGP40_VOC_Index_Driver.tex',
         'SGP40 VOC Index Driver Integration',

@@ -2,7 +2,7 @@ drivers=sgp30 sgpc3 svm30 sgpc3_with_shtc1 sgp40 sgp40_voc_index
 clean_drivers=$(foreach d, $(drivers), clean_$(d))
 release_drivers=$(foreach d, $(drivers), release/$(d))
 
-.PHONY: FORCE all $(release_drivers) $(clean_drivers) style-check style-fix prepare-embedded-sht
+.PHONY: FORCE all $(release_drivers) $(clean_drivers) style-check style-fix prepare-embedded-sht docs
 
 all: prepare $(drivers)
 
@@ -22,7 +22,10 @@ sgp-common/sgp_git_version.c: FORCE
 		{print "const char * SGP_DRV_VERSION_STR = \"" $$0"\";"} \
 		END {}' > $@ || echo "Can't update version, not a git repository"
 
-$(release_drivers): sgp-common/sgp_git_version.c
+docs:
+	cd docs && make latexpdf
+
+$(release_drivers): prepare
 	export rel=$@ && \
 	export driver=$${rel#release/} && \
 	export tag="$$(git describe --always --dirty)" && \
@@ -40,7 +43,26 @@ $(release_drivers): sgp-common/sgp_git_version.c
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
 
-release/sgp40_voc_index: release/sgp40 prepare-embedded-sht
+release/sgp40: prepare docs
+	export rel=$@ && \
+	export driver=$${rel#release/} && \
+	export tag="$$(git describe --always --dirty)" && \
+	export pkgname="$${driver}-$${tag}" && \
+	export pkgdir="release/$${pkgname}" && \
+	rm -rf "$${pkgdir}" && mkdir -p "$${pkgdir}" && \
+	cp -r embedded-common/* "$${pkgdir}" && \
+	cp -r sgp-common/* "$${pkgdir}" && \
+	cp -r $${driver}/* "$${pkgdir}" && \
+	cp docs/Application_Note_SGP40.pdf $${pkgdir} && \
+	cp CHANGELOG.md LICENSE "$${pkgdir}" && \
+	echo 'sensirion_common_dir = .' >> $${pkgdir}/user_config.inc && \
+	echo 'sgp_common_dir = .' >> $${pkgdir}/user_config.inc && \
+	echo "$${driver}_dir = ." >> $${pkgdir}/user_config.inc && \
+	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
+	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
+	ln -sf $${pkgname} $@
+
+release/sgp40_voc_index: prepare docs
 	$(RM) $@
 	export rel=$@ && \
 	export driver=$${rel#release/} && \
@@ -62,7 +84,7 @@ release/sgp40_voc_index: release/sgp40 prepare-embedded-sht
 	         sgp_common_dir sht_common_dir sgp40_dir shtc1_dir; \
 		do echo "$$i = ." >> $${pkgdir}/user_config.inc; \
 	done && \
-	cp docs/*.pdf $${pkgdir} && \
+	cp docs/Application_Note_SGP40_VOC_Index_Driver.pdf $${pkgdir} && \
 	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
