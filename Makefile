@@ -2,7 +2,7 @@ drivers=sgp30 sgpc3 svm30 sgpc3_with_shtc1 sgp40 sgp40_voc_index
 clean_drivers=$(foreach d, $(drivers), clean_$(d))
 release_drivers=$(foreach d, $(drivers), release/$(d))
 
-.PHONY: FORCE all $(release_drivers) $(clean_drivers) style-check style-fix prepare-embedded-sht
+.PHONY: FORCE all $(release_drivers) $(clean_drivers) style-check style-fix prepare-embedded-sht docs
 
 all: prepare $(drivers)
 
@@ -22,6 +22,9 @@ sgp-common/sgp_git_version.c: FORCE
 		{print "const char * SGP_DRV_VERSION_STR = \"" $$0"\";"} \
 		END {}' > $@ || echo "Can't update version, not a git repository"
 
+docs:
+	cd docs && make latexpdf
+
 $(release_drivers): sgp-common/sgp_git_version.c
 	export rel=$@ && \
 	export driver=$${rel#release/} && \
@@ -40,7 +43,7 @@ $(release_drivers): sgp-common/sgp_git_version.c
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
 
-release/sgp40: sgp-common/sgp_git_version.c
+release/sgp40: sgp-common/sgp_git_version.c docs
 	export rel=$@ && \
 	export driver=$${rel#release/} && \
 	export tag="$$(git describe --always --dirty)" && \
@@ -59,7 +62,7 @@ release/sgp40: sgp-common/sgp_git_version.c
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
 
-release/sgp40_voc_index: release/sgp40 prepare-embedded-sht
+release/sgp40_voc_index: release/sgp40 prepare-embedded-sht docs
 	$(RM) $@
 	export rel=$@ && \
 	export driver=$${rel#release/} && \
