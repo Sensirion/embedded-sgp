@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2019, Sensirion AG
+   Copyright (c) 2020, Sensirion AG
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
@@ -31,20 +31,8 @@
 
 #include "sgp40_voc_index.h"
 
-#include <stdio.h>  // printf
-
-/* TO USE CONSOLE OUTPUT (printf) YOU MAY NEED TO ADAPT THE
-   INCLUDES ABOVE OR DEFINE THEM ACCORDING TO YOUR PLATFORM.
-   #define printf(...)
-*/
-
-int32_t voc_index;
-int32_t temperature_celsius;
-int32_t relative_humidity_percent;
-int16_t err;
-
-
 void setup() {
+  int16_t err;
   /* Initialize I2C bus, SHT, SGP and VOC Engine */
   while ((err = sensirion_init_sensors())) {
     Serial.print("initialization failed: ");
@@ -55,8 +43,12 @@ void setup() {
 }
 
 
-/* Run one measurement per second, persist state every hour */
+/* Run one measurement per second */
 void loop() {
+  int16_t err;
+  int32_t voc_index;
+  int32_t temperature_celsius;
+  int32_t relative_humidity_percent;
   err = sensirion_measure_voc_index_with_rh_t(
           &voc_index, &relative_humidity_percent, &temperature_celsius );
   if (err == STATUS_OK) {

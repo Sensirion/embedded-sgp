@@ -1,6 +1,6 @@
 drivers=sgp30 sgpc3 svm30 sgpc3_with_shtc1 sgp40 sgp40_voc_index
 clean_drivers=$(foreach d, $(drivers), clean_$(d))
-release_drivers=$(foreach d, $(drivers), release/$(d))
+release_drivers=$(foreach d, $(drivers), release/$(d)) release/sgp40_voc_index_arduino
 
 .PHONY: FORCE all $(release_drivers) $(clean_drivers) style-check style-fix prepare-embedded-sht docs
 
@@ -86,6 +86,28 @@ release/sgp40_voc_index: prepare docs
 	done && \
 	cp docs/Application_Note_SGP40_VOC_Index_Driver.pdf $${pkgdir} && \
 	cd "$${pkgdir}" && $(MAKE) $(MFLAGS) && $(MAKE) clean $(MFLAGS) && cd - && \
+	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
+	ln -sf $${pkgname} $@
+
+release/sgp40_voc_index_arduino: prepare docs
+	$(RM) $@
+	export rel=$@ && \
+	export driver=$${rel#release/} && \
+	export tag="$$(git describe --always --dirty)" && \
+	export pkgname="$${driver}-$${tag}" && \
+	export pkgdir="release/$${pkgname}" && \
+	echo $${pkgname} $${pkgdir} && \
+	rm -rf "$${pkgdir}" && mkdir -p "$${pkgdir}/sgp40_voc_index" && \
+	cp embedded-common/*.[ch] $${pkgdir}/sgp40_voc_index &&  \
+	cp embedded-common/hw_i2c/sample-implementations/arduino/*.cpp $${pkgdir}/sgp40_voc_index &&  \
+	cp sgp40/sgp40.[ch] $${pkgdir}/sgp40_voc_index && \
+	cp sgp40_voc_index/*.[ch] $${pkgdir}/sgp40_voc_index && \
+	cp sgp40_voc_index/sgp40_voc_index_example_usage.ino $${pkgdir}/sgp40_voc_index/sgp40_voc_index.ino && \
+	rm $${pkgdir}/sgp40_voc_index/*example_usage.c && \
+	cp sgp-common/*.[ch] $${pkgdir}/sgp40_voc_index && \
+	cp embedded-sht/sht-common/*.[ch] $${pkgdir}/sgp40_voc_index && \
+	cp embedded-sht/shtc1/shtc1.[ch] $${pkgdir}/sgp40_voc_index && \
+	cp docs/Application_Note_SGP40_VOC_Index_Driver_Arduino.pdf $${pkgdir}/ && \
 	cd release && zip -r "$${pkgname}.zip" "$${pkgname}" && cd - && \
 	ln -sf $${pkgname} $@
 

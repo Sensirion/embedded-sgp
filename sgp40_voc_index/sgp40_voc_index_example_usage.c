@@ -51,7 +51,7 @@ int main(void) {
     }
     printf("initialization successful\n");
 
-    /* Run one measurement per second, persist state every hour */
+    /* Run one measurement per second */
     while (1) {
         err = sensirion_measure_voc_index_with_rh_t(
             &voc_index, &relative_humidity_percent, &temperature_celsius);
