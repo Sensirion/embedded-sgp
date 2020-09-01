@@ -6,3 +6,4 @@ SGP40
    :caption: Contents
 
    sgp40
+   raspisetup
