@@ -70,6 +70,14 @@ latex_documents = [
         'howto',
         True
     ),
+    (
+        'sgp40_voc_index/arduino_index',
+        'Application_Note_SGP40_VOC_Index_Driver_Arduino.tex',
+        'SGP40 VOC Index Driver Arduino Integration',
+        'Sensirion AG',
+        'howto',
+        True
+    ),
 ]
 latex_logo = html_logo
 
