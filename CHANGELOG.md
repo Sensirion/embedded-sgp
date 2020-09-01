@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.0.0] - 2020-09-01
+
 * [`added`]   Initial driver for SGP40
 * [`added`]   Initial SGP40 VOC Index driver bundle
 * [`fixed`]   Use correct command for `sgpc3_tvoc_init_no_preheat()`
@@ -107,7 +109,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
  * First public release
 
-[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/6.0.0...master
+[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/7.0.0...master
+[7.0.0]: https://github.com/Sensirion/embedded-sgp/compare/6.0.0...7.0.0
 [6.0.0]: https://github.com/Sensirion/embedded-sgp/compare/5.0.0...6.0.0
 [5.0.0]: https://github.com/Sensirion/embedded-sgp/compare/4.0.0...5.0.0
 [4.0.0]: https://github.com/Sensirion/embedded-sgp/compare/3.1.4...4.0.0
