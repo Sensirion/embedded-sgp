@@ -33,6 +33,13 @@
 
 void setup() {
   int16_t err;
+  Serial.begin(115200);  // start serial for output
+
+  // wait for serial connection from PC
+  // comment the following line if you'd like the output
+  // without waiting for the interface being ready
+  while(!Serial);
+
   /* Initialize I2C bus, SHT, SGP and VOC Engine */
   while ((err = sensirion_init_sensors())) {
     Serial.print("initialization failed: ");
