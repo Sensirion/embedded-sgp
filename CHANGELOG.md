@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 * [`fixed`]   Arduino: Initialize serial port and Wait for it to be ready.
+* [`changed`] Makefile to only include needed files from embedded-common
+
 
 ## [7.0.0] - 2020-09-01
 
