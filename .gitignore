@@ -13,3 +13,14 @@
 /svm30/svm30_example_usage
 /svm30/user_config.inc
 /sgp-common/sgp_git_version.c
+i2c-mux-testbed/
+tests/sgp30-test-hw_i2c
+tests/sgp30-test-sw_i2c
+tests/sgp40-test-hw_i2c
+tests/sgp40-test-sw_i2c
+tests/sgp40-voc-index-test-hw_i2c
+tests/sgp40-voc-index-test-sw_i2c
+tests/sgpc3-test-hw_i2c
+tests/sgpc3-test-sw_i2c
+tests/svm30-test-hw_i2c
+tests/svm30-test-sw_i2c
