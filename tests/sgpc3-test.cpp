@@ -40,12 +40,14 @@ static void sgpc3_run_tests(uint16_t fs) {
     // check sensor for defects
     ret = sgpc3_measure_test(&test_result);
     CHECK_ZERO_TEXT(ret, "sgpc3_measure_test");
-    CHECK_EQUAL_TEXT(SGPC3_MEASURE_TEST_RESULT, test_result, "sgpc3_measure_test result");
+    CHECK_EQUAL_TEXT(SGPC3_MEASURE_TEST_RESULT, test_result,
+                     "sgpc3_measure_test result");
 
     // tvoc measurements
     ret = sgpc3_measure_tvoc_blocking_read(&tvoc_ppb);
     CHECK_ZERO_TEXT(ret, "sgpc3_measure_tvoc_blocking_read");
-    CHECK_TRUE_TEXT(tvoc_ppb <= MAX_VALUE_TVOC, "sgpc3_measure_tvoc_blocking_read tvoc");
+    CHECK_TRUE_TEXT(tvoc_ppb <= MAX_VALUE_TVOC,
+                    "sgpc3_measure_tvoc_blocking_read tvoc");
 
     ret = sgpc3_measure_tvoc();
     CHECK_ZERO_TEXT(ret, "sgpc3_measure_tvoc");
@@ -57,7 +59,8 @@ static void sgpc3_run_tests(uint16_t fs) {
     // ethanol measurements
     ret = sgpc3_measure_raw_blocking_read(&ethanol);
     CHECK_ZERO_TEXT(ret, "sgpc3_measure_raw_blocking_read");
-    CHECK_TRUE_TEXT(ethanol >= MIN_VALUE_ETHANOL && ethanol <= MAX_VALUE_ETHANOL,
+    CHECK_TRUE_TEXT(ethanol >= MIN_VALUE_ETHANOL &&
+                        ethanol <= MAX_VALUE_ETHANOL,
                     "sgpc3_measure_raw_blocking_read ethanol");
 
     ret = sgpc3_measure_raw();
@@ -65,7 +68,8 @@ static void sgpc3_run_tests(uint16_t fs) {
     sensirion_sleep_usec(MEASUREMENT_TIME_USEC);
     ret = sgpc3_read_raw(&ethanol);
     CHECK_ZERO_TEXT(ret, "sgpc3_read_raw");
-    CHECK_TRUE_TEXT(ethanol >= MIN_VALUE_ETHANOL && ethanol <= MAX_VALUE_ETHANOL,
+    CHECK_TRUE_TEXT(ethanol >= MIN_VALUE_ETHANOL &&
+                        ethanol <= MAX_VALUE_ETHANOL,
                     "sgpc3_read_raw ethanol");
 
     // tvoc and ethanol measurements
@@ -73,7 +77,8 @@ static void sgpc3_run_tests(uint16_t fs) {
     CHECK_ZERO_TEXT(ret, "sgpc3_measure_tvoc_and_raw_blocking_read");
     CHECK_TRUE_TEXT(tvoc_ppb <= MAX_VALUE_TVOC,
                     "sgpc3_measure_tvoc_and_raw_blocking_read tvoc");
-    CHECK_TRUE_TEXT(ethanol >= MIN_VALUE_ETHANOL && ethanol <= MAX_VALUE_ETHANOL,
+    CHECK_TRUE_TEXT(ethanol >= MIN_VALUE_ETHANOL &&
+                        ethanol <= MAX_VALUE_ETHANOL,
                     "sgpc3_measure_tvoc_and_raw_blocking_read ethanol");
 
     ret = sgpc3_measure_tvoc_and_raw();
@@ -82,7 +87,8 @@ static void sgpc3_run_tests(uint16_t fs) {
     ret = sgpc3_read_tvoc_and_raw(&tvoc_ppb, &ethanol);
     CHECK_ZERO_TEXT(ret, "sgpc3_read_tvoc_and_raw");
     CHECK_TRUE_TEXT(tvoc_ppb <= MAX_VALUE_TVOC, "sgpc3_read_tvoc_and_raw tvoc");
-    CHECK_TRUE_TEXT(ethanol >= MIN_VALUE_ETHANOL && ethanol <= MAX_VALUE_ETHANOL,
+    CHECK_TRUE_TEXT(ethanol >= MIN_VALUE_ETHANOL &&
+                        ethanol <= MAX_VALUE_ETHANOL,
                     "sgpc3_read_tvoc_and_raw ethanol");
 }
 
@@ -100,7 +106,8 @@ static void sgpc3_test_all_humi(uint16_t fs) {
         sgpc3_run_tests(fs);
 
         ret = sgpc3_set_absolute_humidity(MAX_VALUE_HUMIDITY + 1);
-        CHECK_EQUAL_TEXT(STATUS_FAIL, ret, "sgpc3_set_absolute_humidity should fail");
+        CHECK_EQUAL_TEXT(STATUS_FAIL, ret,
+                         "sgpc3_set_absolute_humidity should fail");
     } else {
         ret = sgpc3_set_absolute_humidity(0);
         CHECK_EQUAL_TEXT(SGPC3_ERR_UNSUPPORTED_FEATURE_SET, ret,
@@ -120,7 +127,7 @@ static void sgpc3_test_all_inits(uint16_t expected_feature_set) {
     ret = sgpc3_probe();
     CHECK_ZERO_TEXT(ret, "sgpc3_probe");
 
-    const char *version = sgpc3_get_driver_version();
+    const char* version = sgpc3_get_driver_version();
     printf("sgpc3_get_driver_version: %s\n", version);
 
     uint8_t addr = sgpc3_get_configured_address();
@@ -166,7 +173,7 @@ static void test_teardown() {
     sensirion_i2c_release();
 }
 
-TEST_GROUP(SGPC3_FS4_Tests) {
+TEST_GROUP (SGPC3_FS4_Tests) {
     void setup() {
         sensirion_i2c_init();
         int16_t ret = sensirion_i2c_mux_set_single_channel(0x71, 3);
@@ -178,7 +185,7 @@ TEST_GROUP(SGPC3_FS4_Tests) {
     }
 };
 
-TEST_GROUP(SGPC3_FS5_Tests) {
+TEST_GROUP (SGPC3_FS5_Tests) {
     void setup() {
         sensirion_i2c_init();
         int16_t ret = sensirion_i2c_mux_set_single_channel(0x71, 4);
@@ -190,7 +197,7 @@ TEST_GROUP(SGPC3_FS5_Tests) {
     }
 };
 
-TEST_GROUP(SGPC3_FS6_Tests) {
+TEST_GROUP (SGPC3_FS6_Tests) {
     void setup() {
         sensirion_i2c_init();
         int16_t ret = sensirion_i2c_mux_set_single_channel(0x71, 5);
@@ -202,25 +209,23 @@ TEST_GROUP(SGPC3_FS6_Tests) {
     }
 };
 
-TEST(SGPC3_FS4_Tests, SGPC3Test_FS4) {
+TEST (SGPC3_FS4_Tests, SGPC3Test_FS4) {
     sgpc3_test_all_inits(4);
     int16_t ret = sgpc3_set_power_mode(1);
     CHECK_EQUAL_TEXT(SGPC3_ERR_UNSUPPORTED_FEATURE_SET, ret,
                      "sgpc3_set_power_mode unsupported FS");
 }
 
-TEST(SGPC3_FS5_Tests, SGPC3Test_FS5) {
+TEST (SGPC3_FS5_Tests, SGPC3Test_FS5) {
     sgpc3_test_all_inits(5);
     int16_t ret = sgpc3_set_power_mode(1);
     CHECK_EQUAL_TEXT(SGPC3_ERR_UNSUPPORTED_FEATURE_SET, ret,
                      "sgpc3_set_power_mode unsupported FS");
 }
 
-TEST(SGPC3_FS6_Tests, SGPC3Test_FS6) {
-    sgpc3_test_all_inits(6);
-}
+TEST (SGPC3_FS6_Tests, SGPC3Test_FS6) { sgpc3_test_all_inits(6); }
 
-TEST(SGPC3_FS6_Tests, SGPC3Test_FS6_ULP) {
+TEST (SGPC3_FS6_Tests, SGPC3Test_FS6_ULP) {
     int16_t ret = sgpc3_probe();
     CHECK_ZERO_TEXT(ret, "sgpc3_probe before setting ULP mode in SGPC3 FS6");
     ret = sgpc3_set_power_mode(1);

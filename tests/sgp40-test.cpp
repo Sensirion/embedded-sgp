@@ -1,12 +1,12 @@
 #include "sensirion_test_setup.h"
 #include "sgp40.h"
-#include <stdio.h>
 #include <inttypes.h>
+#include <stdio.h>
 
 #define MIN_VALUE_ETHANOL 0
 #define MAX_VALUE_ETHANOL 60000
 
-TEST_GROUP(SGP40_Tests) {
+TEST_GROUP (SGP40_Tests) {
     void setup() {
         int16_t ret;
         sensirion_i2c_init();
@@ -24,12 +24,12 @@ TEST_GROUP(SGP40_Tests) {
     }
 };
 
-TEST(SGP40_Tests, SGP40_Test) {
+TEST (SGP40_Tests, SGP40_Test) {
     uint8_t serial_id[SGP40_SERIAL_ID_NUM_BYTES];
     int16_t ret;
     uint16_t signal, ix;
 
-    const char *version = sgp40_get_driver_version();
+    const char* version = sgp40_get_driver_version();
     printf("SGP40 Driver version: %s\n", version);
 
     ret = sgp40_probe();
@@ -49,7 +49,6 @@ TEST(SGP40_Tests, SGP40_Test) {
     }
     printf("SGP40 serial dec: %" PRIu64 "\n", serial_id_dec);
 
-
     ret = sgp40_measure_raw_blocking_read(&signal);
     printf("SGP Reading: %u\n", signal);
     CHECK_ZERO_TEXT(ret, "sgp40_measure_raw_blocking_read");
@@ -57,16 +56,16 @@ TEST(SGP40_Tests, SGP40_Test) {
                     "sgp40_measure_raw_blocking_read value");
 }
 
-TEST(SGP40_Tests, sgp40_convert_rht) {
+TEST (SGP40_Tests, sgp40_convert_rht) {
     int32_t rh = 50000;
     int32_t t = 25000;
     uint16_t rh_sensor_format;
     uint16_t t_sensor_format;
     sgp40_convert_rht(rh, t, &rh_sensor_format, &t_sensor_format);
     CHECK_TEXT(rh_sensor_format >= (SGP40_DEFAULT_HUMIDITY - 40) &&
-               rh_sensor_format <= (SGP40_DEFAULT_HUMIDITY + 40),
+                   rh_sensor_format <= (SGP40_DEFAULT_HUMIDITY + 40),
                "sgp40_convert_rht wrong humidity");
     CHECK_TEXT(t_sensor_format >= (SGP40_DEFAULT_TEMPERATURE - 40) &&
-               t_sensor_format <= (SGP40_DEFAULT_TEMPERATURE + 40),
+                   t_sensor_format <= (SGP40_DEFAULT_TEMPERATURE + 40),
                "sgp40_convert_rht wrong temperature");
 }
