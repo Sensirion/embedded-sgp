@@ -30,7 +30,7 @@ static void sgp30_run_tests(uint16_t expected_feature_set) {
     uint32_t iaq_baseline;
     uint64_t serial;
 
-    const char *version = sgp30_get_driver_version();
+    const char* version = sgp30_get_driver_version();
     printf("sgp30_get_driver_version: %s\n", version);
 
     uint8_t addr = sgp30_get_configured_address();
@@ -86,7 +86,8 @@ static void sgp30_run_tests(uint16_t expected_feature_set) {
     // check sensor for defects
     ret = sgp30_measure_test(&test_result);
     CHECK_ZERO_TEXT(ret, "sgp30_measure_test");
-    CHECK_EQUAL_TEXT(SGP30_MEASURE_TEST_RESULT, test_result, "sgp30_measure_test result");
+    CHECK_EQUAL_TEXT(SGP30_MEASURE_TEST_RESULT, test_result,
+                     "sgp30_measure_test result");
 
     // iaq measurements (tvoc and co2)
     ret = sgp30_measure_iaq_blocking_read(&tvoc_ppb, &co2_ppm);
@@ -137,7 +138,8 @@ static void sgp30_run_tests(uint16_t expected_feature_set) {
     // raw measurements
     ret = sgp30_measure_raw_blocking_read(&ethanol_raw, &h2_raw);
     CHECK_ZERO_TEXT(ret, "sgp30_measure_raw_blocking_read");
-    CHECK_TRUE_TEXT(ethanol_raw >= MIN_VALUE_ETHANOL && ethanol_raw <= MAX_VALUE_ETHANOL,
+    CHECK_TRUE_TEXT(ethanol_raw >= MIN_VALUE_ETHANOL &&
+                        ethanol_raw <= MAX_VALUE_ETHANOL,
                     "sgp30_measure_raw_blocking_read ethanol");
     CHECK_TRUE_TEXT(h2_raw >= MIN_VALUE_H2 && h2_raw <= MAX_VALUE_H2,
                     "sgp30_measure_raw_blocking_read h2");
@@ -147,7 +149,8 @@ static void sgp30_run_tests(uint16_t expected_feature_set) {
     sensirion_sleep_usec(MEASUREMENT_DURATION_USEC);
     ret = sgp30_read_raw(&ethanol_raw, &h2_raw);
     CHECK_ZERO_TEXT(ret, "sgp30_read_raw");
-    CHECK_TRUE_TEXT(ethanol_raw >= MIN_VALUE_ETHANOL && ethanol_raw <= MAX_VALUE_ETHANOL,
+    CHECK_TRUE_TEXT(ethanol_raw >= MIN_VALUE_ETHANOL &&
+                        ethanol_raw <= MAX_VALUE_ETHANOL,
                     "sgp30_read_raw ethanol");
     CHECK_TRUE_TEXT(h2_raw >= MIN_VALUE_H2 && h2_raw <= MAX_VALUE_H2,
                     "sgp30_read_raw h2");
@@ -164,7 +167,7 @@ static void test_teardown() {
     sensirion_i2c_release();
 }
 
-TEST_GROUP(SGP30_FS_0x20_Tests) {
+TEST_GROUP (SGP30_FS_0x20_Tests) {
     void setup() {
         sensirion_i2c_init();
         int16_t ret = sensirion_i2c_mux_set_single_channel(0x71, 0);
@@ -177,7 +180,7 @@ TEST_GROUP(SGP30_FS_0x20_Tests) {
     }
 };
 
-TEST_GROUP(SGP30_FS_0x21_Tests) {
+TEST_GROUP (SGP30_FS_0x21_Tests) {
     void setup() {
         sensirion_i2c_init();
         int16_t ret = sensirion_i2c_mux_set_single_channel(0x71, 1);
@@ -190,7 +193,7 @@ TEST_GROUP(SGP30_FS_0x21_Tests) {
     }
 };
 
-TEST_GROUP(SGP30_FS_0x22_Tests) {
+TEST_GROUP (SGP30_FS_0x22_Tests) {
     void setup() {
         sensirion_i2c_init();
         int16_t ret = sensirion_i2c_mux_set_single_channel(0x71, 2);
@@ -203,53 +206,53 @@ TEST_GROUP(SGP30_FS_0x22_Tests) {
     }
 };
 
-TEST(SGP30_FS_0x20_Tests, SGP30_no_humi_compensation) {
+TEST (SGP30_FS_0x20_Tests, SGP30_no_humi_compensation) {
     int16_t ret = sgp30_set_absolute_humidity(0);
     CHECK_ZERO_TEXT(ret, "sgp_set_absolute_humidity");
     sgp30_run_tests(0x20);
 }
 
-TEST(SGP30_FS_0x20_Tests, SGP30_with_humi_compensation) {
+TEST (SGP30_FS_0x20_Tests, SGP30_with_humi_compensation) {
     int16_t ret = sgp30_set_absolute_humidity(MAX_VALUE_HUMIDITY);
     CHECK_ZERO_TEXT(ret, "sgp_set_absolute_humidity");
     sgp30_run_tests(0x20);
 }
 
-TEST(SGP30_FS_0x20_Tests, SGP30_too_much_humidity) {
+TEST (SGP30_FS_0x20_Tests, SGP30_too_much_humidity) {
     int16_t ret = sgp30_set_absolute_humidity(MAX_VALUE_HUMIDITY + 1);
     CHECK_EQUAL_TEXT(STATUS_FAIL, ret, "sgp_set_absolute_humidity should fail");
 }
 
-TEST(SGP30_FS_0x21_Tests, SGP30_no_humi_compensation) {
+TEST (SGP30_FS_0x21_Tests, SGP30_no_humi_compensation) {
     int16_t ret = sgp30_set_absolute_humidity(0);
     CHECK_ZERO_TEXT(ret, "sgp_set_absolute_humidity");
     sgp30_run_tests(0x21);
 }
 
-TEST(SGP30_FS_0x21_Tests, SGP30_with_humi_compensation) {
+TEST (SGP30_FS_0x21_Tests, SGP30_with_humi_compensation) {
     int16_t ret = sgp30_set_absolute_humidity(MAX_VALUE_HUMIDITY);
     CHECK_ZERO_TEXT(ret, "sgp_set_absolute_humidity");
     sgp30_run_tests(0x21);
 }
 
-TEST(SGP30_FS_0x21_Tests, SGP30_too_much_humidity) {
+TEST (SGP30_FS_0x21_Tests, SGP30_too_much_humidity) {
     int16_t ret = sgp30_set_absolute_humidity(MAX_VALUE_HUMIDITY + 1);
     CHECK_EQUAL_TEXT(STATUS_FAIL, ret, "sgp_set_absolute_humidity should fail");
 }
 
-TEST(SGP30_FS_0x22_Tests, SGP30_no_humi_compensation) {
+TEST (SGP30_FS_0x22_Tests, SGP30_no_humi_compensation) {
     int16_t ret = sgp30_set_absolute_humidity(0);
     CHECK_ZERO_TEXT(ret, "sgp_set_absolute_humidity");
     sgp30_run_tests(0x22);
 }
 
-TEST(SGP30_FS_0x22_Tests, SGP30_with_humi_compensation) {
+TEST (SGP30_FS_0x22_Tests, SGP30_with_humi_compensation) {
     int16_t ret = sgp30_set_absolute_humidity(MAX_VALUE_HUMIDITY);
     CHECK_ZERO_TEXT(ret, "sgp_set_absolute_humidity");
     sgp30_run_tests(0x22);
 }
 
-TEST(SGP30_FS_0x22_Tests, SGP30_too_much_humidity) {
+TEST (SGP30_FS_0x22_Tests, SGP30_too_much_humidity) {
     int16_t ret = sgp30_set_absolute_humidity(MAX_VALUE_HUMIDITY + 1);
     CHECK_EQUAL_TEXT(STATUS_FAIL, ret, "sgp_set_absolute_humidity should fail");
 }
