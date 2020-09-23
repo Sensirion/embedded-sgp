@@ -107,6 +107,13 @@ VOC Index is zero
 During the initialization phase of the VOC Index algorithm, which is the first
 100 iterations, the VOC Index will output zero.
 
+Arduino Nano 33 BLE doesn't show up in port list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Try double tapping or long pressing the reset button located on the top of the Arduino board.
+When the orange LED on the board (next to the Micro USB) lights up the Arduino should show up.
+Otherwise use a different USB cable, restart the IDE and reconnect the Arduino.
+
 .. |Arduino Pinout| image:: ./images/Pinout-NANOble_latest_marked.png
 
 .. |Boardmanager| image:: ./images/Boardmanager.png
