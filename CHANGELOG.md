@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [`changed`] default_config.inc for sgp40_voc_index such that the variable
+              sgp40_sources matches the one named the same in sgp40.
 * [`fixed`]   Arduino: Initialize serial port and Wait for it to be ready.
 * [`changed`] Makefile to only include needed files from embedded-common
 
