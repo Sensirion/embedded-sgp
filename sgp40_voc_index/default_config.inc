@@ -27,15 +27,15 @@ sensirion_common_sources = ${sensirion_common_dir}/sensirion_arch_config.h \
 sgp_common_sources = ${sgp_common_dir}/sgp_git_version.h \
                      ${sgp_common_dir}/sgp_git_version.c
 
-sgp40_sources = ${sgp40_dir}/sgp40.h ${sgp40_dir}/sgp40.c
+sgp40_sources = ${sensirion_common_sources} \
+                ${sgp_common_sources} \
+                ${sgp40_dir}/sgp40.h ${sgp40_dir}/sgp40.c
 
 sgp40_voc_index_voc_algorithm_sources = ${sgp40_voc_index_voc_algorithm_dir}/sensirion_voc_algorithm.h \
                                      ${sgp40_voc_index_voc_algorithm_dir}/sensirion_voc_algorithm.c
 
-sgp40_voc_index_sources = ${sensirion_common_sources} \
-                        ${sgp_common_sources} \
+sgp40_voc_index_sources = ${sgp40_sources} \
                         ${sht_common_sources} \
-                        ${sgp40_sources} \
                         ${shtc1_sources} \
                         ${sgp40_voc_index_voc_algorithm_sources} \
                         ${sgp40_voc_index_dir}/sgp40_voc_index.h \
