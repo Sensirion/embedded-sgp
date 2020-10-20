@@ -40,7 +40,8 @@
 
 typedef int32_t fix16_t;
 
-#define F16(x) ((fix16_t)(((x) >= 0) ? ((x) * 65536.0 + 0.5) : ((x) * 65536.0 - 0.5)))
+#define F16(x) \
+    ((fix16_t)(((x) >= 0) ? ((x)*65536.0 + 0.5) : ((x)*65536.0 - 0.5)))
 
 #define VocAlgorithm_SAMPLING_INTERVAL (1.)
 #define VocAlgorithm_INITIAL_BLACKOUT (45.)
@@ -69,7 +70,6 @@ typedef int32_t fix16_t;
 #define VocAlgorithm_PERSISTENCE_UPTIME_GAMMA ((3. * 3600.))
 #define VocAlgorithm_MEAN_VARIANCE_ESTIMATOR__GAMMA_SCALING (64.)
 #define VocAlgorithm_MEAN_VARIANCE_ESTIMATOR__FIX16_MAX (32767.)
-
 
 /**
  * Struct to hold all the states of the VOC algorithm.
@@ -114,13 +114,19 @@ typedef struct {
  * whenever the sensor stopped measurements.
  * @param params    Pointer to the VocAlgorithmParams struct
  */
-void VocAlgorithm_init(VocAlgorithmParams *params);
+void VocAlgorithm_init(VocAlgorithmParams* params);
 
-void VocAlgorithm_get_states(VocAlgorithmParams *params, int32_t *state0, int32_t *state1);
+void VocAlgorithm_get_states(VocAlgorithmParams* params, int32_t* state0,
+                             int32_t* state1);
 
-void VocAlgorithm_set_states(VocAlgorithmParams *params, int32_t state0, int32_t state1);
+void VocAlgorithm_set_states(VocAlgorithmParams* params, int32_t state0,
+                             int32_t state1);
 
-void VocAlgorithm_set_tuning_parameters(VocAlgorithmParams *params, int32_t voc_index_offset, int32_t learning_time_hours, int32_t gating_max_duration_minutes, int32_t std_initial);
+void VocAlgorithm_set_tuning_parameters(VocAlgorithmParams* params,
+                                        int32_t voc_index_offset,
+                                        int32_t learning_time_hours,
+                                        int32_t gating_max_duration_minutes,
+                                        int32_t std_initial);
 
 /**
  * Calculate the VOC index value from the raw sensor value.
@@ -130,6 +136,7 @@ void VocAlgorithm_set_tuning_parameters(VocAlgorithmParams *params, int32_t voc_
  * @param voc_index Calculated VOC index value from the raw sensor value. Range
  *                  0..500
  */
-void VocAlgorithm_process(VocAlgorithmParams *params, int32_t sraw, int32_t *voc_index);
+void VocAlgorithm_process(VocAlgorithmParams* params, int32_t sraw,
+                          int32_t* voc_index);
 
 #endif /* VOCALGORITHM_H_ */
