@@ -32,35 +32,15 @@
 #ifndef VOCALGORITHM_H_
 #define VOCALGORITHM_H_
 
+#include "sensirion_arch_config.h"
 
-
-#include <stdint.h>
+/* The fixed point arithmetic parts of this code were originally created by
+ * https://github.com/PetteriAimonen/libfixmath
+ */
 
 typedef int32_t fix16_t;
 
 #define F16(x) ((fix16_t)(((x) >= 0) ? ((x) * 65536.0 + 0.5) : ((x) * 65536.0 - 0.5)))
-
-
-#ifndef __cplusplus
-
-#if __STDC_VERSION__ >= 199901L
-#include <stdbool.h>
-#else
-
-#ifndef bool
-#define bool int
-#define true 1
-#define false 0
-#endif // bool
-
-#endif // __STDC_VERSION__
-
-#endif // __cplusplus
-
-// Should be set by the building toolchain
-#ifndef LIBRARY_VERSION_NAME
-#define LIBRARY_VERSION_NAME "custom build"
-#endif
 
 #define VocAlgorithm_SAMPLING_INTERVAL (1.)
 #define VocAlgorithm_INITIAL_BLACKOUT (45.)
@@ -91,6 +71,9 @@ typedef int32_t fix16_t;
 #define VocAlgorithm_MEAN_VARIANCE_ESTIMATOR__FIX16_MAX (32767.)
 
 
+/**
+ * Struct to hold all the states of the VOC algorithm.
+ */
 typedef struct {
     fix16_t mVoc_Index_Offset;
     fix16_t mTau_Mean_Variance_Hours;
@@ -126,10 +109,27 @@ typedef struct {
     fix16_t m_Adaptive_Lowpass___X3;
 } VocAlgorithmParams;
 
+/**
+ * Initialize the VOC algorithm parameters. Call this once at the beginning or
+ * whenever the sensor stopped measurements.
+ * @param params    Pointer to the VocAlgorithmParams struct
+ */
 void VocAlgorithm_init(VocAlgorithmParams *params);
+
 void VocAlgorithm_get_states(VocAlgorithmParams *params, int32_t *state0, int32_t *state1);
+
 void VocAlgorithm_set_states(VocAlgorithmParams *params, int32_t state0, int32_t state1);
+
 void VocAlgorithm_set_tuning_parameters(VocAlgorithmParams *params, int32_t voc_index_offset, int32_t learning_time_hours, int32_t gating_max_duration_minutes, int32_t std_initial);
+
+/**
+ * Calculate the VOC index value from the raw sensor value.
+ *
+ * @param params    Pointer to the VocAlgorithmParams struct
+ * @param sraw      Raw value from the SGP40 sensor
+ * @param voc_index Calculated VOC index value from the raw sensor value. Range
+ *                  0..500
+ */
 void VocAlgorithm_process(VocAlgorithmParams *params, int32_t sraw, int32_t *voc_index);
 
 #endif /* VOCALGORITHM_H_ */

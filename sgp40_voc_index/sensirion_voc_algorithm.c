@@ -29,8 +29,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sensirion_voc_algorithm_internal.h"
+#include "sensirion_voc_algorithm.h"
 
+/* The fixed point arithmetic parts of this code were originally created by
+ * https://github.com/PetteriAimonen/libfixmath
+ */
 
 /*!< the maximum value of fix16_t */
 #define FIX16_MAXIMUM  0x7FFFFFFF
