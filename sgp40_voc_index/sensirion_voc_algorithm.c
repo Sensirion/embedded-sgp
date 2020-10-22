@@ -29,9 +29,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-//#define FIXMATH_NO_OVERFLOW
-//#define FIXMATH_NO_ROUNDING
-
 #include "sensirion_voc_algorithm.h"
 
 /* The fixed point arithmetic parts of this code were originally created by
@@ -192,24 +189,60 @@ static fix16_t fix16_div(fix16_t a, fix16_t b) {
 }
 
 static fix16_t fix16_sqrt(fix16_t x) {
-    // Function to calculate sqrt(x) using Newton's method
+    // It is assumed that x is not negative
 
-    fix16_t res;
-    fix16_t a;
-    uint16_t f;
-    uint16_t i;
+    uint32_t num = x;
+    uint32_t result = 0;
+    uint32_t bit;
+    uint8_t n;
 
-    a = x;
-    f = 0;
-    while (a >= F16(4.)) {
-        a >>= 2;
-        f += 1;
+    bit = (uint32_t)1 << 30;
+    while (bit > num)
+        bit >>= 2;
+
+    // The main part is executed twice, in order to avoid
+    // using 64 bit values in computations.
+    for (n = 0; n < 2; n++) {
+        // First we get the top 24 bits of the answer.
+        while (bit) {
+            if (num >= result + bit) {
+                num -= result + bit;
+                result = (result >> 1) + bit;
+            } else {
+                result = (result >> 1);
+            }
+            bit >>= 2;
+        }
+
+        if (n == 0) {
+            // Then process it again to get the lowest 8 bits.
+            if (num > 65535) {
+                // The remainder 'num' is too large to be shifted left
+                // by 16, so we have to add 1 to result manually and
+                // adjust 'num' accordingly.
+                // num = a - (result + 0.5)^2
+                //	 = num + result^2 - (result + 0.5)^2
+                //	 = num - result - 0.5
+                num -= result;
+                num = (num << 16) - 0x8000;
+                result = (result << 16) + 0x8000;
+            } else {
+                num <<= 16;
+                result <<= 16;
+            }
+
+            bit = 1 << 14;
+        }
     }
-    res = ((FIX16_ONE + a) >> 1) << f;
-    for (i = 0; i < 5; i++) {
-        res = (res + fix16_div(x, res)) >> 1;
+
+#ifndef FIXMATH_NO_ROUNDING
+    // Finally, if next bit would have been 1, round the result upwards.
+    if (num > result) {
+        result++;
     }
-    return res;
+#endif
+
+    return (fix16_t)result;
 }
 
 static fix16_t fix16_exp(fix16_t x) {
@@ -256,7 +289,12 @@ VocAlgorithm__mean_variance_estimator__init(VocAlgorithmParams* params);
 static void VocAlgorithm__mean_variance_estimator___init_instances(
     VocAlgorithmParams* params);
 static void VocAlgorithm__mean_variance_estimator__set_parameters(
-    VocAlgorithmParams* params);
+    VocAlgorithmParams* params, fix16_t std_initial,
+    fix16_t tau_mean_variance_hours, fix16_t gating_max_duration_minutes);
+static void
+VocAlgorithm__mean_variance_estimator__set_states(VocAlgorithmParams* params,
+                                                  fix16_t mean, fix16_t std,
+                                                  fix16_t uptime_gamma);
 static fix16_t
 VocAlgorithm__mean_variance_estimator__get_std(VocAlgorithmParams* params);
 static fix16_t
@@ -277,45 +315,78 @@ static void VocAlgorithm__mox_model__set_parameters(VocAlgorithmParams* params,
                                                     fix16_t SRAW_MEAN);
 static fix16_t VocAlgorithm__mox_model__process(VocAlgorithmParams* params,
                                                 fix16_t sraw);
-static void VocAlgorithm__sigmoid__init(VocAlgorithmParams* params);
-static void VocAlgorithm__sigmoid__set_parameters(VocAlgorithmParams* params,
-                                                  fix16_t L, fix16_t X0,
-                                                  fix16_t K);
-static fix16_t VocAlgorithm__sigmoid__process(VocAlgorithmParams* params,
-                                              fix16_t sample);
+static void VocAlgorithm__sigmoid_scaled__init(VocAlgorithmParams* params);
+static void
+VocAlgorithm__sigmoid_scaled__set_parameters(VocAlgorithmParams* params,
+                                             fix16_t offset);
+static fix16_t VocAlgorithm__sigmoid_scaled__process(VocAlgorithmParams* params,
+                                                     fix16_t sample);
 static void VocAlgorithm__adaptive_lowpass__init(VocAlgorithmParams* params);
 static void
 VocAlgorithm__adaptive_lowpass__set_parameters(VocAlgorithmParams* params);
-static fix16_t
-VocAlgorithm__adaptive_lowpass___safe_exp(VocAlgorithmParams* params,
-                                          fix16_t x);
 static fix16_t
 VocAlgorithm__adaptive_lowpass__process(VocAlgorithmParams* params,
                                         fix16_t sample);
 
 void VocAlgorithm_init(VocAlgorithmParams* params) {
 
+    params->mVoc_Index_Offset = F16(VocAlgorithm_VOC_INDEX_OFFSET_DEFAULT);
+    params->mTau_Mean_Variance_Hours =
+        F16(VocAlgorithm_TAU_MEAN_VARIANCE_HOURS);
+    params->mGating_Max_Duration_Minutes =
+        F16(VocAlgorithm_GATING_MAX_DURATION_MINUTES);
+    params->mSraw_Std_Initial = F16(VocAlgorithm_SRAW_STD_INITIAL);
     params->mUptime = F16(0.);
     params->mSraw = F16(0.);
     params->mVoc_Index = 0;
-    params->m_First_Tick_Valid = true;
     VocAlgorithm__init_instances(params);
 }
 
 static void VocAlgorithm__init_instances(VocAlgorithmParams* params) {
 
     VocAlgorithm__mean_variance_estimator__init(params);
-    VocAlgorithm__mean_variance_estimator__set_parameters(params);
+    VocAlgorithm__mean_variance_estimator__set_parameters(
+        params, params->mSraw_Std_Initial, params->mTau_Mean_Variance_Hours,
+        params->mGating_Max_Duration_Minutes);
     VocAlgorithm__mox_model__init(params);
     VocAlgorithm__mox_model__set_parameters(
         params, VocAlgorithm__mean_variance_estimator__get_std(params),
         VocAlgorithm__mean_variance_estimator__get_mean(params));
-    VocAlgorithm__sigmoid__init(params);
-    VocAlgorithm__sigmoid__set_parameters(params, F16(VocAlgorithm_SIGMOID_L),
-                                          F16(VocAlgorithm_SIGMOID_X0),
-                                          F16(VocAlgorithm_SIGMOID_K));
+    VocAlgorithm__sigmoid_scaled__init(params);
+    VocAlgorithm__sigmoid_scaled__set_parameters(params,
+                                                 params->mVoc_Index_Offset);
     VocAlgorithm__adaptive_lowpass__init(params);
     VocAlgorithm__adaptive_lowpass__set_parameters(params);
+}
+
+void VocAlgorithm_get_states(VocAlgorithmParams* params, int32_t* state0,
+                             int32_t* state1) {
+
+    *state0 = VocAlgorithm__mean_variance_estimator__get_mean(params);
+    *state1 = VocAlgorithm__mean_variance_estimator__get_std(params);
+    return;
+}
+
+void VocAlgorithm_set_states(VocAlgorithmParams* params, int32_t state0,
+                             int32_t state1) {
+
+    VocAlgorithm__mean_variance_estimator__set_states(
+        params, state0, state1, F16(VocAlgorithm_PERSISTENCE_UPTIME_GAMMA));
+    params->mSraw = state0;
+}
+
+void VocAlgorithm_set_tuning_parameters(VocAlgorithmParams* params,
+                                        int32_t voc_index_offset,
+                                        int32_t learning_time_hours,
+                                        int32_t gating_max_duration_minutes,
+                                        int32_t std_initial) {
+
+    params->mVoc_Index_Offset = (fix16_from_int(voc_index_offset));
+    params->mTau_Mean_Variance_Hours = (fix16_from_int(learning_time_hours));
+    params->mGating_Max_Duration_Minutes =
+        (fix16_from_int(gating_max_duration_minutes));
+    params->mSraw_Std_Initial = (fix16_from_int(std_initial));
+    VocAlgorithm__init_instances(params);
 }
 
 void VocAlgorithm_process(VocAlgorithmParams* params, int32_t sraw,
@@ -332,20 +403,16 @@ void VocAlgorithm_process(VocAlgorithmParams* params, int32_t sraw,
                 sraw = 52767;
             }
             params->mSraw = (fix16_from_int((sraw - 20000)));
-            if ((params->m_First_Tick_Valid == true)) {
-                VocAlgorithm__mox_model__set_parameters(
-                    params,
-                    VocAlgorithm__mean_variance_estimator__get_std(params),
-                    params->mSraw);
-                params->m_First_Tick_Valid = false;
-            }
         }
         params->mVoc_Index =
             VocAlgorithm__mox_model__process(params, params->mSraw);
         params->mVoc_Index =
-            VocAlgorithm__sigmoid__process(params, params->mVoc_Index);
+            VocAlgorithm__sigmoid_scaled__process(params, params->mVoc_Index);
         params->mVoc_Index =
             VocAlgorithm__adaptive_lowpass__process(params, params->mVoc_Index);
+        if ((params->mVoc_Index < F16(0.5))) {
+            params->mVoc_Index = F16(0.5);
+        }
         if ((params->mSraw > F16(0.))) {
             VocAlgorithm__mean_variance_estimator__process(
                 params, params->mSraw, params->mVoc_Index);
@@ -361,7 +428,8 @@ void VocAlgorithm_process(VocAlgorithmParams* params, int32_t sraw,
 static void
 VocAlgorithm__mean_variance_estimator__init(VocAlgorithmParams* params) {
 
-    VocAlgorithm__mean_variance_estimator__set_parameters(params);
+    VocAlgorithm__mean_variance_estimator__set_parameters(params, F16(0.),
+                                                          F16(0.), F16(0.));
     VocAlgorithm__mean_variance_estimator___init_instances(params);
 }
 
@@ -372,30 +440,44 @@ static void VocAlgorithm__mean_variance_estimator___init_instances(
 }
 
 static void VocAlgorithm__mean_variance_estimator__set_parameters(
-    VocAlgorithmParams* params) {
+    VocAlgorithmParams* params, fix16_t std_initial,
+    fix16_t tau_mean_variance_hours, fix16_t gating_max_duration_minutes) {
 
+    params->m_Mean_Variance_Estimator__Gating_Max_Duration_Minutes =
+        gating_max_duration_minutes;
     params->m_Mean_Variance_Estimator___Initialized = false;
     params->m_Mean_Variance_Estimator___Mean = F16(0.);
     params->m_Mean_Variance_Estimator___Sraw_Offset = F16(0.);
-    params->m_Mean_Variance_Estimator___Std =
-        F16(VocAlgorithm_SRAW_STD_INITIAL);
-    params->m_Mean_Variance_Estimator___Gamma = F16(
-        ((VocAlgorithm_SAMPLING_INTERVAL /
-          (VocAlgorithm_TAU_MEAN_VARIANCE + VocAlgorithm_SAMPLING_INTERVAL)) *
-         VocAlgorithm_MEAN_VAR_SCALING));
-    params->m_Mean_Variance_Estimator___Gamma_Initial_Mean = F16(
-        ((VocAlgorithm_SAMPLING_INTERVAL /
-          (VocAlgorithm_TAU_INITIAL_MEAN + VocAlgorithm_SAMPLING_INTERVAL)) *
-         VocAlgorithm_MEAN_VAR_SCALING));
+    params->m_Mean_Variance_Estimator___Std = std_initial;
+    params->m_Mean_Variance_Estimator___Gamma =
+        (fix16_div(F16((VocAlgorithm_MEAN_VARIANCE_ESTIMATOR__GAMMA_SCALING *
+                        (VocAlgorithm_SAMPLING_INTERVAL / 3600.))),
+                   (tau_mean_variance_hours +
+                    F16((VocAlgorithm_SAMPLING_INTERVAL / 3600.)))));
+    params->m_Mean_Variance_Estimator___Gamma_Initial_Mean =
+        F16(((VocAlgorithm_MEAN_VARIANCE_ESTIMATOR__GAMMA_SCALING *
+              VocAlgorithm_SAMPLING_INTERVAL) /
+             (VocAlgorithm_TAU_INITIAL_MEAN + VocAlgorithm_SAMPLING_INTERVAL)));
     params->m_Mean_Variance_Estimator___Gamma_Initial_Variance = F16(
-        ((VocAlgorithm_SAMPLING_INTERVAL / (VocAlgorithm_TAU_INITIAL_VARIANCE +
-                                            VocAlgorithm_SAMPLING_INTERVAL)) *
-         VocAlgorithm_MEAN_VAR_SCALING));
+        ((VocAlgorithm_MEAN_VARIANCE_ESTIMATOR__GAMMA_SCALING *
+          VocAlgorithm_SAMPLING_INTERVAL) /
+         (VocAlgorithm_TAU_INITIAL_VARIANCE + VocAlgorithm_SAMPLING_INTERVAL)));
     params->m_Mean_Variance_Estimator__Gamma_Mean = F16(0.);
     params->m_Mean_Variance_Estimator__Gamma_Variance = F16(0.);
     params->m_Mean_Variance_Estimator___Uptime_Gamma = F16(0.);
     params->m_Mean_Variance_Estimator___Uptime_Gating = F16(0.);
-    params->m_Mean_Variance_Estimator___Gating_Duration = F16(0.);
+    params->m_Mean_Variance_Estimator___Gating_Duration_Minutes = F16(0.);
+}
+
+static void
+VocAlgorithm__mean_variance_estimator__set_states(VocAlgorithmParams* params,
+                                                  fix16_t mean, fix16_t std,
+                                                  fix16_t uptime_gamma) {
+
+    params->m_Mean_Variance_Estimator___Mean = mean;
+    params->m_Mean_Variance_Estimator___Std = std;
+    params->m_Mean_Variance_Estimator___Uptime_Gamma = uptime_gamma;
+    params->m_Mean_Variance_Estimator___Initialized = true;
 }
 
 static fix16_t
@@ -424,8 +506,8 @@ static void VocAlgorithm__mean_variance_estimator___calculate_gamma(
     fix16_t gating_threshold_variance;
     fix16_t sigmoid_gating_variance;
 
-    uptime_limit =
-        F16((VocAlgorithm_FIX16_MAX - VocAlgorithm_SAMPLING_INTERVAL));
+    uptime_limit = F16((VocAlgorithm_MEAN_VARIANCE_ESTIMATOR__FIX16_MAX -
+                        VocAlgorithm_SAMPLING_INTERVAL));
     if ((params->m_Mean_Variance_Estimator___Uptime_Gamma < uptime_limit)) {
         params->m_Mean_Variance_Estimator___Uptime_Gamma =
             (params->m_Mean_Variance_Estimator___Uptime_Gamma +
@@ -489,17 +571,18 @@ static void VocAlgorithm__mean_variance_estimator___calculate_gamma(
             params, voc_index_from_prior);
     params->m_Mean_Variance_Estimator__Gamma_Variance =
         (fix16_mul(sigmoid_gating_variance, gamma_variance));
-    params->m_Mean_Variance_Estimator___Gating_Duration =
-        (params->m_Mean_Variance_Estimator___Gating_Duration +
-         (fix16_mul(F16(VocAlgorithm_SAMPLING_INTERVAL),
+    params->m_Mean_Variance_Estimator___Gating_Duration_Minutes =
+        (params->m_Mean_Variance_Estimator___Gating_Duration_Minutes +
+         (fix16_mul(F16((VocAlgorithm_SAMPLING_INTERVAL / 60.)),
                     ((fix16_mul((F16(1.) - sigmoid_gating_mean),
                                 F16((1. + VocAlgorithm_GATING_MAX_RATIO)))) -
                      F16(VocAlgorithm_GATING_MAX_RATIO)))));
-    if ((params->m_Mean_Variance_Estimator___Gating_Duration < F16(0.))) {
-        params->m_Mean_Variance_Estimator___Gating_Duration = F16(0.);
+    if ((params->m_Mean_Variance_Estimator___Gating_Duration_Minutes <
+         F16(0.))) {
+        params->m_Mean_Variance_Estimator___Gating_Duration_Minutes = F16(0.);
     }
-    if ((params->m_Mean_Variance_Estimator___Gating_Duration >
-         F16(VocAlgorithm_GATING_MAX_DURATION))) {
+    if ((params->m_Mean_Variance_Estimator___Gating_Duration_Minutes >
+         params->m_Mean_Variance_Estimator__Gating_Max_Duration_Minutes)) {
         params->m_Mean_Variance_Estimator___Uptime_Gating = F16(0.);
     }
 }
@@ -508,9 +591,8 @@ static void VocAlgorithm__mean_variance_estimator__process(
     VocAlgorithmParams* params, fix16_t sraw, fix16_t voc_index_from_prior) {
 
     fix16_t delta_sgp;
-    fix16_t factor1;
-    fix16_t additional_scaling;
     fix16_t c;
+    fix16_t additional_scaling;
 
     if ((params->m_Mean_Variance_Estimator___Initialized == false)) {
         params->m_Mean_Variance_Estimator___Initialized = true;
@@ -527,40 +609,38 @@ static void VocAlgorithm__mean_variance_estimator__process(
         sraw = (sraw - params->m_Mean_Variance_Estimator___Sraw_Offset);
         VocAlgorithm__mean_variance_estimator___calculate_gamma(
             params, voc_index_from_prior);
-        delta_sgp =
-            (fix16_div((sraw - params->m_Mean_Variance_Estimator___Mean),
-                       F16(VocAlgorithm_MEAN_VAR_SCALING)));
-        factor1 =
-            fix16_sqrt((F16(VocAlgorithm_MEAN_VAR_SCALING) -
-                        params->m_Mean_Variance_Estimator__Gamma_Variance));
-        additional_scaling = F16(1.);
-        if ((delta_sgp < 0)) {
+        delta_sgp = (fix16_div(
+            (sraw - params->m_Mean_Variance_Estimator___Mean),
+            F16(VocAlgorithm_MEAN_VARIANCE_ESTIMATOR__GAMMA_SCALING)));
+        if ((delta_sgp < F16(0.))) {
             c = (params->m_Mean_Variance_Estimator___Std - delta_sgp);
         } else {
             c = (params->m_Mean_Variance_Estimator___Std + delta_sgp);
         }
+        additional_scaling = F16(1.);
         if ((c > F16(1440.))) {
             additional_scaling = F16(4.);
         }
         params->m_Mean_Variance_Estimator___Std = (fix16_mul(
-            factor1,
-            (fix16_mul(
-                fix16_sqrt(additional_scaling),
-                fix16_sqrt((
-                    (fix16_mul(
-                        (fix16_div(
-                            params->m_Mean_Variance_Estimator___Std,
-                            (fix16_mul(F16(VocAlgorithm_MEAN_VAR_SCALING),
-                                       additional_scaling)))),
-                        params->m_Mean_Variance_Estimator___Std)) +
-                    (fix16_mul(
-                        (fix16_div(
-                            (fix16_mul(
-                                params
-                                    ->m_Mean_Variance_Estimator__Gamma_Variance,
-                                delta_sgp)),
-                            additional_scaling)),
-                        delta_sgp))))))));
+            fix16_sqrt((fix16_mul(
+                additional_scaling,
+                (F16(VocAlgorithm_MEAN_VARIANCE_ESTIMATOR__GAMMA_SCALING) -
+                 params->m_Mean_Variance_Estimator__Gamma_Variance)))),
+            fix16_sqrt((
+                (fix16_mul(
+                    params->m_Mean_Variance_Estimator___Std,
+                    (fix16_div(
+                        params->m_Mean_Variance_Estimator___Std,
+                        (fix16_mul(
+                            F16(VocAlgorithm_MEAN_VARIANCE_ESTIMATOR__GAMMA_SCALING),
+                            additional_scaling)))))) +
+                (fix16_mul(
+                    (fix16_div(
+                        (fix16_mul(
+                            params->m_Mean_Variance_Estimator__Gamma_Variance,
+                            delta_sgp)),
+                        additional_scaling)),
+                    delta_sgp))))));
         params->m_Mean_Variance_Estimator___Mean =
             (params->m_Mean_Variance_Estimator___Mean +
              (fix16_mul(params->m_Mean_Variance_Estimator__Gamma_Mean,
@@ -616,39 +696,52 @@ static void VocAlgorithm__mox_model__set_parameters(VocAlgorithmParams* params,
 static fix16_t VocAlgorithm__mox_model__process(VocAlgorithmParams* params,
                                                 fix16_t sraw) {
 
-    return ((fix16_mul((fix16_div((sraw - params->m_Mox_Model__Sraw_Mean),
-                                  (-(params->m_Mox_Model__Sraw_Std +
-                                     F16(VocAlgorithm_SRAW_STD_BONUS))))),
-                       F16(VocAlgorithm_VOC_INDEX_GAIN))) +
-            F16(VocAlgorithm_VOC_INDEX_OFFSET));
+    return (fix16_mul((fix16_div((sraw - params->m_Mox_Model__Sraw_Mean),
+                                 (-(params->m_Mox_Model__Sraw_Std +
+                                    F16(VocAlgorithm_SRAW_STD_BONUS))))),
+                      F16(VocAlgorithm_VOC_INDEX_GAIN)));
 }
 
-static void VocAlgorithm__sigmoid__init(VocAlgorithmParams* params) {
+static void VocAlgorithm__sigmoid_scaled__init(VocAlgorithmParams* params) {
 
-    VocAlgorithm__sigmoid__set_parameters(params, F16(0.), F16(0.), F16(0.));
+    VocAlgorithm__sigmoid_scaled__set_parameters(params, F16(0.));
 }
 
-static void VocAlgorithm__sigmoid__set_parameters(VocAlgorithmParams* params,
-                                                  fix16_t L, fix16_t X0,
-                                                  fix16_t K) {
+static void
+VocAlgorithm__sigmoid_scaled__set_parameters(VocAlgorithmParams* params,
+                                             fix16_t offset) {
 
-    params->m_Sigmoid__L = L;
-    params->m_Sigmoid__K = K;
-    params->m_Sigmoid__X0 = X0;
+    params->m_Sigmoid_Scaled__Offset = offset;
 }
 
-static fix16_t VocAlgorithm__sigmoid__process(VocAlgorithmParams* params,
-                                              fix16_t sample) {
+static fix16_t VocAlgorithm__sigmoid_scaled__process(VocAlgorithmParams* params,
+                                                     fix16_t sample) {
 
     fix16_t x;
+    fix16_t shift;
 
-    x = (fix16_mul(params->m_Sigmoid__K, (sample - params->m_Sigmoid__X0)));
+    x = (fix16_mul(F16(VocAlgorithm_SIGMOID_K),
+                   (sample - F16(VocAlgorithm_SIGMOID_X0))));
     if ((x < F16(-50.))) {
-        return params->m_Sigmoid__L;
+        return F16(VocAlgorithm_SIGMOID_L);
     } else if ((x > F16(50.))) {
         return F16(0.);
     } else {
-        return (fix16_div(params->m_Sigmoid__L, (F16(1.) + fix16_exp(x))));
+        if ((sample >= F16(0.))) {
+            shift = (fix16_div(
+                (F16(VocAlgorithm_SIGMOID_L) -
+                 (fix16_mul(F16(5.), params->m_Sigmoid_Scaled__Offset))),
+                F16(4.)));
+            return ((fix16_div((F16(VocAlgorithm_SIGMOID_L) + shift),
+                               (F16(1.) + fix16_exp(x)))) -
+                    shift);
+        } else {
+            return (fix16_mul(
+                (fix16_div(params->m_Sigmoid_Scaled__Offset,
+                           F16(VocAlgorithm_VOC_INDEX_OFFSET_DEFAULT))),
+                (fix16_div(F16(VocAlgorithm_SIGMOID_L),
+                           (F16(1.) + fix16_exp(x))))));
+        }
     }
 }
 
@@ -667,18 +760,6 @@ VocAlgorithm__adaptive_lowpass__set_parameters(VocAlgorithmParams* params) {
         F16((VocAlgorithm_SAMPLING_INTERVAL /
              (VocAlgorithm_LP_TAU_SLOW + VocAlgorithm_SAMPLING_INTERVAL)));
     params->m_Adaptive_Lowpass___Initialized = false;
-}
-
-static fix16_t
-VocAlgorithm__adaptive_lowpass___safe_exp(VocAlgorithmParams* params,
-                                          fix16_t x) {
-
-    if ((x > F16(20.))) {
-        x = F16(20.);
-    } else if ((x < F16(-20.))) {
-        x = F16(-20.);
-    }
-    return fix16_exp(x);
 }
 
 static fix16_t
@@ -709,8 +790,7 @@ VocAlgorithm__adaptive_lowpass__process(VocAlgorithmParams* params,
     if ((abs_delta < F16(0.))) {
         abs_delta = (-abs_delta);
     }
-    F1 = VocAlgorithm__adaptive_lowpass___safe_exp(
-        params, (fix16_mul(F16(VocAlgorithm_LP_ALPHA), abs_delta)));
+    F1 = fix16_exp((fix16_mul(F16(VocAlgorithm_LP_ALPHA), abs_delta)));
     tau_a =
         ((fix16_mul(F16((VocAlgorithm_LP_TAU_SLOW - VocAlgorithm_LP_TAU_FAST)),
                     F1)) +
