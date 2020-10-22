@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
               sgp40_sources matches the one named the same in sgp40.
 * [`fixed`]   Arduino: Initialize serial port and Wait for it to be ready.
 * [`changed`] Makefile to only include needed files from embedded-common
-
+* [`changed`] Updated the VOC algorithm used in the SGP40 VOC Index bundle. It
+              now supports tuning of its parameters and storing and restoring
+              its internal state.
 
 ## [7.0.0] - 2020-09-01
 
