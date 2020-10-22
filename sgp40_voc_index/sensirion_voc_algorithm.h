@@ -116,12 +116,52 @@ typedef struct {
  */
 void VocAlgorithm_init(VocAlgorithmParams* params);
 
+/**
+ * Get current algorithm states. Retrieved values can be used in
+ * VocAlgorithm_set_states() to resume operation after a short interruption,
+ * skipping initial learning phase. This feature can only be used after at least
+ * 3 hours of continuous operation.
+ * @param params    Pointer to the VocAlgorithmParams struct
+ * @param state0    State0 to be stored
+ * @param state1    State1 to be stored
+ */
 void VocAlgorithm_get_states(VocAlgorithmParams* params, int32_t* state0,
                              int32_t* state1);
 
+/**
+ * Set previously retrieved algorithm states to resume operation after a short
+ * interruption, skipping initial learning phase. This feature should not be
+ * used after inerruptions of more than 10 minutes. Call this once after
+ * VocAlgorithm_init() and the optional VocAlgorithm_set_tuning_parameters(), if
+ * desired. Otherwise, the algorithm will start with initial learning phase.
+ * @param params    Pointer to the VocAlgorithmParams struct
+ * @param state0    State0 to be restored
+ * @param state1    State1 to be restored
+ */
 void VocAlgorithm_set_states(VocAlgorithmParams* params, int32_t state0,
                              int32_t state1);
 
+/**
+ * Set parameters to customize the VOC algorithm. Call this once after
+ * VocAlgorithm_init(), if desired. Otherwise, the default values will be used.
+ *
+ * @param params                      Pointer to the VocAlgorithmParams struct
+ * @param voc_index_offset            VOC index representing typical (average)
+ *                                    conditions. Range 1..250, default 100
+ * @param learning_time_hours         Time constant of long-term estimator.
+ *                                    Past events will be forgotten after about
+ *                                    twice the learning time.
+ *                                    Range 1..72 [hours], default 12 [hours]
+ * @param gating_max_duration_minutes Maximum duration of gating (freeze of
+ *                                    estimator during high VOC index signal).
+ *                                    0 (no gating) or range 1..720 [minutes],
+ *                                    default 180 [minutes]
+ * @param std_initial                 Initial estimate for standard deviation.
+ *                                    Lower value boosts events during initial
+ *                                    learning period, but may result in larger
+ *                                    device-to-device variations.
+ *                                    Range 10..500, default 50
+ */
 void VocAlgorithm_set_tuning_parameters(VocAlgorithmParams* params,
                                         int32_t voc_index_offset,
                                         int32_t learning_time_hours,
@@ -133,8 +173,8 @@ void VocAlgorithm_set_tuning_parameters(VocAlgorithmParams* params,
  *
  * @param params    Pointer to the VocAlgorithmParams struct
  * @param sraw      Raw value from the SGP40 sensor
- * @param voc_index Calculated VOC index value from the raw sensor value. Range
- *                  0..500
+ * @param voc_index Calculated VOC index value from the raw sensor value. Zero
+ *                  during initial blackout period and 1..500 afterwards
  */
 void VocAlgorithm_process(VocAlgorithmParams* params, int32_t sraw,
                           int32_t* voc_index);
