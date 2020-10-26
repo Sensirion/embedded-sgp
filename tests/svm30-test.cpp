@@ -29,8 +29,8 @@ TEST_GROUP (SVM30_Tests) {
     }
 
     void teardown() {
-        int16_t ret = i2c_reset();
-        CHECK_ZERO_TEXT(ret, "i2c_reset");
+        int16_t ret = sensirion_i2c_general_call_reset();
+        CHECK_ZERO_TEXT(ret, "sensirion_i2c_general_call_reset");
         sensirion_i2c_release();
     }
 };
