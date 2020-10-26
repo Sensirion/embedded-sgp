@@ -14,6 +14,19 @@ TEST (Sgp40VocIndexAlgorithmTest, returns_zero_during_blackout) {
     }
 }
 
+TEST (Sgp40VocIndexAlgorithmTest, returns_average_after_blackout) {
+    VocAlgorithmParams params;
+    VocAlgorithm_init(&params);
+    int32_t voc_index;
+    for (int i = 0; i < VocAlgorithm_INITIAL_BLACKOUT + 2; ++i) {
+        VocAlgorithm_process(&params, 0, &voc_index);
+    }
+
+    CHECK_EQUAL_TEXT(
+        VocAlgorithm_VOC_INDEX_OFFSET_DEFAULT, voc_index,
+        "VOC index should be the offset default after the the blackout period");
+}
+
 int main(int argc, char** argv) {
     return CommandLineTestRunner::RunAllTests(argc, argv);
 }
