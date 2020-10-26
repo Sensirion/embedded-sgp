@@ -5,10 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-* [`changed`] default_config.inc for sgp40_voc_index such that the variable
-              sgp40_sources matches the one named the same in sgp40.
+## [7.1.0] - 2020-10-26
+
 * [`fixed`]   Arduino: Initialize serial port and Wait for it to be ready.
-* [`changed`] Makefile to only include needed files from embedded-common
+* [`changed`] Only include needed files from embedded-common in release zip
 * [`changed`] Updated the VOC algorithm used in the SGP40 VOC Index bundle. It
               now supports tuning of its parameters and storing and restoring
               its internal state.
@@ -117,7 +117,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
  * First public release
 
-[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/7.0.0...master
+[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/7.1.0...master
+[7.1.0]: https://github.com/Sensirion/embedded-sgp/compare/7.0.0...7.1.0
 [7.0.0]: https://github.com/Sensirion/embedded-sgp/compare/6.0.0...7.0.0
 [6.0.0]: https://github.com/Sensirion/embedded-sgp/compare/5.0.0...6.0.0
 [5.0.0]: https://github.com/Sensirion/embedded-sgp/compare/4.0.0...5.0.0
