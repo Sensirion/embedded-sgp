@@ -24,3 +24,4 @@ tests/sgpc3-test-hw_i2c
 tests/sgpc3-test-sw_i2c
 tests/svm30-test-hw_i2c
 tests/svm30-test-sw_i2c
+tests/sensirion-voc-algorithm-test

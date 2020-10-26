@@ -8,7 +8,9 @@ include ${sgp_driver_dir}/sgpc3/default_config.inc
 
 sgp30_test_binaries := sgp30-test-hw_i2c sgp30-test-sw_i2c
 sgp40_test_binaries := sgp40-test-hw_i2c sgp40-test-sw_i2c
-sgp40_voc_index_test_binaries := sgp40-voc-index-test-hw_i2c sgp40-voc-index-test-sw_i2c
+sgp40_voc_index_test_binaries := sgp40-voc-index-test-hw_i2c \
+                                 sgp40-voc-index-test-sw_i2c \
+                                 sensirion-voc-algorithm-test
 sgpc3_test_binaries := sgpc3-test-hw_i2c sgpc3-test-sw_i2c
 svm30_test_binaries := svm30-test-hw_i2c svm30-test-sw_i2c
 sgp_test_binaries := ${sgp30_test_binaries} \
@@ -46,6 +48,9 @@ sgp40-voc-index-test-hw_i2c: sgp40-voc-index-test.cpp ${sgp40_voc_index_sources}
 
 sgp40-voc-index-test-sw_i2c: CONFIG_I2C_TYPE := sw_i2c
 sgp40-voc-index-test-sw_i2c: sgp40-voc-index-test.cpp ${sgp40_voc_index_sources} ${sw_i2c_sources} ${sensirion_test_sources}
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+sensirion-voc-algorithm-test: sensirion-voc-algorithm-test.cpp ${sgp40_voc_index_voc_algorithm_sources}
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 sgpc3-test-hw_i2c: CONFIG_I2C_TYPE := hw_i2c
