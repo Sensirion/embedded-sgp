@@ -10,6 +10,9 @@ page](https://github.com/Sensirion/embedded-sgp/releases/)**
 We strongly recommend to use the driver from the release bundle instead of
 cloning the repository.
 
+**Note:** If you use the SVM40 module (which contains an SGP40) please check
+out https://github.com/Sensirion/embedded-svm40.
+
 ## Clone this repository
 ```
 git clone --recursive https://github.com/Sensirion/embedded-sgp.git
