@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [`changed`] Arduino: serial print format changed to be 'Serial Plotter' compatible
+
 ## [7.1.0] - 2020-10-26
 
 * [`fixed`]   Arduino: Initialize serial port and Wait for it to be ready.

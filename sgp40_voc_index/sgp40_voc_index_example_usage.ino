@@ -59,14 +59,14 @@ void loop() {
   err = sensirion_measure_voc_index_with_rh_t(
           &voc_index, &relative_humidity_percent, &temperature_celsius );
   if (err == STATUS_OK) {
-    Serial.print("VOC Index: ");
-    Serial.println(voc_index);
-    Serial.print("Temperature: ");
-    Serial.print(temperature_celsius * 0.001f);
-    Serial.println("degC");
-    Serial.print("Relative Humidity: ");
-    Serial.print(relative_humidity_percent * 0.001f);
-    Serial.println("RH");
+    Serial.print("VOCindex:");
+    Serial.print(voc_index / 10.0f);
+    Serial.print("\t");
+    Serial.print("Humidity[%RH]:");
+    Serial.print(relative_humidity / 100.0f);
+    Serial.print("\t");
+    Serial.print("Temperature[degC]:");
+    Serial.println(temperature_celsius / 200.0f);
   } else {
     Serial.print("error reading signal: ");
     Serial.println(err);
