@@ -60,13 +60,13 @@ void loop() {
           &voc_index, &relative_humidity_percent, &temperature_celsius );
   if (err == STATUS_OK) {
     Serial.print("VOCindex:");
-    Serial.print(voc_index / 10.0f);
+    Serial.print(voc_index);
     Serial.print("\t");
     Serial.print("Humidity[%RH]:");
-    Serial.print(relative_humidity / 100.0f);
+    Serial.print(relative_humidity_percent * 0.001f);
     Serial.print("\t");
     Serial.print("Temperature[degC]:");
-    Serial.println(temperature_celsius / 200.0f);
+    Serial.println(temperature_celsius * 0.001f);
   } else {
     Serial.print("error reading signal: ");
     Serial.println(err);
