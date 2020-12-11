@@ -5,7 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-* [`changed`] Arduino: serial print format changed to be 'Serial Plotter' compatible
+* [`changed`] Update embedded-common to 0.1.0 to improve compatibility when
+              using multiple embedded drivers
+* [`changed`] Arduino: serial print format changed to be 'Serial Plotter'
+              compatible
 
 ## [7.1.0] - 2020-10-26
 
