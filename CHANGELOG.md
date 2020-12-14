@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.1.1] - 2020-12-14
+
 * [`changed`] Update embedded-common to 0.1.0 to improve compatibility when
               using multiple embedded drivers
 * [`changed`] Arduino: serial print format changed to be 'Serial Plotter'
@@ -122,7 +124,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
  * First public release
 
-[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/7.1.0...master
+[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/7.1.1...master
+[7.1.1]: https://github.com/Sensirion/embedded-sgp/compare/7.1.0...7.1.1
 [7.1.0]: https://github.com/Sensirion/embedded-sgp/compare/7.0.0...7.1.0
 [7.0.0]: https://github.com/Sensirion/embedded-sgp/compare/6.0.0...7.0.0
 [6.0.0]: https://github.com/Sensirion/embedded-sgp/compare/5.0.0...6.0.0
