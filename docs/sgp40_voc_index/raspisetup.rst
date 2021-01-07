@@ -32,20 +32,20 @@ Use the following pins to connect your SGP40:
 Raspberry Pi
 ~~~~~~~~~~~~
 
- - Install the Raspberry Pi OS on to your Raspberry Pi
+- Install the Raspberry Pi OS on to your Raspberry Pi
     - For help with this, kindly refer to the Raspberry Pi website:
       https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up
- - Enable the I2C interface in the Raspberry Pi config
+- Enable the I2C interface in the Raspberry Pi config
     -  Open a terminal
     -  Run ``sudo raspi-config``
     -  Select "5 Interfacing Options Configure connections to peripherals"
     -  Select "P5 I2C Enable/Disable automatic loading of I2C kernel module"
     -  Select "Yes" when questioned "Would you like the ARM I2C interface to be enabled?"
     -  The Raspberry Pi should respond with "The ARM I2C interface is enabled". Confirm with "Ok"
- - Download driver
+- Download driver
     - Go to the Sensirion SGP Driver Release page (https://github.com/Sensirion/embedded-sgp/releases) and download the latest ``sgp40-VERSION.zip`` file, whereas ``VERSION`` represents the latest version.
     - Unzip the file into the directory where you want to install the driver (Run: ``unzip sgp40-voc-index-VERSION.zip``).
- - Adapt the driver to work with Raspberry Pi
+- Adapt the driver to work with Raspberry Pi
     - We use the ``linux_user_space`` implementation from ``hw_i2c`` (The
       Linux kernel provides an I2C controller, thus "hardware" I2C) to run the
       driver on the Raspberry Pi. To use the in the project provided sample
@@ -55,7 +55,7 @@ Raspberry Pi
       replace the file named the same directly in ``./hw_i2c`` or just run this
       command in the root directory of your project:
       ``cp ./hw_i2c/sample-implementations/linux_user_space/sensirion_hw_i2c_implementation.c ./hw_i2c/``.
- - Compile the driver
+- Compile the driver
     -  Run ``make`` in the root directory of your project.
 
 Output:
