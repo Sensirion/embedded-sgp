@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Sensirion AG
+ * Copyright (c) 2021, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,11 @@ typedef int32_t fix16_t;
 
 #define F16(x) \
     ((fix16_t)(((x) >= 0) ? ((x)*65536.0 + 0.5) : ((x)*65536.0 - 0.5)))
+
+// Should be set by the building toolchain
+#ifndef LIBRARY_VERSION_NAME
+#define LIBRARY_VERSION_NAME "custom build"
+#endif
 
 #define VocAlgorithm_SAMPLING_INTERVAL (1.)
 #define VocAlgorithm_INITIAL_BLACKOUT (45.)

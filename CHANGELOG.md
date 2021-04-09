@@ -5,6 +5,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [`fixed`]   Fix fix16_mul() to work properly with 8-bit PIC compilers (and
+              possibly others)
+
 ## [7.1.1] - 2020-12-14
 
 * [`changed`] Update embedded-common to 0.1.0 to improve compatibility when
