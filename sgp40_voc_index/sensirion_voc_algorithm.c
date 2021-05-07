@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Sensirion AG
+ * Copyright (c) 2021, Sensirion AG
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,12 +45,12 @@
 /*!< fix16_t value of 1 */
 #define FIX16_ONE 0x00010000
 
-inline fix16_t fix16_from_int(int32_t a) {
+static inline fix16_t fix16_from_int(int32_t a) {
     return a * FIX16_ONE;
 }
 
-inline int32_t fix16_cast_to_int(fix16_t a) {
-    return (a >> 16);
+static inline int32_t fix16_cast_to_int(fix16_t a) {
+    return (a >= 0) ? (a >> 16) : -((-a) >> 16);
 }
 
 /*! Multiplies the two given fix16_t's and returns the result. */
@@ -75,14 +75,16 @@ static fix16_t fix16_mul(fix16_t inArg0, fix16_t inArg1) {
     //				 AD
     //				AC
     //			 |----| 64 bit product
-    int32_t A = (inArg0 >> 16), C = (inArg1 >> 16);
-    uint32_t B = (inArg0 & 0xFFFF), D = (inArg1 & 0xFFFF);
+    uint32_t absArg0 = (uint32_t)((inArg0 >= 0) ? inArg0 : (-inArg0));
+    uint32_t absArg1 = (uint32_t)((inArg1 >= 0) ? inArg1 : (-inArg1));
+    uint32_t A = (absArg0 >> 16), C = (absArg1 >> 16);
+    uint32_t B = (absArg0 & 0xFFFF), D = (absArg1 & 0xFFFF);
 
-    int32_t AC = A * C;
-    int32_t AD_CB = A * D + C * B;
+    uint32_t AC = A * C;
+    uint32_t AD_CB = A * D + C * B;
     uint32_t BD = B * D;
 
-    int32_t product_hi = AC + (AD_CB >> 16);
+    uint32_t product_hi = AC + (AD_CB >> 16);
 
     // Handle carry from lower 32 bits to upper part of result.
     uint32_t ad_cb_temp = AD_CB << 16;
@@ -91,30 +93,29 @@ static fix16_t fix16_mul(fix16_t inArg0, fix16_t inArg1) {
         product_hi++;
 
 #ifndef FIXMATH_NO_OVERFLOW
-    // The upper 17 bits should all be the same (the sign).
-    if (product_hi >> 31 != product_hi >> 15)
-        return FIX16_OVERFLOW;
+    // The upper 17 bits should all be zero.
+    if (product_hi >> 15)
+        return (fix16_t)FIX16_OVERFLOW;
 #endif
 
 #ifdef FIXMATH_NO_ROUNDING
-    return (product_hi << 16) | (product_lo >> 16);
+    fix16_t result = (fix16_t)((product_hi << 16) | (product_lo >> 16));
+    if ((inArg0 < 0) != (inArg1 < 0))
+        result = -result;
+    return result;
 #else
-    // Subtracting 0x8000 (= 0.5) and then using signed right shift
-    // achieves proper rounding to result-1, except in the corner
-    // case of negative numbers and lowest word = 0x8000.
-    // To handle that, we also have to subtract 1 for negative numbers.
+    // Adding 0x8000 (= 0.5) and then using right shift
+    // achieves proper rounding to result.
+    // Handle carry from lower to upper part.
     uint32_t product_lo_tmp = product_lo;
-    product_lo -= 0x8000;
-    product_lo -= (uint32_t)product_hi >> 31;
-    if (product_lo > product_lo_tmp)
-        product_hi--;
+    product_lo += 0x8000;
+    if (product_lo < product_lo_tmp)
+        product_hi++;
 
-    // Discard the lowest 16 bits. Note that this is not exactly the same
-    // as dividing by 0x10000. For example if product = -1, result will
-    // also be -1 and not 0. This is compensated by adding +1 to the result
-    // and compensating this in turn in the rounding above.
-    fix16_t result = (product_hi << 16) | (product_lo >> 16);
-    result += 1;
+    // Discard the lowest 16 bits and convert back to signed result.
+    fix16_t result = (fix16_t)((product_hi << 16) | (product_lo >> 16));
+    if ((inArg0 < 0) != (inArg1 < 0))
+        result = -result;
     return result;
 #endif
 }
@@ -126,10 +127,10 @@ static fix16_t fix16_div(fix16_t a, fix16_t b) {
     // platforms without hardware divide.
 
     if (b == 0)
-        return FIX16_MINIMUM;
+        return (fix16_t)FIX16_MINIMUM;
 
-    uint32_t remainder = (a >= 0) ? a : (-a);
-    uint32_t divider = (b >= 0) ? b : (-b);
+    uint32_t remainder = (uint32_t)((a >= 0) ? a : (-a));
+    uint32_t divider = (uint32_t)((b >= 0) ? b : (-b));
 
     uint32_t quotient = 0;
     uint32_t bit = 0x10000;
@@ -142,7 +143,7 @@ static fix16_t fix16_div(fix16_t a, fix16_t b) {
 
 #ifndef FIXMATH_NO_OVERFLOW
     if (!bit)
-        return FIX16_OVERFLOW;
+        return (fix16_t)FIX16_OVERFLOW;
 #endif
 
     if (divider & 0x80000000) {
@@ -173,13 +174,13 @@ static fix16_t fix16_div(fix16_t a, fix16_t b) {
     }
 #endif
 
-    fix16_t result = quotient;
+    fix16_t result = (fix16_t)quotient;
 
     /* Figure out the sign of result */
-    if ((a ^ b) & 0x80000000) {
+    if ((a < 0) != (b < 0)) {
 #ifndef FIXMATH_NO_OVERFLOW
         if (result == FIX16_MINIMUM)
-            return FIX16_OVERFLOW;
+            return (fix16_t)FIX16_OVERFLOW;
 #endif
 
         result = -result;
@@ -191,7 +192,7 @@ static fix16_t fix16_div(fix16_t a, fix16_t b) {
 static fix16_t fix16_sqrt(fix16_t x) {
     // It is assumed that x is not negative
 
-    uint32_t num = x;
+    uint32_t num = (uint32_t)x;
     uint32_t result = 0;
     uint32_t bit;
     uint8_t n;
@@ -246,9 +247,9 @@ static fix16_t fix16_sqrt(fix16_t x) {
 }
 
 static fix16_t fix16_exp(fix16_t x) {
-// Function to approximate exp(); optimized more for code size than speed
+    // Function to approximate exp(); optimized more for code size than speed
 
-// exp(x) for x = +/- {1, 1/8, 1/64, 1/512}
+    // exp(x) for x = +/- {1, 1/8, 1/64, 1/512}
 #define NUM_EXP_VALUES 4
     static const fix16_t exp_pos_values[NUM_EXP_VALUES] = {
         F16(2.7182818), F16(1.1331485), F16(1.0157477), F16(1.0019550)};
