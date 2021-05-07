@@ -3,10 +3,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [7.1.2] - 2021-05-07
 
-* [`fixed`]   Fix fix16_mul() to work properly with 8-bit PIC compilers (and
-              possibly others)
+* [`fixed`]   Fix fix16_mul() in voc-algorithm to work properly with 8-bit PIC
+              compilers (and possibly others)
 
 ## [7.1.1] - 2020-12-14
 
@@ -127,7 +127,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
  * First public release
 
-[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/7.1.1...master
+[Unreleased]: https://github.com/Sensirion/embedded-sgp/compare/7.1.2...master
+[7.1.2]: https://github.com/Sensirion/embedded-sgp/compare/7.1.1...7.1.2
 [7.1.1]: https://github.com/Sensirion/embedded-sgp/compare/7.1.0...7.1.1
 [7.1.0]: https://github.com/Sensirion/embedded-sgp/compare/7.0.0...7.1.0
 [7.0.0]: https://github.com/Sensirion/embedded-sgp/compare/6.0.0...7.0.0
