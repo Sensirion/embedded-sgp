@@ -13,6 +13,12 @@ cloning the repository.
 **Note:** If you use the SVM40 module (which contains an SGP40) please check
 out https://github.com/Sensirion/embedded-svm40.
 
+**Note:** If you are using SGP40 or SGP41 sensor, please check out the 
+following repositories:
+
+* https://github.com/Sensirion/embedded-i2c-sgp40
+* https://github.com/Sensirion/embedded-i2c-sgp41
+
 ## Clone this repository
 ```
 git clone --recursive https://github.com/Sensirion/embedded-sgp.git
