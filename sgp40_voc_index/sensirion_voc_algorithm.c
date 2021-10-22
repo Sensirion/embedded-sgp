@@ -595,7 +595,7 @@ static void VocAlgorithm__mean_variance_estimator__process(
     fix16_t c;
     fix16_t additional_scaling;
 
-    if ((params->m_Mean_Variance_Estimator___Initialized == false)) {
+    if (!params->m_Mean_Variance_Estimator___Initialized) {
         params->m_Mean_Variance_Estimator___Initialized = true;
         params->m_Mean_Variance_Estimator___Sraw_Offset = sraw;
         params->m_Mean_Variance_Estimator___Mean = F16(0.);
@@ -772,7 +772,7 @@ VocAlgorithm__adaptive_lowpass__process(VocAlgorithmParams* params,
     fix16_t tau_a;
     fix16_t a3;
 
-    if ((params->m_Adaptive_Lowpass___Initialized == false)) {
+    if (!params->m_Adaptive_Lowpass___Initialized) {
         params->m_Adaptive_Lowpass___X1 = sample;
         params->m_Adaptive_Lowpass___X2 = sample;
         params->m_Adaptive_Lowpass___X3 = sample;
