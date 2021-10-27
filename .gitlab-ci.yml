@@ -28,6 +28,6 @@ test:
   tags:
     - mso-sw-testbed-2
   script:
-    - git clone -b 2.0.0 https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab/MSO-SW/drivers/testbed/i2c-mux-testbed.git
+    - git clone -b 2.0.0 https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.sensirion.lokal/MSO-SW/drivers/testbed/i2c-mux-testbed.git
     - cd tests
     - make test
